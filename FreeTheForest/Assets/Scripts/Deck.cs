@@ -1,28 +1,38 @@
-/* This class contains the deck of deck and the methods to manipulate it. */
-
+/// <summary>
+/// This class contains the deck of cards and the methods to manipulate it.
+/// </summary>
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-
 public class Deck : MonoBehaviour
 {
-    public List<Card> deck;
-    public List<Card> discardPile;
-    public List<Card> exiledPile;
-
+    private List<Card> deck;
+    private List<Card> discardPile;
+    private List<Card> exiledPile;
     private Random random = UnityEngine.Random;
 
+    /// <summary>
+    /// Constructor to initialize the deck list when a new Deck instance is created.
+    /// </summary>
     public Deck()
     {
         deck = new List<Card>();
     }
 
+    /// <summary>
+    /// Adds a card to the deck.
+    /// </summary>
+    /// <param name="card">The card to add to the deck.</param>
     public void AddCard(Card card)
     {
         deck.Add(card);
     }
 
+    /// <summary>
+    /// Removes a card from the deck.
+    /// </summary>
+    /// <param name="card">The card to remove from the deck.</param>
     public void RemoveCard(Card card)
     {
         deck.Remove(card);
@@ -31,6 +41,7 @@ public class Deck : MonoBehaviour
     /// <summary>
     /// Draws a single card from the deck and returns it.
     /// </summary>
+    /// <returns>The drawn card from the deck.</returns>
     public Card DrawCard()
     {
         Card card = deck[0];
@@ -38,40 +49,37 @@ public class Deck : MonoBehaviour
         return card;
     }
 
+    /// <summary>
+    /// Draws multiple cards from the deck and returns them in a list.
+    /// </summary>
+    /// <param name="numCards">The number of cards to draw from the deck.</param>
+    /// <returns>A list of drawn cards from the deck.</returns>
     public List<Card> DrawCards(int numCards)
     {
         List<Card> cards = new List<Card>();
-        // If there are not enough cards in the deck:
+
+        // check if numCards is greater than deck.Count
         if (numCards > deck.Count)
         {
-            // Add remaining cards in deck to cards to return
+            // if so, add all cards from deck to cards list
             numCards -= deck.Count;
-            for (int i = 0; i < deck.Count; i++)
-            {
-                cards.Add(deck[0]);
-                deck.RemoveAt(0);
-            }
-            // Then shuffle discard pile into deck 
-            cards.AddRange(discardPile);
+            cards.AddRange(deck);
+            deck.Clear();
+            // add all cards from discardPile to deck
+            deck.AddRange(discardPile);
             discardPile.Clear();
             Shuffle();
-            // Then draw remaining cards
-            for (int i = 0; i < numCards; i++)
-            {
-                cards.Add(deck[0]);
-                deck.RemoveAt(0);
-            }
         }
+        // add numCards from deck to cards list and remove them from deck
+        cards.AddRange(deck.GetRange(0, numCards));
+        deck.RemoveRange(0, numCards);
 
-        for (int i = 0; i < numCards; i++)
-        {
-            cards.Add(deck[0]);
-            deck.RemoveAt(0);
-        }
-        
         return cards;
     }
 
+    /// <summary>
+    /// Shuffles the deck using Fisher-Yates algorithm.
+    /// </summary>
     public void Shuffle()
     {
         for (int i = 0; i < deck.Count; i++)
