@@ -1,5 +1,5 @@
 /// <summary>
-/// This class contains the deck of cards and the methods to manipulate it.
+/// This class represents a deck of cards and the methods to manipulate it.
 /// </summary>
 using System.Collections;
 using System.Collections.Generic;
@@ -56,19 +56,19 @@ public class Deck : MonoBehaviour
     {
         List<Card> cards = new List<Card>();
 
-        // check if numCards is greater than deck.Count
+        // Check if numCards is greater than deck.Count
         if (numCards > deck.Count)
         {
-            // if so, add all cards from deck to cards list
+            // If so, add all cards from deck to cards list
             numCards -= deck.Count;
             cards.AddRange(deck);
             deck.Clear();
-            // add all cards from discardPile to deck
+            // Add all cards from discardPile to deck and shuffle
             deck.AddRange(discardPile);
             discardPile.Clear();
             Shuffle();
         }
-        // add numCards from deck to cards list and remove them from deck
+        // Add numCards from deck to cards list and remove them from deck
         cards.AddRange(deck.GetRange(0, numCards));
         deck.RemoveRange(0, numCards);
 
