@@ -24,19 +24,25 @@ public class Deck : MonoBehaviour
     /// Adds a card to the deck.
     /// </summary>
     /// <param name="card">The card to add to the deck.</param>
-    public void AddCard(Card card)
-    {
-        deck.Add(card);
-    }
+    public void AddCard(Card card) => deck.Add(card);
 
     /// <summary>
     /// Removes a card from the deck.
     /// </summary>
     /// <param name="card">The card to remove from the deck.</param>
-    public void RemoveCard(Card card)
-    {
-        deck.Remove(card);
-    }
+    public void RemoveCard(Card card) => deck.Remove(card);
+
+    /// <summary>
+    /// Adds a card to the exiled pile.
+    /// </summary>
+    /// <param name="card">The card to add to the exiled pile.</param>
+    public void ExileCard(Card card) => exiledPile.Add(card);
+
+    /// <summary>
+    /// Add a card to the discard pile.
+    /// </summary>
+    /// <param name="card">The card to add to the discard pile.</param>
+    public void Discard(Card card) => discardPile.Add(card);
 
     /// <summary>
     /// Draws a single card from the deck and returns it.
@@ -90,4 +96,5 @@ public class Deck : MonoBehaviour
             deck[randomIndex] = temp;
         }
     }
+
 }
