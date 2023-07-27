@@ -97,4 +97,15 @@ public class Deck : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Reset the deck by adding all cards from the discard and exiled piles to the deck and shuffling.
+    /// </summary>  
+    public void Reset()
+    {
+        deck.AddRange(discardPile);
+        deck.AddRange(exiledPile);
+        discardPile.Clear();
+        exiledPile.Clear();
+        Shuffle();
+    }
 }
