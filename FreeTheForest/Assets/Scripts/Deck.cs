@@ -7,18 +7,10 @@ using UnityEngine;
 
 public class Deck : MonoBehaviour
 {
-    private List<Card> deck;
-    private List<Card> discardPile;
-    private List<Card> exiledPile;
+    private List<Card> deck = new List<Card>();
+    private List<Card> discardPile = new List<Card>();
+    private List<Card> exiledPile = new List<Card>();
     private Random random = UnityEngine.Random;
-
-    /// <summary>
-    /// Constructor to initialize the deck list when a new Deck instance is created.
-    /// </summary>
-    public Deck()
-    {
-        deck = new List<Card>();
-    }
 
     /// <summary>
     /// Adds a card to the deck.
