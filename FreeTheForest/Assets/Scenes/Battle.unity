@@ -200,7 +200,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 265315586}
-  - component: {fileID: 265315585}
+  - component: {fileID: 265315587}
   m_Layer: 0
   m_Name: PlayerObject
   m_TagString: Untagged
@@ -208,20 +208,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &265315585
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 265315584}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f0ff6f73bb65f1045b21367c3130b29e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_TextMeshPro: {fileID: 1465878251}
-  m_TextMeshPro2: {fileID: 648946095}
 --- !u!4 &265315586
 Transform:
   m_ObjectHideFlags: 0
@@ -230,14 +216,27 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 265315584}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 3.2613335, y: -2.6128159, z: 2.510493}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 643.4187, y: -303.15613, z: -5161.881}
+  m_LocalScale: {x: 59, y: 59, z: 59}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 648946094}
-  m_Father: {fileID: 0}
+  m_Father: {fileID: 1012519974}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &265315587
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 265315584}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 766c43887d249274c9db45a2b5c68f44, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  nickNameText: {fileID: 648946095}
 --- !u!1 &648946093
 GameObject:
   m_ObjectHideFlags: 0
@@ -506,6 +505,7 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1028827341}
+  - {fileID: 265315586}
   m_Father: {fileID: 813830788}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -930,4 +930,3 @@ SceneRoots:
   - {fileID: 1780280016}
   - {fileID: 813830788}
   - {fileID: 162792843}
-  - {fileID: 265315586}
