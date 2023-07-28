@@ -39,13 +39,29 @@ public class Deck : MonoBehaviour
     /// <summary>
     /// Draws a single card from the deck and returns it.
     /// </summary>
-    /// <returns>The drawn card from the deck.</returns>
+    /// <returns>The drawn card from the deck, or null if both deck and discard pile are empty.</returns>
     public Card DrawCard()
     {
+        // check if deck is empty
+        if (deck.Count == 0)
+        {
+            if (discardPile.Count == 0)
+            {
+                // Both deck and discard pile are empty, return null
+                return null;
+            }
+
+            // Reshuffle the discard pile into the deck
+            deck.AddRange(discardPile);
+            discardPile.Clear();
+            Shuffle();
+        }
+
         Card card = deck[0];
         deck.RemoveAt(0);
         return card;
     }
+
 
     /// <summary>
     /// Draws multiple cards from the deck and returns them in a list.
@@ -68,10 +84,13 @@ public class Deck : MonoBehaviour
             discardPile.Clear();
             Shuffle();
         }
-        // Add numCards from deck to cards list and remove them from deck
-        cards.AddRange(deck.GetRange(0, numCards));
-        deck.RemoveRange(0, numCards);
-
+        // Check that deck is not empty
+        if (deck.Count > 0)
+        {
+            // Add numCards from deck to cards list and remove them from deck
+            cards.AddRange(deck.GetRange(0, numCards));
+            deck.RemoveRange(0, numCards);
+        }
         return cards;
     }
 
