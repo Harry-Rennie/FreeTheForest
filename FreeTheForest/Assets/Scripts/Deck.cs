@@ -1,5 +1,5 @@
 /// <summary>
-/// This class represents a deck of cards and the methods to manipulate it.
+/// This class represents a Deck of cards and the methods to manipulate it.
 /// </summary>
 using System.Collections;
 using System.Collections.Generic;
@@ -7,116 +7,117 @@ using UnityEngine;
 
 public class Deck : MonoBehaviour
 {
-    private List<Card> deck = new List<Card>();
-    private List<Card> discardPile = new List<Card>();
-    private List<Card> exiledPile = new List<Card>();
+    public List<Card> Deck { get; } = new List<Card>();
+    public List<Card> DiscardPile { get; } = new List<Card>();
+    public List<Card> ExiledPile { get; } = new List<Card>();
+
     private Random random = UnityEngine.Random;
 
     /// <summary>
-    /// Adds a card to the deck.
+    /// Adds a card to the Deck.
     /// </summary>
-    /// <param name="card">The card to add to the deck.</param>
-    public void AddCard(Card card) => deck.Add(card);
+    /// <param name="card">The card to add to the Deck.</param>
+    public void AddCard(Card card) => Deck.Add(card);
 
     /// <summary>
-    /// Removes a card from the deck.
+    /// Removes a card from the Deck.
     /// </summary>
-    /// <param name="card">The card to remove from the deck.</param>
-    public void RemoveCard(Card card) => deck.Remove(card);
+    /// <param name="card">The card to remove from the Deck.</param>
+    public void RemoveCard(Card card) => Deck.Remove(card);
 
     /// <summary>
     /// Adds a card to the exiled pile.
     /// </summary>
     /// <param name="card">The card to add to the exiled pile.</param>
-    public void ExileCard(Card card) => exiledPile.Add(card);
+    public void ExileCard(Card card) => ExiledPile.Add(card);
 
     /// <summary>
     /// Add a card to the discard pile.
     /// </summary>
     /// <param name="card">The card to add to the discard pile.</param>
-    public void Discard(Card card) => discardPile.Add(card);
+    public void Discard(Card card) => DiscardPile.Add(card);
 
     /// <summary>
-    /// Draws a single card from the deck and returns it.
+    /// Draws a single card from the Deck and returns it.
     /// </summary>
-    /// <returns>The drawn card from the deck, or null if both deck and discard pile are empty.</returns>
+    /// <returns>The drawn card from the Deck, or null if both Deck and discard pile are empty.</returns>
     public Card DrawCard()
     {
-        // check if deck is empty
-        if (deck.Count == 0)
+        // check if Deck is empty
+        if (Deck.Count == 0)
         {
-            if (discardPile.Count == 0)
+            if (DiscardPile.Count == 0)
             {
-                // Both deck and discard pile are empty, return null
+                // Both Deck and discard pile are empty, return null
                 return null;
             }
 
-            // Reshuffle the discard pile into the deck
-            deck.AddRange(discardPile);
-            discardPile.Clear();
+            // Reshuffle the discard pile into the Deck
+            Deck.AddRange(DiscardPile);
+            DiscardPile.Clear();
             Shuffle();
         }
 
-        Card card = deck[0];
-        deck.RemoveAt(0);
+        Card card = Deck[0];
+        Deck.RemoveAt(0);
         return card;
     }
 
 
     /// <summary>
-    /// Draws multiple cards from the deck and returns them in a list.
+    /// Draws multiple cards from the Deck and returns them in a list.
     /// </summary>
-    /// <param name="numCards">The number of cards to draw from the deck.</param>
-    /// <returns>A list of drawn cards from the deck.</returns>
+    /// <param name="numCards">The number of cards to draw from the Deck.</param>
+    /// <returns>A list of drawn cards from the Deck.</returns>
     public List<Card> DrawCards(int numCards)
     {
         List<Card> cards = new List<Card>();
 
-        // Check if numCards is greater than deck.Count
-        if (numCards > deck.Count)
+        // Check if numCards is greater than Deck.Count
+        if (numCards > Deck.Count)
         {
-            // If so, add all cards from deck to cards list
-            numCards -= deck.Count;
-            cards.AddRange(deck);
-            deck.Clear();
-            // Add all cards from discardPile to deck and shuffle
-            deck.AddRange(discardPile);
-            discardPile.Clear();
+            // If so, add all cards from Deck to cards list
+            numCards -= Deck.Count;
+            cards.AddRange(Deck);
+            Deck.Clear();
+            // Add all cards from DiscardPile to Deck and shuffle
+            Deck.AddRange(DiscardPile);
+            DiscardPile.Clear();
             Shuffle();
         }
-        // Check that deck is not empty
-        if (deck.Count > 0)
+        // Check that Deck is not empty
+        if (Deck.Count > 0)
         {
-            // Add numCards from deck to cards list and remove them from deck
-            cards.AddRange(deck.GetRange(0, numCards));
-            deck.RemoveRange(0, numCards);
+            // Add numCards from Deck to cards list and remove them from Deck
+            cards.AddRange(Deck.GetRange(0, numCards));
+            Deck.RemoveRange(0, numCards);
         }
         return cards;
     }
 
     /// <summary>
-    /// Shuffles the deck using Fisher-Yates algorithm.
+    /// Shuffles the Deck using Fisher-Yates algorithm.
     /// </summary>
     public void Shuffle()
     {
-        for (int i = 0; i < deck.Count; i++)
+        for (int i = 0; i < Deck.Count; i++)
         {
-            Card temp = deck[i];
-            int randomIndex = random.Range(i, deck.Count);
-            deck[i] = deck[randomIndex];
-            deck[randomIndex] = temp;
+            Card temp = Deck[i];
+            int randomIndex = random.Range(i, Deck.Count);
+            Deck[i] = Deck[randomIndex];
+            Deck[randomIndex] = temp;
         }
     }
 
     /// <summary>
-    /// Reset the deck by adding all cards from the discard and exiled piles to the deck and shuffling.
+    /// Reset the Deck by adding all cards from the discard and exiled piles to the Deck and shuffling.
     /// </summary>  
     public void Reset()
     {
-        deck.AddRange(discardPile);
-        deck.AddRange(exiledPile);
-        discardPile.Clear();
-        exiledPile.Clear();
+        Deck.AddRange(DiscardPile);
+        Deck.AddRange(ExiledPile);
+        DiscardPile.Clear();
+        ExiledPile.Clear();
         Shuffle();
     }
 }
