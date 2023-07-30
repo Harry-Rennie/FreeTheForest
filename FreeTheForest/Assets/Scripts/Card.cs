@@ -1,13 +1,19 @@
 /* This class represents a card in the deck. */
 
 using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
 
-public class Card
+public class Card : ScriptableObject
 {
-    public string name;
+    public string title;
+    public string description;
 
-    public Card(string name)
-    {
-        this.name = name;
-    }
+    public Sprite image;
+
+    public int manaCost;
+    public CardType cardType;
+    public enum CardType { Attack, Skill}
+    public CardTargetType cardTargetType;
+    public enum CardTargetType { self, enemy}
 }
