@@ -14,7 +14,7 @@ public class Entity : MonoBehaviour
 
     public bool isPlayer;
     BattleManager battleManager;
-    GameManager gameManager;
+    PlayerInfoController gameManager;
 
     private void Awake()
     {

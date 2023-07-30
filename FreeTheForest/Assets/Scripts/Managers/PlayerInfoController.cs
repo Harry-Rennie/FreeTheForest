@@ -7,6 +7,7 @@ public class PlayerInfoController : MonoBehaviour
 {
     public TMP_Text m_TextMeshPro;
     public static PlayerInfoController instance;
+    public List<Card> playerDeck = new List<Card>();
 
     private void Awake()
     {

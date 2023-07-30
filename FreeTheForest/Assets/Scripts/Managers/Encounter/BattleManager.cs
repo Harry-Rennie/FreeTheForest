@@ -22,24 +22,14 @@ public class BattleManager : MonoBehaviour
     public int drawAmount = 5;
 
     [Header("Enemies")]
-    public List<Entity> enemies = new List<Entity>;
+    public List<Entity> enemies = new List<Entity>();
     CardActions cardActions;
-    GameManager gameManager;
+    PlayerInfoController gameManager;
 
     public void Awake()
     {
-        gameManager = FindObjectOfType<GameManager>();
+        gameManager = FindObjectOfType<PlayerInfoController>();
         cardActions = GetComponent<CardActions>();
-    }
-
-    void Start()
-    {
-        
-    }
-    // Update is called once per frame
-    void Update()
-    {
-
     }
 
     public void StartBattle()
