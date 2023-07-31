@@ -7,7 +7,12 @@ public class MapGraph : MonoBehaviour
 {
     [SerializeField] RectTransform graphContainer;
     [SerializeField] private GameObject tilePrefab;
-
+    //decide max encounters per level
+    // populate a list of encounters, with appropriate spacing between nodes, maybe keep track of the 'floor' number (Row)
+    // decide on which types of encounters we are going to have (boss, elite, normal mob, rest, reward etc.)
+    // assign a probability of each encounter type spawning to determine the node type to spawn.
+    // after the first row, we can have a random chance of spawning a node that is not a normal mob, but a rest, elite, boss, etc.
+    // the last and highest Y position node will always be the final boss of the stage.
     private void Awake()
     {
         graphContainer = transform.Find("GraphContainer").GetComponent<RectTransform>();
