@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEditor.PackageManager;
 using UnityEngine;
 using UnityEngine.UI;
@@ -11,35 +12,89 @@ public class MapGraph : MonoBehaviour
     [SerializeField] private GameObject tilePrefab;
     [SerializeField] int numberOfNodes = 10;
     private float graphHeight;
+    private float graphWidth;
     //decide max encounters per level
     // populate a list of encounters, with appropriate spacing between nodes, maybe keep track of the 'floor' number (Row)
     // decide on which types of encounters we are going to have (boss, elite, normal mob, rest, reward etc.)
     // assign a probability of each encounter type spawning to determine the node type to spawn.
     // after the first row, we can have a random chance of spawning a node that is not a normal mob, but a rest, elite, boss, etc.
     // the last and highest Y position node will always be the final boss of the stage.
-    private void Start()
+
+    private void Awake()
     {
         mGraph = GetComponent<RectTransform>();
-        //setting graphContainer to correct dimension and position of parent object
-        graphHeight = mGraph.sizeDelta.y;
+        graphHeight = mGraph.rect.height;
+        graphWidth = mGraph.rect.width;
         graphContainer = transform.Find("GraphContainer").GetComponent<RectTransform>();
-        graphContainer.sizeDelta = new Vector2(graphContainer.sizeDelta.x, graphHeight);
-        List<int> nodeLocations = GenerateRandomNodeLocations(numberOfNodes);
+    }
+    private void Start()
+    {
+        List<Vector2> nodeLocations = GenerateRandomNodeLocations(numberOfNodes);
         SpawnNodes(nodeLocations);
     }
 
-    private List<int> GenerateRandomNodeLocations(int numberOfNodes)
+    private List<Vector2> GenerateRandomNodeLocations(int numberOfNodes)
     {
-        List<int> randomNodeLocations = new List<int>();
+        List<Vector2> randomNodeLocations = new List<Vector2>();
 
-        for (int i = 0; i < numberOfNodes; i++)
+        // Define minimum and maximum spacing for the first three nodes
+        float minFirstThreeNodeSpace = 200f;  // Minimum spacing
+        float maxFirstThreeNodeSpace = 450f;  // Maximum spacing
+
+        float[] firstThreeNodeSpaces = new float[3];
+
+        // Calculate random space for the first three nodes
+        for (int i = 0; i < 3; i++)
         {
-            // Make sure the randomYPos is within the graphContainer's height
-            int randomYPos = Random.Range(50, (int)graphContainer.sizeDelta.y - 50);
-            randomNodeLocations.Add(randomYPos);
+            do
+            {
+                firstThreeNodeSpaces[i] = (i == 0 ? 0 : firstThreeNodeSpaces[i - 1]) + Random.Range(minFirstThreeNodeSpace, maxFirstThreeNodeSpace);
+            }
+            while (firstThreeNodeSpaces[i] > graphContainer.sizeDelta.x - 50f);
+
+            Vector2 newNodePos = new Vector2(firstThreeNodeSpaces[i], 50f);  // Y position set to bottom
+            randomNodeLocations.Add(newNodePos);
         }
 
+        for (int i = 3; i < numberOfNodes - 1; i++)
+        {
+            Vector2 newNodePos;
+            do
+            {
+                int randomXPos = Random.Range(50, (int)graphContainer.sizeDelta.x - 50);
+                int randomYPos = Random.Range(50, (int)graphContainer.sizeDelta.y - 150);
+                newNodePos = new Vector2(randomXPos, randomYPos);
+            }
+            while (CheckNodeViolation(randomNodeLocations, newNodePos));
+
+            randomNodeLocations.Add(newNodePos);
+        }
+
+        // Ensure that one node is always the highest
+        Vector2 finalNodePos;
+        do
+        {
+            int finalNodeXPos = Random.Range(50, (int)graphContainer.sizeDelta.x - 50);
+            finalNodePos = new Vector2(finalNodeXPos, (int)graphContainer.sizeDelta.y - 50);
+        }
+        while (CheckNodeViolation(randomNodeLocations, finalNodePos));
+
+        randomNodeLocations.Add(finalNodePos);
+
         return randomNodeLocations;
+    }
+
+    private bool CheckNodeViolation(List<Vector2> existingNodes, Vector2 newNode)
+    {
+        foreach (var node in existingNodes)
+        {
+            //if the node is too close to another node, return true and try again.
+            if (Mathf.Abs(node.x - newNode.x) < 200f && Mathf.Abs(node.y - newNode.y) < 200f)
+            {
+                return true;
+            }
+        }
+        return false;
     }
 
     private void SpawnTile(Vector2 anchoredPos)
@@ -56,19 +111,26 @@ public class MapGraph : MonoBehaviour
         tileTransform.anchorMax = new Vector2(0, 0);
     }
 
-    private void SpawnNodes(List<int> nodeLocations)
+    private void SpawnNodes(List<Vector2> nodeLocations)
     {
-        float xSpace = graphContainer.sizeDelta.x / (nodeLocations.Count - 1);
-
         for (int i = 0; i < nodeLocations.Count; i++)
         {
-            // Calculate positions
-            float xPosition = i * xSpace;
-            float normalizedYPos = (float)nodeLocations[i] / graphContainer.sizeDelta.y;
-            // If it's one of the first 3 nodes, set y position to the bottom margin, otherwise normalize between 0 and 1
-            float yPosition = i < 3 ? 50f : normalizedYPos * graphHeight;
-
-            SpawnTile(new Vector2(xPosition, yPosition));
+            SpawnTile(nodeLocations[i]);
         }
+    }
+
+    public void RegenerateNodes()
+    {
+        // Clear the current graph first
+        foreach (Transform child in graphContainer)
+        {
+           if(child.name != "GraphContainerBackground")
+             {
+                Destroy(child.gameObject);
+             }
+        }
+        // Regenerate nodes and spawn a new graph
+        List<Vector2> nodeLocations = GenerateRandomNodeLocations(numberOfNodes);
+        SpawnNodes(nodeLocations);
     }
 }
