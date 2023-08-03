@@ -24,7 +24,7 @@ public class CardActions : MonoBehaviour
             case "Strike":
                 AttackEnemy();
                 break;
-            case "Defend":
+            case "Block":
                 PerformBlock();
                 break;
             default:

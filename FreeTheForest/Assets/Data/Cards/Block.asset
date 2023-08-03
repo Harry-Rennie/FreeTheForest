@@ -10,11 +10,11 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f6d5a2fb821bc4fa6988ef63e88642ee, type: 3}
-  m_Name: New Card
+  m_Name: Block
   m_EditorClassIdentifier: 
-  title: Strike
-  description: Attack
+  title: Block
+  description: Defend
   image: {fileID: 0}
   manaCost: 1
-  cardType: 0
-  cardTargetType: 1
+  cardType: 1
+  cardTargetType: 0

@@ -30,6 +30,8 @@ public class BattleManager : MonoBehaviour
     {
         gameManager = FindObjectOfType<PlayerInfoController>();
         cardActions = GetComponent<CardActions>();
+
+        StartBattle();
     }
 
     public void StartBattle()

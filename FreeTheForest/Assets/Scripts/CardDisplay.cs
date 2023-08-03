@@ -42,6 +42,11 @@ public class CardDisplay : MonoBehaviour
         battleManager.selectedCard = null;
     }
 
+    public void HandleDrag()
+    {
+        //Empty
+    }
+
     public void HandleEndDrag()
     {
         if (battleManager.energy < card.manaCost)
