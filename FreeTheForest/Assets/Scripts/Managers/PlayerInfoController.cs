@@ -7,7 +7,7 @@ public class PlayerInfoController : MonoBehaviour
 {
     public TMP_Text m_TextMeshPro;
     public static PlayerInfoController instance;
-    public List<Card> playerDeck = new List<Card>();
+    public List<Card> playerDeck = new List<Card>(); //Holds the players current deck as a list of cards.
 
     private void Awake()
     {
