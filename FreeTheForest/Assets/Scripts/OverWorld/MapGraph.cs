@@ -1,4 +1,4 @@
-using System.Collections;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -30,8 +30,6 @@ public class MapGraph : MonoBehaviour
         nodeLocations = SortNodes(nodeLocations);
         List<GameObject> nodes = SpawnNodes(nodeLocations);
         ConnectNodes(nodes);
-        List<List<GameObject>> groups = GroupConnectedNodes(nodes);
-        ConnectGroups(groups);
     }
 
     private List<Vector2> GenerateRandomNodeLocations(int numberOfNodes)
@@ -61,7 +59,7 @@ public class MapGraph : MonoBehaviour
 
             do
             {
-                gridX = Random.Range(1, gridSizeX - 1);
+                gridX = UnityEngine.Random.Range(1, gridSizeX - 1);
                 newNodePos = new Vector2(gridX * cellWidth, 1 * cellHeight);
             }
             while (CheckNodeViolation(randomNodeLocations, newNodePos));
@@ -80,9 +78,8 @@ public class MapGraph : MonoBehaviour
 
             do
             {
-                gridX = Random.Range(1, gridSizeX - 1);
-                gridY = Random.Range(2, gridSizeY - 1);  //excluding top and second row
-
+                gridX = UnityEngine.Random.Range(1, gridSizeX - 1);
+                gridY = UnityEngine.Random.Range(2, gridSizeY - 1);  //excluding top and second row
                 newNodePos = new Vector2(gridX * cellWidth, gridY * cellHeight);
             }
             while (CheckNodeViolation(randomNodeLocations, newNodePos));
@@ -127,162 +124,76 @@ public class MapGraph : MonoBehaviour
             GameObject newNode = SpawnTile(nodeLocations[i]);
             nodes.Add(newNode);
         }
+
+        nodes = nodes.OrderByDescending(n => n.GetComponent<RectTransform>().anchoredPosition.y)
+                    .ThenBy(n => n.GetComponent<RectTransform>().anchoredPosition.x)
+                    .ToList();
+
         return nodes;
     }
+
     private void ConnectNodes(List<GameObject> nodes)
     {
-        for (int i = 0; i < nodes.Count; i++)
+        //initial connections from each node to the closest node below it
+        List<GameObject> sortedNodes = nodes.OrderBy(n => n.GetComponent<RectTransform>().anchoredPosition.y).ToList();
+
+        for (int i = 0; i < sortedNodes.Count; i++)
         {
-            GameObject node = nodes[i];
-            Vector2 nodePosition = node.GetComponent<RectTransform>().anchoredPosition;
+            GameObject currentNode = sortedNodes[i];
 
-            //get nodes in row below the current node
-            List<GameObject> nodesInNextRow = GetNodesInRow(nodes, nodePosition.y);
+            //get all nodes in the rows below the current node
+            List<GameObject> lowerNodes = sortedNodes.Where(n => n.GetComponent<RectTransform>().anchoredPosition.y < currentNode.GetComponent<RectTransform>().anchoredPosition.y).ToList();
 
-            //check if there are nodes in the row below
-            if (nodesInNextRow.Count > 0)
+            //if there are no nodes below the current node, move to the next node
+            if (!lowerNodes.Any())
             {
-                //find the closest node in the row below and draw a line
-                GameObject closestNode = GetClosestNode(nodePosition, nodesInNextRow);
+                continue;
+            }
+            //find the closest node in the rows below and draw line between them.
+            GameObject closestNode = lowerNodes.OrderBy(n => Vector2.Distance(n.GetComponent<RectTransform>().anchoredPosition, currentNode.GetComponent<RectTransform>().anchoredPosition)).First();
+            DrawLineBetweenNodes(currentNode, closestNode);
+        }
+        //loop through all nodes and ensure each node has at least one connection above it
+        foreach (GameObject node in sortedNodes)
+        {
+            List<GameObject> linesFromNode = GetLinesFromNode(node);
+
+            //check if there are lines going to a node above the current node
+            bool hasConnectionAbove = linesFromNode.Any(line => line.GetComponent<LineRenderer>().GetPosition(1).y > node.GetComponent<RectTransform>().anchoredPosition.y);
+            //if there are no connections above - connect the node to the closest node above it
+            if (!hasConnectionAbove)
+            {
+                //get all nodes above the current node
+                List<GameObject> upperNodes = sortedNodes.Where(n => n.GetComponent<RectTransform>().anchoredPosition.y > node.GetComponent<RectTransform>().anchoredPosition.y).ToList();
+                //if there are no nodes above skip to the next node
+                if (!upperNodes.Any())
+                {
+                    continue;
+                }
+                //find the closest node among all nodes above
+                GameObject closestNode = upperNodes.OrderBy(n => Vector2.Distance(n.GetComponent<RectTransform>().anchoredPosition, node.GetComponent<RectTransform>().anchoredPosition)).First();
+                //connect nodes
                 DrawLineBetweenNodes(node, closestNode);
             }
         }
-        GroupConnectedNodes(nodes);
     }
 
-    private List<GameObject> GetNodesInRow(List<GameObject> nodes, float currentY)
+    public List<GameObject> GetLinesFromNode(GameObject node)
     {
-        //dont do an exact comparison on two floats
-        float rowHeightTolerance = 0.1f;
-        //for each node get absolute value of node in row and return as list
-        return nodes.Where(n => Mathf.Abs(n.GetComponent<RectTransform>().anchoredPosition.y - currentY) > rowHeightTolerance).ToList();
-    }
-
-    //sorting to find closest node
-    private GameObject GetClosestNode(Vector2 nodePosition, List<GameObject> nodes)
-    {
-        GameObject closestNode = null;
-        float closestDistance = float.MaxValue;
-
-        foreach (var node in nodes)
+        List<GameObject> lines = new List<GameObject>();
+        foreach (Transform child in node.transform)
         {
-            Vector2 thisNodePosition = node.GetComponent<RectTransform>().anchoredPosition;
-            float distance = Vector2.Distance(nodePosition, thisNodePosition);
-
-            if (distance < closestDistance)
+            if (child.name.StartsWith("Line"))
             {
-                closestDistance = distance;
-                closestNode = node;
+                lines.Add(child.gameObject);
             }
         }
-
-        return closestNode;
+        return lines;
     }
+
     private void DrawLineBetweenNodes(GameObject nodeA, GameObject nodeB)
     {
         lineDrawer.DrawLine(nodeA, nodeB);
-    }
-    //functions to perform depth first search on nodes with lines drawn between them, appending them to lists of groups of lists of nodes.
-    private List<List<GameObject>> GroupConnectedNodes(List<GameObject> nodes)
-    {
-        HashSet<GameObject> visitedNodes = new HashSet<GameObject>(); //this keeps track of the nodes that the depth first search finds.
-        List<List<GameObject>> groups = new List<List<GameObject>>();
-
-        foreach (var node in nodes)
-        {
-            if (!visitedNodes.Contains(node))
-            {
-                List<GameObject> group = new List<GameObject>();
-                DFS(node, group, nodes, visitedNodes);
-                groups.Add(group);
-            }
-        }
-
-        //logging information about the groups - remove when finished.
-        Debug.Log($"Total number of groups: {groups.Count}");
-        for (int i = 0; i < groups.Count; i++)
-        {
-            Debug.Log($"Group {i + 1} has {groups[i].Count} nodes.");
-        }
-
-        return groups;
-    }
-
-    private void DFS(GameObject currentNode, List<GameObject> group, List<GameObject> nodes, HashSet<GameObject> visitedNodes)
-    {
-        if (visitedNodes.Contains(currentNode))
-            return;
-
-        visitedNodes.Add(currentNode);
-        group.Add(currentNode);
-
-        //get neighboring nodes (directly connected nodes)
-        List<GameObject> neighbors = GetConnectedNeighbors(currentNode, nodes);
-
-        foreach (var neighbor in neighbors)
-        {
-            DFS(neighbor, group, nodes, visitedNodes);
-        }
-    }
-
-    private List<GameObject> GetConnectedNeighbors(GameObject node, List<GameObject> nodes)
-    {
-        List<GameObject> neighbors = new List<GameObject>();
-        Vector2 nodePosition = node.GetComponent<RectTransform>().anchoredPosition;
-
-        //checks nodes in the same row and nodes below for potential neighbours
-        List<GameObject> possibleNeighbors = GetNodesInRow(nodes, nodePosition.y);
-        possibleNeighbors.AddRange(GetNodesInRow(nodes, nodePosition.y - 1));  // -1 row
-
-        foreach (var neighbor in possibleNeighbors)
-        {
-            if (IsDirectlyConnected(node, neighbor))
-            {
-                neighbors.Add(neighbor);
-            }
-        }
-
-        return neighbors;
-    }
-
-    //using node locations to check if line renderer intersects with a node
-    private bool IsDirectlyConnected(GameObject node1, GameObject node2)
-    {
-        //get all LineRenderers in the scene
-        LineRenderer[] lineRenderers = GameObject.FindObjectsOfType<LineRenderer>();
-
-        foreach (LineRenderer lr in lineRenderers)
-        {
-            Vector3 startPoint = lr.GetPosition(0);
-            Vector3 endPoint = lr.GetPosition(1);
-
-            //check if either point of the line is within bounds of node1 or node2
-            if (IsPointInsideNodeBounds(startPoint, node1) && IsPointInsideNodeBounds(endPoint, node2) ||
-                IsPointInsideNodeBounds(startPoint, node2) && IsPointInsideNodeBounds(endPoint, node1))
-            {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    private bool IsPointInsideNodeBounds(Vector3 point, GameObject node)
-    {
-        RectTransform rt = node.GetComponent<RectTransform>();
-
-        Vector3[] corners = new Vector3[4];
-        rt.GetWorldCorners(corners);
-
-        bool insideX = point.x >= corners[0].x && point.x <= corners[2].x;
-        bool insideY = point.y >= corners[0].y && point.y <= corners[2].y;
-
-        return insideX && insideY;
-    }
-
-    private void ConnectGroups(List<List<GameObject>> groups)
-    {
-        //todo
     }
 
     public void RegenerateNodes()
@@ -300,8 +211,6 @@ public class MapGraph : MonoBehaviour
         nodeLocations = SortNodes(nodeLocations);
         List<GameObject> nodes = SpawnNodes(nodeLocations);
         ConnectNodes(nodes);
-        List<List<GameObject>> groups = GroupConnectedNodes(nodes);
-        ConnectGroups(groups);
     }
 
     //sorts from top to bottom
