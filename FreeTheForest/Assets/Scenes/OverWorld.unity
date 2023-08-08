@@ -625,7 +625,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   graphContainer: {fileID: 1216346340}
   tilePrefab: {fileID: 8074084271344646365, guid: ee3bb82f2f6d4884e8204901bd65a957, type: 3}
-  numberOfNodes: 12
+  numberOfNodes: 20
   lineDrawer: {fileID: 297744769}
   gridSizeX: 7
   gridSizeY: 7
