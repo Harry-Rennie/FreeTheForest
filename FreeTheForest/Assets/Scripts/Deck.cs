@@ -7,23 +7,21 @@ using UnityEngine;
 
 public class Deck : MonoBehaviour
 {
-    public List<Card> Deck { get; } = new List<Card>();
+    public List<Card> MainDeck { get; } = new List<Card>();
     public List<Card> DiscardPile { get; } = new List<Card>();
     public List<Card> ExiledPile { get; } = new List<Card>();
-
-    private Random random = UnityEngine.Random;
 
     /// <summary>
     /// Adds a card to the Deck.
     /// </summary>
     /// <param name="card">The card to add to the Deck.</param>
-    public void AddCard(Card card) => Deck.Add(card);
+    public void AddCard(Card card) => MainDeck.Add(card);
 
     /// <summary>
     /// Removes a card from the Deck.
     /// </summary>
     /// <param name="card">The card to remove from the Deck.</param>
-    public void RemoveCard(Card card) => Deck.Remove(card);
+    public void RemoveCard(Card card) => MainDeck.Remove(card);
 
     /// <summary>
     /// Adds a card to the exiled pile.
@@ -44,7 +42,7 @@ public class Deck : MonoBehaviour
     public Card DrawCard()
     {
         // check if Deck is empty
-        if (Deck.Count == 0)
+        if (MainDeck.Count == 0)
         {
             if (DiscardPile.Count == 0)
             {
@@ -53,13 +51,13 @@ public class Deck : MonoBehaviour
             }
 
             // Reshuffle the discard pile into the Deck
-            Deck.AddRange(DiscardPile);
+            MainDeck.AddRange(DiscardPile);
             DiscardPile.Clear();
             Shuffle();
         }
 
-        Card card = Deck[0];
-        Deck.RemoveAt(0);
+        Card card = MainDeck[0];
+        MainDeck.RemoveAt(0);
         return card;
     }
 
@@ -74,23 +72,23 @@ public class Deck : MonoBehaviour
         List<Card> cards = new List<Card>();
 
         // Check if numCards is greater than Deck.Count
-        if (numCards > Deck.Count)
+        if (numCards > MainDeck.Count)
         {
             // If so, add all cards from Deck to cards list
-            numCards -= Deck.Count;
-            cards.AddRange(Deck);
-            Deck.Clear();
+            numCards -= MainDeck.Count;
+            cards.AddRange(MainDeck);
+            MainDeck.Clear();
             // Add all cards from DiscardPile to Deck and shuffle
-            Deck.AddRange(DiscardPile);
+            MainDeck.AddRange(DiscardPile);
             DiscardPile.Clear();
             Shuffle();
         }
         // Check that Deck is not empty
-        if (Deck.Count > 0)
+        if (MainDeck.Count > 0)
         {
             // Add numCards from Deck to cards list and remove them from Deck
-            cards.AddRange(Deck.GetRange(0, numCards));
-            Deck.RemoveRange(0, numCards);
+            cards.AddRange(MainDeck.GetRange(0, numCards));
+            MainDeck.RemoveRange(0, numCards);
         }
         return cards;
     }
@@ -100,12 +98,12 @@ public class Deck : MonoBehaviour
     /// </summary>
     public void Shuffle()
     {
-        for (int i = 0; i < Deck.Count; i++)
+        for (int i = 0; i < MainDeck.Count; i++)
         {
-            Card temp = Deck[i];
-            int randomIndex = random.Range(i, Deck.Count);
-            Deck[i] = Deck[randomIndex];
-            Deck[randomIndex] = temp;
+            Card temp = MainDeck[i];
+            int randomIndex = Random.Range(i, MainDeck.Count);
+            MainDeck[i] = MainDeck[randomIndex];
+            MainDeck[randomIndex] = temp;
         }
     }
 
@@ -114,8 +112,8 @@ public class Deck : MonoBehaviour
     /// </summary>  
     public void Reset()
     {
-        Deck.AddRange(DiscardPile);
-        Deck.AddRange(ExiledPile);
+        MainDeck.AddRange(DiscardPile);
+        MainDeck.AddRange(ExiledPile);
         DiscardPile.Clear();
         ExiledPile.Clear();
         Shuffle();
