@@ -43,7 +43,6 @@ public class BattleManager : MonoBehaviour
 
         deck.DiscardPile.AddRange(gameManager.playerDeck); //Add cards from GM to discard pile of new empty deck
 
-        deck.Shuffle(); //Shuffle the added cards into the main deck
         DrawCards(drawAmount);
         energy = maxEnergy;
     }
