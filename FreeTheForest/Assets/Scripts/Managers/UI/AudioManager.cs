@@ -56,5 +56,5 @@ public class AudioManager : MonoBehaviour
     { musicSrc.volume = volume; }
 
     public void SfxVolume(float volume)
-    { musicSrc.volume = volume; }
+    { sfxSrc.volume = volume; }
 }
