@@ -22,7 +22,7 @@ public class TitleScreen : MonoBehaviour
             audioManager.GetComponent<AudioManager>().ToggleMusic();
         }
 
-        //SceneManager.LoadSceneAsync("MainMenu", LoadSceneMode.Additive);      
+        SceneManager.LoadSceneAsync("MainMenu", LoadSceneMode.Additive);      
     }
 
 }
