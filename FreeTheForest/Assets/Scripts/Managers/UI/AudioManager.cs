@@ -6,7 +6,7 @@ using UnityEngine;
 public class AudioManager : MonoBehaviour
 {
 
-    public static AudioManager instance; //still needs to be converted to dependency injection
+    public static AudioManager instance;
     public Audio[] musicSnd, sfxSnd;
     public AudioSource musicSrc, sfxSrc;
 
