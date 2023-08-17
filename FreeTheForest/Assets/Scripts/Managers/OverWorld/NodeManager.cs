@@ -70,6 +70,10 @@ public class NodeManager : MonoBehaviour
         }
 
         //ensure both node types are spawned if not already:
+        //this is a todo.
+        //at this point I realised we definitely need an overarching data structure to keep track of 'paths' nodes consist of, 
+        //aswell as their row and column position in the grid, so that we can distribute nodes in desired way.
+        //we can then run a comparison against a data set of encounter types to modify stats/difficulty/rewards as we see fit (dependent on the 'floor' or row of the dungeon).
         int nodesLeft = existingNodes.Count - 4;
         if (nodesLeft <= (desiredHeals + desiredUpgrades - healCount - upgradeCount))
         {
