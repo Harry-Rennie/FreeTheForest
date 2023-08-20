@@ -20,7 +20,9 @@ public class BattleManager : MonoBehaviour
     public Entity player;
     public int maxEnergy;
     public int energy;
+    public int energyGain;
     public int drawAmount = 5;
+    public bool playersTurn = true;
 
     [Header("Enemies")]
     public List<Entity> enemies = new List<Entity>();
@@ -98,8 +100,46 @@ public class BattleManager : MonoBehaviour
         energy -= card.card.manaCost; //Reduce energy by card cost (CardActions checks for enough mana)
 
         selectedCard = null; //Drop the referenced card
+        
+        DiscardCard(card);
+    }
+
+    public void DiscardCard(CardDisplay card)
+    {
         card.gameObject.SetActive(false); //Deactivate the gameObject
         cardsInHand.Remove(card.card); //Remove the Hand list item
         deck.Discard(card.card); //Put the card into the Discard pile of the Deck object.
+    }
+
+    public void EndTurn()
+    {
+        //Set turn to no
+        playersTurn = false;
+        
+        //Discard all player cards
+        foreach(CardDisplay card in handCardObjects)
+        {
+            DiscardCard(card);
+        }
+
+        //Go through each enemy and execute their actions
+        foreach(Entity enemy in enemies)
+        {
+            int roll = Random.Range(0, enemy.enemyCards.Count);
+
+            Card card = enemy.enemyCards[roll];
+            cardActions.PerformAction(card, enemy);
+        }
+
+        //TODO: FUTURE CONTENT: Process buffs
+
+        //Draw the player their next hand
+        DrawCards(drawAmount);
+
+        //Restore energy
+        energy += energyGain;
+
+        //Set turn to yes
+        playersTurn = true;
     }
 }
