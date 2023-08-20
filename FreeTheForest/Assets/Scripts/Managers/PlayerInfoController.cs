@@ -9,6 +9,8 @@ public class PlayerInfoController : MonoBehaviour
     public static PlayerInfoController instance;
     public List<Card> playerDeck = new List<Card>(); //Holds the players current deck as a list of cards.
 
+    public List<Enemy> currentEnemies = new List<Enemy>(); //Battle reads from here to load in enemies to battle scene.
+
     private void Awake()
     {
         if (instance == null)
