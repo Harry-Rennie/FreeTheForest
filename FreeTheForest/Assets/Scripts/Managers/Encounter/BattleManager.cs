@@ -24,6 +24,7 @@ public class BattleManager : MonoBehaviour
 
     [Header("Enemies")]
     public List<Entity> enemies = new List<Entity>();
+    
     CardActions cardActions;
     PlayerInfoController gameManager;
 
@@ -38,6 +39,8 @@ public class BattleManager : MonoBehaviour
     //Function initializes the battle state, loading in the deck from GameManager and drawing the opening hand.
     public void StartBattle()
     {
+        LoadEnemies();
+        
         deck = new Deck();
         cardsInHand = new List<Card>();
 
@@ -58,6 +61,24 @@ public class BattleManager : MonoBehaviour
             cardsInHand.Add(cardDrawn); //Put the card in the Hand list
             DisplayCardInHand(cardDrawn); //Display the card
             cardsDrawn++;
+        }
+    }
+
+    public void LoadEnemies()
+    {
+        for(int i = 0; i > gameManager.currentEnemies.Count; i++)
+        {
+            Entity ent = enemies[i];
+            Enemy curEnemy = gameManager.currentEnemies[i];
+
+            ent.name = curEnemy.title;
+            ent.offense = curEnemy.offense;
+            ent.defense = curEnemy.defense;
+            ent.maxHealth = curEnemy.health;
+            ent.currentHealth = curEnemy.health;
+            ent.enemyCards = curEnemy.Actions;
+
+            ent.gameObject.SetActive(true);
         }
     }
 

@@ -19,6 +19,9 @@ public class Entity : MonoBehaviour
     [Header("Player Check")]
     public bool isPlayer;
 
+    [Header("Enemy Actions")]
+    public List<Card> enemyCards;
+
     BattleManager battleManager;
     PlayerInfoController gameManager;
 
