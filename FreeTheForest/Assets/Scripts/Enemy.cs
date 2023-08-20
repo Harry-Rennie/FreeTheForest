@@ -6,15 +6,13 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "Enemy")]
 public class Enemy : ScriptableObject
 {
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
+    public string title; //Name of enemy
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
+    //Stats
+    public int offense;
+    public int defense;
+    public int health;
+
+    public List<Card> Actions; //List of cards the enemy can execute
+
 }
