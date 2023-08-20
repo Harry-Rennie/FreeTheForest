@@ -23,6 +23,7 @@ public class BattleManager : MonoBehaviour
     public int energyGain;
     public int drawAmount = 5;
     public bool playersTurn = true;
+    public int battleCounter;
 
     [Header("Enemies")]
     public List<Entity> enemies = new List<Entity>();
@@ -42,6 +43,7 @@ public class BattleManager : MonoBehaviour
     public void StartBattle()
     {
         LoadEnemies();
+        battleCounter = 0;
         
         deck = new Deck();
         cardsInHand = new List<Card>();
@@ -68,7 +70,7 @@ public class BattleManager : MonoBehaviour
 
     public void LoadEnemies()
     {
-        for(int i = 0; i > gameManager.currentEnemies.Count; i++)
+        for(int i = 0; i < gameManager.currentEnemies.Count; i++)
         {
             Entity ent = enemies[i];
             Enemy curEnemy = gameManager.currentEnemies[i];
@@ -117,19 +119,28 @@ public class BattleManager : MonoBehaviour
         playersTurn = false;
         
         //Discard all player cards
-        foreach(CardDisplay card in handCardObjects)
+        foreach (CardDisplay card in handCardObjects)
         {
-            DiscardCard(card);
+            if(card.gameObject.activeSelf)
+            {
+                DiscardCard(card);
+            }
         }
 
         //Go through each enemy and execute their actions
         foreach(Entity enemy in enemies)
         {
-            int roll = Random.Range(0, enemy.enemyCards.Count);
+            if (enemy.gameObject.activeSelf)
+            {
+                int roll = battleCounter % enemy.enemyCards.Count;
 
-            Card card = enemy.enemyCards[roll];
-            cardActions.PerformAction(card, enemy);
+                Card card = enemy.enemyCards[roll];
+                cardActions.PerformAction(card, enemy);
+            }
         }
+
+        //Increment battleCounter
+        battleCounter++;
 
         //TODO: FUTURE CONTENT: Process buffs
 

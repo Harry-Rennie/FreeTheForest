@@ -326,9 +326,10 @@ MonoBehaviour:
   player: {fileID: 358687197}
   maxEnergy: 5
   energy: 0
-  energyGain: 0
+  energyGain: 2
   drawAmount: 5
   playersTurn: 1
+  battleCounter: 0
   enemies:
   - {fileID: 83582885}
   - {fileID: 1330989729}
@@ -457,6 +458,7 @@ MonoBehaviour:
   energyGain: 0
   drawAmount: 5
   playersTurn: 1
+  battleCounter: 0
   enemies: []
 --- !u!1 &354861712
 GameObject:
@@ -2537,7 +2539,8 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 0c91da6c3ef651c4b9b0e07d277392c3, type: 2}
   - {fileID: 11400000, guid: 0c91da6c3ef651c4b9b0e07d277392c3, type: 2}
   - {fileID: 11400000, guid: 0c91da6c3ef651c4b9b0e07d277392c3, type: 2}
-  currentEnemies: []
+  currentEnemies:
+  - {fileID: 11400000, guid: 1c0e0a676bde91a4d85f6ab750710a11, type: 2}
 --- !u!4 &1501504310
 Transform:
   m_ObjectHideFlags: 0
