@@ -4,15 +4,10 @@ using UnityEngine;
 
 public class OverworldInfo : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
+    [SerializeField]
+    public List<GameObject> Tier1Enemies;
+    [SerializeField]
+    public List<GameObject> Tier2Enemies;
+    [SerializeField]
+    public List<GameObject> Tier3Enemies;
 }
