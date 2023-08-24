@@ -1613,7 +1613,14 @@ MonoBehaviour:
     - {fileID: 7375989448986254230, guid: 56998e37a0c4648ac893c6643fc91c0f, type: 3}
     - {fileID: 7375989448986254230, guid: b33e3f3626b68437299084b6ee28f733, type: 3}
     - {fileID: 7375989448986254230, guid: b33e3f3626b68437299084b6ee28f733, type: 3}
-  test: 0
+  - rows: 04000000
+    enemies:
+    - {fileID: 7375989448986254230, guid: 56998e37a0c4648ac893c6643fc91c0f, type: 3}
+    - {fileID: 7375989448986254230, guid: 56998e37a0c4648ac893c6643fc91c0f, type: 3}
+  - rows: 04000000
+    enemies:
+    - {fileID: 7375989448986254230, guid: 1c785f6d5e32d49f99e1efc487bcc785, type: 3}
+    - {fileID: 7375989448986254230, guid: 1c785f6d5e32d49f99e1efc487bcc785, type: 3}
 --- !u!4 &1765366763
 Transform:
   m_ObjectHideFlags: 0
