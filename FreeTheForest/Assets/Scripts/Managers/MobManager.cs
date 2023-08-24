@@ -27,9 +27,13 @@ public class MobManager : MonoBehaviour
     public List<BattleTemplate> BattleTemplates;
     public List<List<List<GameObject>>> BattleGrid;
 
+    private int overworldX = 5;
+    private int overworldY = 5;
+
     void Start()
     {
-        BattleGrid = GenBattleGrid(5, 5);
+        BattleGrid = GenBattleGrid(overworldX, overworldY);
+        printGrid();
     }
 
     /// <summary>
@@ -76,5 +80,28 @@ public class MobManager : MonoBehaviour
         }
         return grid;
     }
-
+     private void printGrid()
+     { 
+        string gridString = "";
+        // for each row
+        for (int i = 0; i < BattleGrid.Count; i++)
+        {
+            string battleString = "";
+            gridString += "Row " + i + ": ";
+            // for each battle
+            foreach (List<GameObject> battle in BattleGrid[i])
+            {
+                string enemies = "";
+                // for each enemy
+                foreach (GameObject enemy in battle)
+                {
+                    enemies += enemy.name + ", ";
+                }
+                enemies += "\b\b";
+                battleString += enemies;
+            }
+            gridString += battleString + "\n";
+        }
+        Debug.Log(gridString);
+     }
 }
