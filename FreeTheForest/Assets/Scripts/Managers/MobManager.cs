@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 /// <summary>
@@ -24,9 +25,12 @@ public class MobManager : MonoBehaviour
 {
 
     [SerializeField]
-    public List<BattleTemplate> BattleTemplates;
-    public List<List<List<GameObject>>> BattleGrid;
+    public List<BattleTemplate> BattleTemplates { get; }
+    public List<List<List<GameObject>>> BattleGrid { get; }
 
+    /// <todo>
+    /// This should be replaced with a function that gets the maximum x and y values of the overworld tree
+    /// </todo>
     private int overworldX = 5;
     private int overworldY = 5;
 
@@ -47,19 +51,29 @@ public class MobManager : MonoBehaviour
         List<BattleTemplate> possibleTemplates = new List<BattleTemplate>();
         foreach (BattleTemplate template in BattleTemplates)
         {
+            // find a template that contains the row number in its list of rows
             if (template.rows.Contains(row))
             {
                 possibleTemplates.Add(template);
             }
         }
+        // select a random template from the list of possible templates
         BattleTemplate selectedTemplate = possibleTemplates[UnityEngine.Random.Range(0, possibleTemplates.Count)];
-        foreach (GameObject enemy in selectedTemplate.enemies)
-        {
-            enemies.Add(enemy);
-        }
+        // add the enemies from the selected template to the list of enemies for the battle
+        enemies.AddRange(selectedTemplate.enemies);
         return enemies;
     }
 
+    /// <summary>
+    /// This function generates a grid of mobs corresponding to the maximum size of the overworld tree
+    /// </summary>
+    /// <param name="x">The maximum x value of the overworld tree</param>
+    /// <param name="y">The maximum y value of the overworld tree</param>
+    /// <returns> A 3D list of mobs
+    /// The first dimension is a list of rows
+    /// The second dimension is a list of battles
+    /// The third dimension is a list of enemies for each battle
+    ///</returns>
     public List<List<List<GameObject>>> GenBattleGrid(int x, int y)
     {
         List<List<List<GameObject>>> grid = new List<List<List<GameObject>>>();
@@ -80,6 +94,10 @@ public class MobManager : MonoBehaviour
         }
         return grid;
     }
+
+    /// <summary>
+    /// This function prints the battle grid, nicely formatted
+    /// </summary>
      private void printGrid()
      { 
         string gridString = "";
@@ -87,17 +105,11 @@ public class MobManager : MonoBehaviour
         for (int i = 0; i < BattleGrid.Count; i++)
         {
             string battleString = "";
-            gridString += "Row " + i + ": ";
+            gridString += "Row " + i + ":\n";
             // for each battle
             foreach (List<GameObject> battle in BattleGrid[i])
             {
-                string enemies = "";
-                // for each enemy
-                foreach (GameObject enemy in battle)
-                {
-                    enemies += enemy.name + ", ";
-                }
-                enemies += "\b\b";
+                string enemies = string.Join(", ", battle.Select(enemy => enemy.name)) + " | ";
                 battleString += enemies;
             }
             gridString += battleString + "\n";
