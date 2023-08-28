@@ -26,7 +26,7 @@ public class MobManager : MonoBehaviour
 
     [SerializeField]
     public List<BattleTemplate> BattleTemplates;
-    public List<List<List<GameObject>>> BattleGrid;
+    public List<List<List<GameObject>>> BattleGrid { get; private set;}
 
     /// <todo>
     /// This should be replaced with a function that gets the maximum x and y values of the overworld tree
