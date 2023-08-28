@@ -38,6 +38,9 @@ public class CardActions : MonoBehaviour
                     case Card.CardEffect.Energy:
                         ChangeEnergy(card.values[i]);
                         break;
+                    case Card.CardEffect.Draw:
+                        ChangeEnergy(card.values[i]);
+                        break;
                     default:
                         Debug.Log("Something gone wrong with Performing Action");
                         break;
@@ -81,5 +84,10 @@ public class CardActions : MonoBehaviour
 
             target.AddBlock(block);
         }
+    }
+
+    private void DrawCards(int amount)
+    {
+        battleManager.DrawCards(amount);
     }
 }
