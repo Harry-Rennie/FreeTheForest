@@ -34,17 +34,39 @@ public class LineManager : MonoBehaviour
         }
     }
 
-    private GameObject GetClosestNode(GameObject referenceNode, List<GameObject> candidates)
+    public GameObject GetClosestNode(GameObject referenceNode, List<GameObject> candidates)
     {
         return candidates.OrderBy(n => Vector2.Distance(n.GetComponent<RectTransform>().anchoredPosition, referenceNode.GetComponent<RectTransform>().anchoredPosition)).FirstOrDefault();
     }
 
-    private List<GameObject> GetLowerNodes(GameObject node, List<GameObject> allNodes)
+    public GameObject GetClosestUpperNode(GameObject referenceNode, List<GameObject> candidates)
+    {
+        Debug.Log($"searching closest upper node for: {referenceNode.tag}");
+
+        var referencePosition = referenceNode.GetComponent<RectTransform>().anchoredPosition;
+
+        foreach (var candidate in candidates)
+        {
+            Debug.Log($"candidate: {candidate.tag} at {candidate.GetComponent<RectTransform>().anchoredPosition}");
+        }
+
+        //filter out nodes that are not strictly above the reference node
+        var upperNodes = candidates.Where(n => n.GetComponent<RectTransform>().anchoredPosition.y > referencePosition.y).ToList();
+
+        //find the closest upper nodes based on x axis
+        var closestNode = upperNodes.OrderBy(n => Mathf.Abs(n.GetComponent<RectTransform>().anchoredPosition.x - referencePosition.x)).FirstOrDefault();
+
+        Debug.Log($"selected closest upper node: {closestNode?.tag ?? "null"} at {closestNode.GetComponent<RectTransform>().anchoredPosition}");
+
+        return closestNode;
+    }
+
+    public List<GameObject> GetLowerNodes(GameObject node, List<GameObject> allNodes)
     {
         return allNodes.Where(n => n.GetComponent<RectTransform>().anchoredPosition.y < node.GetComponent<RectTransform>().anchoredPosition.y).ToList();
     }
 
-    private List<GameObject> GetUpperNodes(GameObject node, List<GameObject> allNodes)
+    public List<GameObject> GetUpperNodes(GameObject node, List<GameObject> allNodes)
     {
         return allNodes.Where(n => n.GetComponent<RectTransform>().anchoredPosition.y > node.GetComponent<RectTransform>().anchoredPosition.y).ToList();
     }

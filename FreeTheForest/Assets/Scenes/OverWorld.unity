@@ -667,10 +667,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2ba6e2fd9ad629d42aae687555a134e5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  graphContainer: {fileID: 1216346340}
-  numberOfNodes: 20
   nodeManager: {fileID: 1063975314}
   lineManager: {fileID: 794677079}
+  graphContainer: {fileID: 1216346340}
+  numberOfNodes: 20
   gridSizeX: 7
   gridSizeY: 7
 --- !u!1 &411000519
@@ -1025,6 +1025,7 @@ MonoBehaviour:
   basicPrefab: {fileID: 8074084271344646365, guid: 9ada0f8834b922843870803b1878e2bd, type: 3}
   healPrefab: {fileID: 8074084271344646365, guid: 756f42e981248bf41a9691cf0b45b198, type: 3}
   upgradePrefab: {fileID: 8074084271344646365, guid: 2453bd5b6f13d14478a0405e5e7fa969, type: 3}
+  lineManager: {fileID: 794677079}
 --- !u!4 &1063975315
 Transform:
   m_ObjectHideFlags: 0
