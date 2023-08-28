@@ -51,17 +51,53 @@ public class CardActions : MonoBehaviour
 
     private void AttackEnemy(int mode) //Deal damage to current target equal to Player Offense stat
     {
-        if (battleManager.playersTurn)
+        switch (mode)
         {
-            int damage = player.offense;
+            case 0: //Default case, deal damage based on Offense
+                if (battleManager.playersTurn)
+                {
+                    int damage = player.offense;
 
-            target.TakeDamage(damage);
-        }
-        else
-        {
-            int damage = target.offense;
+                    target.TakeDamage(damage);
+                }
+                else
+                {
+                    int damage = target.offense;
 
-            player.TakeDamage(damage);
+                    player.TakeDamage(damage);
+                }
+                break;
+            case 1: //Weak attack, deals 30% less damage
+                if (battleManager.playersTurn)
+                {
+                    int damage = Mathf.RoundToInt(player.offense * 0.7f);
+
+                    target.TakeDamage(damage);
+                }
+                else
+                {
+                    int damage = Mathf.RoundToInt(target.offense * 0.7f);
+
+                    player.TakeDamage(damage);
+                }
+                break;
+            case 2: //Attack enhanced by Entity current block, usually to be followed by a Block Wipe
+                if (battleManager.playersTurn)
+                {
+                    int damage = player.offense + (player.currentBlock * 2);
+
+                    target.TakeDamage(damage);
+                }
+                else
+                {
+                    int damage = target.offense + (target.currentBlock * 2);
+
+                    player.TakeDamage(damage);
+                }
+                break;
+            default:
+                Debug.Log("Something gone wrong with Attack Mode");
+                break;
         }
     }
 
