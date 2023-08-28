@@ -16,28 +16,34 @@ public class CardActions : MonoBehaviour
         battleManager = GetComponent<BattleManager>();
     }
 
-    //This method reads the title of a given card and executes the appropriate action via 
+    //This method reads the effects of a given card and executes the appropriate action(s) via 
     //switch statement. BattleManager calls this once player has played a card.
     public void PerformAction(Card _card, Entity _entity)
     {
         card = _card;
         target = _entity;
 
-        switch (card.title)
+        if (card.effects != null) //Check that we have a card that does stuff
         {
-            case "Strike":
-                AttackEnemy();
-                break;
-            case "Block":
-                PerformBlock();
-                break;
-            default:
-                Debug.Log("Something gone wrong with Performing Action");
-                break;
+            for (int i = 0; i < card.effects.Count; i++) //Loop through the effects
+            {
+                switch (card.effects[i])
+                {
+                    case Card.CardEffect.Attack:
+                        AttackEnemy(card.values[i]); //Call the relevant effect with the current "values" as argument
+                        break;
+                    case Card.CardEffect.Block:
+                        PerformBlock(card.values[i]);
+                        break;
+                    default:
+                        Debug.Log("Something gone wrong with Performing Action");
+                        break;
+                }
+            }
         }
     }
 
-    private void AttackEnemy() //Deal damage to current target equal to Player Offense stat
+    private void AttackEnemy(int mode) //Deal damage to current target equal to Player Offense stat
     {
         if (battleManager.playersTurn)
         {
@@ -53,7 +59,7 @@ public class CardActions : MonoBehaviour
         }
     }
 
-    private void PerformBlock() //Player gains block equal to their Defense stat
+    private void PerformBlock(int mode) //Player gains block equal to their Defense stat
     {
         if (battleManager.playersTurn)
         {

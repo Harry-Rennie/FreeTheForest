@@ -17,4 +17,5 @@ MonoBehaviour:
   image: {fileID: 0}
   manaCost: 1
   cardType: 1
-  cardTargetType: 0
+  effects: 01000000
+  values: 00000000
