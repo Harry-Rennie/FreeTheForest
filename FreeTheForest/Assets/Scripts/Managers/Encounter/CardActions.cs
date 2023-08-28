@@ -39,7 +39,7 @@ public class CardActions : MonoBehaviour
                         ChangeEnergy(card.values[i]);
                         break;
                     case Card.CardEffect.Draw:
-                        ChangeEnergy(card.values[i]);
+                        DrawCards(card.values[i]);
                         break;
                     default:
                         Debug.Log("Something gone wrong with Performing Action");
@@ -70,19 +70,51 @@ public class CardActions : MonoBehaviour
         battleManager.energy += change;
     }
 
-    private void PerformBlock(int mode) //Player gains block equal to their Defense stat
+    private void PerformBlock(int mode) //Entity gains block equal to their Defense stat
     {
-        if (battleManager.playersTurn)
+        switch (mode)
         {
-            int block = player.defense;
+            case 0: //Default Case, Add block equal to defense
+                if (battleManager.playersTurn)
+                {
+                    int block = player.defense;
 
-            player.AddBlock(block);
-        }
-        else
-        {
-            int block = target.defense;
+                    player.AddBlock(block);
+                }
+                else
+                {
+                    int block = target.defense;
 
-            target.AddBlock(block);
+                    target.AddBlock(block);
+                }
+                break;
+            case 1://Double entity block
+                if (battleManager.playersTurn)
+                {
+                    int block = player.currentBlock;
+
+                    player.AddBlock(block);
+                }
+                else
+                {
+                    int block = target.currentBlock;
+
+                    target.AddBlock(block);
+                }
+                break;
+            case -1: //Entity loses all block
+                if (battleManager.playersTurn)
+                {
+                    player.AddBlock(-player.currentBlock);
+                }
+                else
+                {
+                    target.AddBlock(-target.currentBlock);
+                }
+                break;
+            default:
+                Debug.Log("Something gone wrong with Block Mode");
+                break;
         }
     }
 
