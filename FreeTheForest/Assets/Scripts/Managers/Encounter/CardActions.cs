@@ -35,6 +35,9 @@ public class CardActions : MonoBehaviour
                     case Card.CardEffect.Block:
                         PerformBlock(card.values[i]);
                         break;
+                    case Card.CardEffect.Energy:
+                        ChangeEnergy(card.values[i]);
+                        break;
                     default:
                         Debug.Log("Something gone wrong with Performing Action");
                         break;
@@ -57,6 +60,11 @@ public class CardActions : MonoBehaviour
 
             player.TakeDamage(damage);
         }
+    }
+
+    private void ChangeEnergy(int change)
+    {
+        battleManager.energy += change;
     }
 
     private void PerformBlock(int mode) //Player gains block equal to their Defense stat
