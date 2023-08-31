@@ -1,8 +1,5 @@
-using System;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
-using UnityEngine.UI;
 
 public class NodeManager : MonoBehaviour
 {
@@ -35,24 +32,6 @@ public class NodeManager : MonoBehaviour
     public GameObject SpawnSpecificNode(GameObject initialPrefab, Vector2 position, RectTransform container)
     {
         GameObject prefabToSpawn = initialPrefab;
-
-        Debug.Log($"Initial prefab: {initialPrefab.tag}");
-        Debug.Log(nodesAddedSoFar.Count);
-        if (nodesAddedSoFar.Count > 0)
-        {
-            //remove nulls from the list
-            nodesAddedSoFar = nodesAddedSoFar.Where(n => n != null).ToList();
-
-            if (initialPrefab.tag == "Heal" || initialPrefab.tag == "Upgrade")
-            {
-                GameObject closestUpperNode = lineManager.GetClosestUpperNode(initialPrefab, nodesAddedSoFar);
-                if (closestUpperNode != null && closestUpperNode.tag == initialPrefab.tag)
-                {
-                    prefabToSpawn = GetRandomPrefab(false, initialPrefab.tag);  //change the prefab to spawn
-                    Debug.Log($"Changed prefab to: {prefabToSpawn.tag}");
-                }
-            }
-        }
         //create object on screen
         GameObject newNode = Instantiate(prefabToSpawn, container);
         RectTransform newNodeTransform = newNode.GetComponent<RectTransform>();
@@ -60,7 +39,6 @@ public class NodeManager : MonoBehaviour
         SetNodeProperties(newNode);
         //keep track of the nodes so far.
         nodesAddedSoFar.Add(newNode);
-        Debug.Log($"Spawned: {newNode.tag}");
         return newNode;
     }
 
@@ -94,11 +72,10 @@ public class NodeManager : MonoBehaviour
             availablePrefabs.RemoveAll(x => x.tag == excludeTag);
         }
 
-        // Randomly select a prefab from the available options
         int randomIndex = UnityEngine.Random.Range(0, availablePrefabs.Count);
         GameObject selectedPrefab = availablePrefabs[randomIndex];
 
-        // Update the count of special nodes
+        //update the count of special nodes
         if (selectedPrefab == healPrefab)
         {
             totalHealNodes++;
@@ -107,7 +84,6 @@ public class NodeManager : MonoBehaviour
         {
             totalUpgradeNodes++;
         }
-
         return selectedPrefab;
     }
 
@@ -119,11 +95,65 @@ public class NodeManager : MonoBehaviour
         nodeTransform.anchorMax = new Vector2(0, 0);
     }
     
+    //this is dirty. the method checks the nodes after they have been spawned, and replaces the ones causing undesired consecutive spawning. Ideally this is done before.
+    public GameObject Respawn(GameObject node, RectTransform container, string tag)
+    {
+        //get position of node
+        RectTransform nodeTransform = node.GetComponent<RectTransform>();
+        Vector2 position = nodeTransform.anchoredPosition;
+        //grab the lines that are children of the object
+        List<GameObject> lines = lineManager.GetLinesFromNode(node);
+        //spawn a new node
+        GameObject newNode = SpawnSpecificNode(GetRandomPrefab(false, tag), position, container);
+        // Get parent node if any
+        GameObject parentNode;
+        if (lineManager.nodeParentMap.TryGetValue(node, out parentNode))
+        {
+            // Remove old node from dictionary
+            lineManager.nodeParentMap.Remove(node);
+
+            // Add new node with old node's parent
+            lineManager.nodeParentMap.Add(newNode, parentNode);
+        }
+
+        // If the node itself was a parent, update its children
+        List<GameObject> childrenToUpdate = new List<GameObject>();
+        foreach (var entry in lineManager.nodeParentMap)
+        {
+            if (entry.Value == node)
+            {
+                childrenToUpdate.Add(entry.Key);
+            }
+        }
+
+        foreach (var child in childrenToUpdate)
+        {
+            lineManager.nodeParentMap[child] = newNode;
+        }
+        //destroy the node
+        Destroy(node);
+        if(tag == "Heal")
+        {
+            totalHealNodes--;
+        }
+        if (tag == "Upgrade")
+        {
+            totalUpgradeNodes--;
+        }
+        //set the lines as child of the new node
+        foreach (var line in lines)
+        {
+            line.transform.SetParent(newNode.transform);
+        }
+        return newNode;
+    }
     public void CleanNodes()
     {
         foreach (var node in nodesAddedSoFar)
         {
             Destroy(node);
         }
+        //also clearing dictionary
+        lineManager.nodeParentMap.Clear();
     }
 }

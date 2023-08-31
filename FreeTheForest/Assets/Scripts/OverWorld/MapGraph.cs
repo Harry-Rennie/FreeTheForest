@@ -1,6 +1,8 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using static UnityEngine.EventSystems.EventTrigger;
 
 public class MapGraph : MonoBehaviour
 {
@@ -108,8 +110,44 @@ public class MapGraph : MonoBehaviour
         GenerateNodeGrid(nodeLocations);
         List<GameObject> nodes = SpawnNodes(nodeLocations, nodeGrid);
         lineManager.ConnectNodes(nodes);
+        CheckRespawn();
     }
 
+    //compares tags of parent child, respawns if they match condition, updates dictionary.
+    private void CheckRespawn()
+    {
+        bool hasDuplicate;
+        do
+        {
+            hasDuplicate = false;
+            List<GameObject> keysToUpdate = new List<GameObject>();
+            Dictionary<GameObject, GameObject> newEntries = new Dictionary<GameObject, GameObject>();
+
+            foreach (KeyValuePair<GameObject, GameObject> entry in new Dictionary<GameObject, GameObject>(lineManager.nodeParentMap))
+            {
+                GameObject childNode = entry.Key;
+                GameObject parentNode = entry.Value;
+                string tag = childNode.tag;
+                if (childNode.name == parentNode.name && (tag == "Heal" || tag == "Upgrade"))
+                {
+                    hasDuplicate = true; //rerun the check
+                    GameObject newChildNode = nodeManager.Respawn(childNode, graphContainer, tag);
+                    keysToUpdate.Add(childNode);
+                    newEntries[newChildNode] = parentNode;
+                }
+            }
+            //update the dictionary
+            foreach (var key in keysToUpdate)
+            {
+                lineManager.nodeParentMap.Remove(key);
+            }
+            foreach (var entry in newEntries)
+            {
+                lineManager.nodeParentMap[entry.Key] = entry.Value;
+            }
+        }
+        while (hasDuplicate);
+    }
     //refactor later out of this file
     private List<List<Vector2?>> GenerateNodeGrid(List<Vector2> nodeLocations)
     {
@@ -144,13 +182,6 @@ public class MapGraph : MonoBehaviour
                 nodeGrid[row - 1][col] = Vector2.negativeInfinity;
             }
         }
-        //for (int i = 0; i < nodeGrid.Count; i++)
-        //{
-        //    for (int j = 0; j < nodeGrid[i].Count; j++)
-        //    {
-        //        Debug.Log($"Cell at [{i}, {j}] = {nodeGrid[i][j]}");
-        //    }
-        //}
         return nodeGrid;
     }
     public (int row, int col) GetNodeGridPosition(Vector2 nodeLocation, List<List<Vector2?>> nodeGrid)

@@ -4,8 +4,8 @@ using UnityEngine;
 
 public class LineManager : MonoBehaviour
 {
+    public Dictionary<GameObject, GameObject> nodeParentMap = new Dictionary<GameObject, GameObject>();
     [SerializeField] private LineDrawer lineDrawer;
-
     //connect given nodes based on their position
     public void ConnectNodes(List<GameObject> nodes)
     {
@@ -19,7 +19,7 @@ public class LineManager : MonoBehaviour
             GameObject closestLowerNode = GetClosestNode(currentNode, GetLowerNodes(currentNode, sortedNodes));
 
             if (closestLowerNode != null)
-                lineDrawer.DrawLine(currentNode, closestLowerNode);
+                DrawLineBetweenNodes(currentNode, closestLowerNode);
         }
 
         //ensure each node has connection above
@@ -29,7 +29,7 @@ public class LineManager : MonoBehaviour
             {
                 GameObject closestUpperNode = GetClosestNode(node, GetUpperNodes(node, sortedNodes));
                 if (closestUpperNode != null)
-                    lineDrawer.DrawLine(node, closestUpperNode);
+                    DrawLineBetweenNodes(node, closestUpperNode);
             }
         }
     }
@@ -41,23 +41,11 @@ public class LineManager : MonoBehaviour
 
     public GameObject GetClosestUpperNode(GameObject referenceNode, List<GameObject> candidates)
     {
-        Debug.Log($"searching closest upper node for: {referenceNode.tag}");
-
         var referencePosition = referenceNode.GetComponent<RectTransform>().anchoredPosition;
-
-        foreach (var candidate in candidates)
-        {
-            Debug.Log($"candidate: {candidate.tag} at {candidate.GetComponent<RectTransform>().anchoredPosition}");
-        }
-
         //filter out nodes that are not strictly above the reference node
         var upperNodes = candidates.Where(n => n.GetComponent<RectTransform>().anchoredPosition.y > referencePosition.y).ToList();
-
         //find the closest upper nodes based on x axis
         var closestNode = upperNodes.OrderBy(n => Mathf.Abs(n.GetComponent<RectTransform>().anchoredPosition.x - referencePosition.x)).FirstOrDefault();
-
-        Debug.Log($"selected closest upper node: {closestNode?.tag ?? "null"} at {closestNode.GetComponent<RectTransform>().anchoredPosition}");
-
         return closestNode;
     }
 
@@ -85,6 +73,7 @@ public class LineManager : MonoBehaviour
 
     public void DrawLineBetweenNodes(GameObject nodeA, GameObject nodeB)
     {
+        nodeParentMap[nodeB] = nodeA; //updating the dictionary with the dependency added (based from line drawn)
         lineDrawer.DrawLine(nodeA, nodeB);
     }
 }
