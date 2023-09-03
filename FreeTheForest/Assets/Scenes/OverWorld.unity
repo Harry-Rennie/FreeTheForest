@@ -929,16 +929,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9e71979b54e5c4971950cbc7b4dfee0e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Tier1Enemies:
-  - {fileID: 7375989448986254230, guid: b33e3f3626b68437299084b6ee28f733, type: 3}
-  - {fileID: 7375989448986254230, guid: 3c65bbe36dab94ce4adedeb2db54437b, type: 3}
-  - {fileID: 7375989448986254230, guid: 8ef7b028983d44e45aa2312a720324d8, type: 3}
-  Tier2Enemies:
-  - {fileID: 7375989448986254230, guid: 07a046731577544a082c76303a801cc7, type: 3}
-  - {fileID: 7375989448986254230, guid: 4dfe5bbc5ce6344bbaef7c2ccd7402e9, type: 3}
-  Tier3Enemies:
-  - {fileID: 7375989448986254230, guid: 56998e37a0c4648ac893c6643fc91c0f, type: 3}
-  - {fileID: 7375989448986254230, guid: 1c785f6d5e32d49f99e1efc487bcc785, type: 3}
 --- !u!4 &846004041
 Transform:
   m_ObjectHideFlags: 0
@@ -1577,47 +1567,56 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   BattleTemplates:
-  - rows: 0000000001000000
+  - MinRow: 0
+    MaxRow: 1
     enemies:
     - {fileID: 7375989448986254230, guid: b33e3f3626b68437299084b6ee28f733, type: 3}
     - {fileID: 7375989448986254230, guid: b33e3f3626b68437299084b6ee28f733, type: 3}
     - {fileID: 7375989448986254230, guid: b33e3f3626b68437299084b6ee28f733, type: 3}
-  - rows: 0000000001000000
+  - MinRow: 0
+    MaxRow: 1
     enemies:
     - {fileID: 7375989448986254230, guid: 3c65bbe36dab94ce4adedeb2db54437b, type: 3}
     - {fileID: 7375989448986254230, guid: 3c65bbe36dab94ce4adedeb2db54437b, type: 3}
     - {fileID: 7375989448986254230, guid: b33e3f3626b68437299084b6ee28f733, type: 3}
-  - rows: 0100000002000000
+  - MinRow: 1
+    MaxRow: 3
     enemies:
     - {fileID: 7375989448986254230, guid: 8ef7b028983d44e45aa2312a720324d8, type: 3}
     - {fileID: 7375989448986254230, guid: 8ef7b028983d44e45aa2312a720324d8, type: 3}
     - {fileID: 7375989448986254230, guid: 8ef7b028983d44e45aa2312a720324d8, type: 3}
     - {fileID: 7375989448986254230, guid: 8ef7b028983d44e45aa2312a720324d8, type: 3}
-  - rows: 0200000003000000
+  - MinRow: 2
+    MaxRow: 3
     enemies:
     - {fileID: 7375989448986254230, guid: 07a046731577544a082c76303a801cc7, type: 3}
     - {fileID: 7375989448986254230, guid: 3c65bbe36dab94ce4adedeb2db54437b, type: 3}
     - {fileID: 7375989448986254230, guid: 3c65bbe36dab94ce4adedeb2db54437b, type: 3}
-  - rows: 0200000003000000
+  - MinRow: 2
+    MaxRow: 3
     enemies:
     - {fileID: 7375989448986254230, guid: 4dfe5bbc5ce6344bbaef7c2ccd7402e9, type: 3}
     - {fileID: 7375989448986254230, guid: b33e3f3626b68437299084b6ee28f733, type: 3}
     - {fileID: 7375989448986254230, guid: b33e3f3626b68437299084b6ee28f733, type: 3}
-  - rows: 0300000004000000
+  - MinRow: 3
+    MaxRow: 4
     enemies:
     - {fileID: 7375989448986254230, guid: 1c785f6d5e32d49f99e1efc487bcc785, type: 3}
     - {fileID: 7375989448986254230, guid: 3c65bbe36dab94ce4adedeb2db54437b, type: 3}
     - {fileID: 7375989448986254230, guid: 3c65bbe36dab94ce4adedeb2db54437b, type: 3}
-  - rows: 0300000004000000
+  - MinRow: 3
+    MaxRow: 4
     enemies:
     - {fileID: 7375989448986254230, guid: 56998e37a0c4648ac893c6643fc91c0f, type: 3}
     - {fileID: 7375989448986254230, guid: b33e3f3626b68437299084b6ee28f733, type: 3}
     - {fileID: 7375989448986254230, guid: b33e3f3626b68437299084b6ee28f733, type: 3}
-  - rows: 04000000
+  - MinRow: 4
+    MaxRow: 4
     enemies:
     - {fileID: 7375989448986254230, guid: 56998e37a0c4648ac893c6643fc91c0f, type: 3}
     - {fileID: 7375989448986254230, guid: 56998e37a0c4648ac893c6643fc91c0f, type: 3}
-  - rows: 04000000
+  - MinRow: 4
+    MaxRow: 4
     enemies:
     - {fileID: 7375989448986254230, guid: 1c785f6d5e32d49f99e1efc487bcc785, type: 3}
     - {fileID: 7375989448986254230, guid: 1c785f6d5e32d49f99e1efc487bcc785, type: 3}
