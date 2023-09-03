@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using UnityEngine;
 
@@ -14,7 +15,7 @@ using UnityEngine;
 [Serializable]
 public class BattleTemplate
 {
-    public List<int> rows;
+    public int MinRow, MaxRow;
     public List<GameObject> enemies;
 }
 
@@ -26,7 +27,8 @@ public class MobManager : MonoBehaviour
 
     [SerializeField]
     public List<BattleTemplate> BattleTemplates;
-    public List<List<List<GameObject>>> BattleGrid { get; private set;}
+    public List<List<List<GameObject>>> BattleGrid { get; private set; }
+
 
     /// <todo>
     /// This should be replaced with a function that gets the maximum x and y values of the overworld tree
@@ -49,18 +51,25 @@ public class MobManager : MonoBehaviour
     {
         List<GameObject> enemies = new List<GameObject>();
         List<BattleTemplate> possibleTemplates = new List<BattleTemplate>();
+
         foreach (BattleTemplate template in BattleTemplates)
         {
-            // find a template that contains the row number in its list of rows
-            if (template.rows.Contains(row))
+            // if the row is within the range of the template
+            if (row >= template.MinRow && row <= template.MaxRow)
             {
+                // add the template to the list of possible templates
                 possibleTemplates.Add(template);
             }
         }
-        // select a random template from the list of possible templates
-        BattleTemplate selectedTemplate = possibleTemplates[UnityEngine.Random.Range(0, possibleTemplates.Count)];
-        // add the enemies from the selected template to the list of enemies for the battle
-        enemies.AddRange(selectedTemplate.enemies);
+
+        if (possibleTemplates.Count > 0)
+        {
+            // select a random template from the list of possible templates
+            BattleTemplate selectedTemplate = possibleTemplates[UnityEngine.Random.Range(0, possibleTemplates.Count)];
+            // add the enemies from the selected template to the list of enemies for the battle
+            enemies.AddRange(selectedTemplate.enemies);
+        }
+
         return enemies;
     }
 
@@ -98,8 +107,8 @@ public class MobManager : MonoBehaviour
     /// <summary>
     /// This function prints the battle grid, nicely formatted
     /// </summary>
-     private void printGrid()
-     { 
+    private void printGrid()
+    {
         string gridString = "";
         // for each row
         for (int i = 0; i < BattleGrid.Count; i++)
@@ -115,5 +124,5 @@ public class MobManager : MonoBehaviour
             gridString += battleString + "\n";
         }
         Debug.Log(gridString);
-     }
+    }
 }
