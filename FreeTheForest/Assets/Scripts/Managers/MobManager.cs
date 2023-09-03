@@ -8,7 +8,7 @@ using UnityEngine;
 /// <summary>
 /// This class contains fields for a battle template.
 /// A battle template is a list of rows and a list of enemies.
-/// The rows determine the rows of the overworld tree this template can appear on.
+/// MinRow and MaxRow are the minimum and maximum rows that the enemies can appear in.
 /// The class is intended to be stored in a list of battle templates in the MobManager.
 /// The templates are populated in the editor.
 /// </summary>
