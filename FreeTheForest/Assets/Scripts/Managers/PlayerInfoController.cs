@@ -11,6 +11,32 @@ public class PlayerInfoController : MonoBehaviour
 
     public List<Enemy> currentEnemies = new List<Enemy>(); //Battle reads from here to load in enemies to battle scene.
 
+    public int PlayerHealth = 100;
+
+    # region SINGLETON
+    // This is the singleton pattern
+    // This pattern makes it so that there can only be one instance of this class.
+    // Here is an example of how to reference PlayerHealth from another script:
+    // PlayerInfoController.Instance.PlayerHealth
+    public static PlayerInfoController Instance
+    {
+        get
+        {
+            if (instance == null)
+            {
+                instance = FindObjectOfType<PlayerInfoController>();
+                if (instance == null)
+                {
+                    GameObject go = new GameObject();
+                    go.name = typeof(PlayerInfoController).Name;
+                    instance = go.AddComponent<PlayerInfoController>();
+                    DontDestroyOnLoad(go);
+                }
+            }
+            return instance;
+        }
+    }
+    #endregion
     private void Awake()
     {
         if (instance == null)
@@ -28,3 +54,5 @@ public class PlayerInfoController : MonoBehaviour
         // You can perform other initialization logic here if needed.
     }
 }
+
+
