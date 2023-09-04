@@ -1,8 +1,5 @@
-using System;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
-using UnityEngine.UI;
 
 public class NodeManager : MonoBehaviour
 {
@@ -10,8 +7,12 @@ public class NodeManager : MonoBehaviour
     [SerializeField] private GameObject basicPrefab;
     [SerializeField] private GameObject healPrefab;
     [SerializeField] private GameObject upgradePrefab;
+    [SerializeField] private LineManager lineManager;
+    List<GameObject> nodesAddedSoFar = new List<GameObject>();
+    private int totalNodes = 0;
+    private int totalHealNodes = 0;
+    private int totalUpgradeNodes = 0;
 
-    //spawns nodes at given positions
     public GameObject SpawnBossNode(Vector2 position, RectTransform container)
     {
         return SpawnSpecificNode(bossPrefab, position, container);
@@ -22,93 +23,137 @@ public class NodeManager : MonoBehaviour
         return SpawnSpecificNode(basicPrefab, position, container);
     }
 
-    //spawns random(ish) node
-    public GameObject SpawnRandomNode(Vector2 position, RectTransform container, List<GameObject> existingNodes)
+    public GameObject SpawnRandomNode(Vector2 position, RectTransform container, List<Vector2> existingNodeLocations, int row, int col, List<List<Vector2?>> nodeGrid)
     {
-        GameObject prefab = GetRandomPrefab(existingNodes);
+        GameObject prefab = GetRandomPrefab();
         return SpawnSpecificNode(prefab, position, container);
     }
 
-    //instantiates node with given properties
-    private GameObject SpawnSpecificNode(GameObject prefab, Vector2 position, RectTransform container)
+    public GameObject SpawnSpecificNode(GameObject initialPrefab, Vector2 position, RectTransform container)
     {
-        GameObject node = Instantiate(prefab, container);
-        RectTransform nodeTransform = node.GetComponent<RectTransform>();
-        nodeTransform.anchoredPosition = position;
-        SetNodeProperties(node);
-        return node;
+        GameObject prefabToSpawn = initialPrefab;
+        //create object on screen
+        GameObject newNode = Instantiate(prefabToSpawn, container);
+        RectTransform newNodeTransform = newNode.GetComponent<RectTransform>();
+        newNodeTransform.anchoredPosition = position;
+        SetNodeProperties(newNode);
+        //keep track of the nodes so far.
+        nodesAddedSoFar.Add(newNode);
+        return newNode;
     }
 
-    //returns prefab for node creation with spawn rules - needs to be rewritten.
-    private GameObject GetRandomPrefab(List<GameObject> existingNodes)
+    public GameObject GetRandomPrefab(bool allowRandomSelection = true, string excludeTag = null)
     {
-        //total nodes not force spawned
-        int totalRegularNodes = existingNodes.Count - 4;
+        //update total number of nodes
+        if (allowRandomSelection) totalNodes++;
 
-        //percentage of nodes to try spawn
-        int desiredHeals = (int)(0.25 * existingNodes.Count);
-        int desiredUpgrades = (int)(0.25 * existingNodes.Count);
-        int healCount = existingNodes.Count(node => node.name.Contains("Heal"));
-        int upgradeCount = existingNodes.Count(node => node.name.Contains("Upgrade"));
+        //define maximum number of special nodes based on total nodes
+        int maxHealNodes = Mathf.FloorToInt(totalNodes * 0.2f);
+        int maxUpgradeNodes = Mathf.FloorToInt(totalNodes * 0.2f);
 
-        List<GameObject> availablePrefabs = new List<GameObject>();
+        //start with the basic prefab in available options
+        List<GameObject> availablePrefabs = new List<GameObject> { basicPrefab };
 
-        //first node is always boss
-        if (existingNodes.Count == 0)
-        {
-            return bossPrefab;
-        }
-
-        //at least one heal node and one upgrade node are spawned:
-        if (healCount == 0)
+        //add heal prefab if conditions are met
+        if (totalHealNodes < maxHealNodes)
         {
             availablePrefabs.Add(healPrefab);
         }
-        if (upgradeCount == 0)
+
+        //add upgrade prefab if conditions are met
+        if (totalUpgradeNodes < maxUpgradeNodes)
         {
             availablePrefabs.Add(upgradePrefab);
         }
 
-        //ensure both node types are spawned if not already:
-        //this is a todo.
-        //at this point I realised we definitely need an overarching data structure to keep track of 'paths' nodes consist of, 
-        //aswell as their row and column position in the grid, so that we can distribute nodes in desired way.
-        //we can then run a comparison against a data set of encounter types to modify stats/difficulty/rewards as we see fit (dependent on the 'floor' or row of the dungeon).
-        int nodesLeft = existingNodes.Count - 4;
-        if (nodesLeft <= (desiredHeals + desiredUpgrades - healCount - upgradeCount))
+        //remove excluded prefab if needed
+        if (excludeTag != null)
         {
-            if (healCount < desiredHeals && (existingNodes.Last().name != "Heal"))
-            {
-                availablePrefabs.Add(healPrefab);
-            }
-            if (upgradeCount < desiredUpgrades && (existingNodes.Last().name != "Upgrade"))
-            {
-                availablePrefabs.Add(upgradePrefab);
-            }
-        }
-
-        //last 3 nodes are always basic nodes.
-        if (nodesLeft <= 3)
-        {
-            return basicPrefab;
-        }
-
-        //if no specials left, then spawn a basic.
-        if (availablePrefabs.Count == 0)
-        {
-            return basicPrefab;
+            availablePrefabs.RemoveAll(x => x.tag == excludeTag);
         }
 
         int randomIndex = UnityEngine.Random.Range(0, availablePrefabs.Count);
-        return availablePrefabs[randomIndex];
+        GameObject selectedPrefab = availablePrefabs[randomIndex];
+
+        //update the count of special nodes
+        if (selectedPrefab == healPrefab)
+        {
+            totalHealNodes++;
+        }
+        else if (selectedPrefab == upgradePrefab)
+        {
+            totalUpgradeNodes++;
+        }
+        return selectedPrefab;
     }
 
-    //sets properties to nodes after spawned
     private void SetNodeProperties(GameObject node)
     {
         RectTransform nodeTransform = node.GetComponent<RectTransform>();
         nodeTransform.sizeDelta = new Vector2(50, 50);
         nodeTransform.anchorMin = new Vector2(0, 0);
         nodeTransform.anchorMax = new Vector2(0, 0);
+    }
+    
+    //this is dirty. the method checks the nodes after they have been spawned, and replaces the ones causing undesired consecutive spawning. Ideally this is done before.
+    public GameObject Respawn(GameObject node, RectTransform container, string tag)
+    {
+        //get position of node
+        RectTransform nodeTransform = node.GetComponent<RectTransform>();
+        Vector2 position = nodeTransform.anchoredPosition;
+        //grab the lines that are children of the object
+        List<GameObject> lines = lineManager.GetLinesFromNode(node);
+        //spawn a new node
+        GameObject newNode = SpawnSpecificNode(GetRandomPrefab(false, tag), position, container);
+        // Get parent node if any
+        GameObject parentNode;
+        if (lineManager.nodeParentMap.TryGetValue(node, out parentNode))
+        {
+            // Remove old node from dictionary
+            lineManager.nodeParentMap.Remove(node);
+
+            // Add new node with old node's parent
+            lineManager.nodeParentMap.Add(newNode, parentNode);
+        }
+
+        // If the node itself was a parent, update its children
+        List<GameObject> childrenToUpdate = new List<GameObject>();
+        foreach (var entry in lineManager.nodeParentMap)
+        {
+            if (entry.Value == node)
+            {
+                childrenToUpdate.Add(entry.Key);
+            }
+        }
+
+        foreach (var child in childrenToUpdate)
+        {
+            lineManager.nodeParentMap[child] = newNode;
+        }
+        //destroy the node
+        Destroy(node);
+        if(tag == "Heal")
+        {
+            totalHealNodes--;
+        }
+        if (tag == "Upgrade")
+        {
+            totalUpgradeNodes--;
+        }
+        //set the lines as child of the new node
+        foreach (var line in lines)
+        {
+            line.transform.SetParent(newNode.transform);
+        }
+        return newNode;
+    }
+    public void CleanNodes()
+    {
+        foreach (var node in nodesAddedSoFar)
+        {
+            Destroy(node);
+        }
+        //also clearing dictionary
+        lineManager.nodeParentMap.Clear();
     }
 }

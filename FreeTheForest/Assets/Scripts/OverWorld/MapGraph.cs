@@ -1,8 +1,8 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
-using UnityEngine.UI;
+using static UnityEngine.EventSystems.EventTrigger;
 
 public class MapGraph : MonoBehaviour
 {
@@ -17,7 +17,7 @@ public class MapGraph : MonoBehaviour
     [SerializeField] private int gridSizeY = 7;
     private float graphHeight;
     private float graphWidth;
-
+    private List<List<Vector2?>> nodeGrid = new List<List<Vector2?>>();
     private void Awake()
     {
         //initializing graph and dimensions
@@ -83,15 +83,15 @@ public class MapGraph : MonoBehaviour
         return randomNodeLocations;
     }
 
-    private List<GameObject> SpawnNodes(List<Vector2> nodeLocations)
+    private List<GameObject> SpawnNodes(List<Vector2> nodeLocations, List<List<Vector2?>> nodeGrid)
     {
         //spawn nodes based locations and type
         List<GameObject> nodes = new List<GameObject>();
         nodes.Add(nodeManager.SpawnBossNode(nodeLocations[0], graphContainer));
-
         for (int i = 1; i < nodeLocations.Count - 3; i++)
         {
-            nodes.Add(nodeManager.SpawnRandomNode(nodeLocations[i], graphContainer, nodes));
+            var (row, col) = GetNodeGridPosition(nodeLocations[i], nodeGrid);
+            nodes.Add(nodeManager.SpawnRandomNode(nodeLocations[i], graphContainer, nodeLocations, row, col, nodeGrid));
         }
 
         for (int i = nodeLocations.Count - 3; i < nodeLocations.Count; i++)
@@ -107,13 +107,107 @@ public class MapGraph : MonoBehaviour
         //generate nodes and connect them
         List<Vector2> nodeLocations = GenerateRandomNodeLocations(numberOfNodes);
         nodeLocations = NodeUtility.SortNodes(nodeLocations);
-        List<GameObject> nodes = SpawnNodes(nodeLocations);
+        GenerateNodeGrid(nodeLocations);
+        List<GameObject> nodes = SpawnNodes(nodeLocations, nodeGrid);
         lineManager.ConnectNodes(nodes);
+        CheckRespawn();
     }
 
+    //compares tags of parent child, respawns if they match condition, updates dictionary.
+    private void CheckRespawn()
+    {
+        bool hasDuplicate;
+        do
+        {
+            hasDuplicate = false;
+            List<GameObject> keysToUpdate = new List<GameObject>();
+            Dictionary<GameObject, GameObject> newEntries = new Dictionary<GameObject, GameObject>();
+
+            foreach (KeyValuePair<GameObject, GameObject> entry in new Dictionary<GameObject, GameObject>(lineManager.nodeParentMap))
+            {
+                GameObject childNode = entry.Key;
+                GameObject parentNode = entry.Value;
+                string tag = childNode.tag;
+                if (childNode.name == parentNode.name && (tag == "Heal" || tag == "Upgrade"))
+                {
+                    hasDuplicate = true; //rerun the check
+                    GameObject newChildNode = nodeManager.Respawn(childNode, graphContainer, tag);
+                    keysToUpdate.Add(childNode);
+                    newEntries[newChildNode] = parentNode;
+                }
+            }
+            //update the dictionary
+            foreach (var key in keysToUpdate)
+            {
+                lineManager.nodeParentMap.Remove(key);
+            }
+            foreach (var entry in newEntries)
+            {
+                lineManager.nodeParentMap[entry.Key] = entry.Value;
+            }
+        }
+        while (hasDuplicate);
+    }
+    //refactor later out of this file
+    private List<List<Vector2?>> GenerateNodeGrid(List<Vector2> nodeLocations)
+    {
+        List<List<Vector2?>> nodeGrid = new List<List<Vector2?>>();
+
+        for (int y = 0; y < gridSizeY; y++)
+        {
+            List<Vector2?> newRow = new List<Vector2?>();
+            for (int x = 0; x < gridSizeX; x++)
+            {
+                newRow.Add(null);
+            }
+            nodeGrid.Add(newRow);
+        }
+
+        foreach (var location in nodeLocations)
+        {
+            int row = Mathf.FloorToInt(location.y / (graphHeight / gridSizeY));
+            int col = Mathf.FloorToInt(location.x / (graphWidth / gridSizeX));
+            nodeGrid[row][col] = location;
+        }
+
+        // Mark empty cells based on node locations and dimensions
+        foreach (var location in nodeLocations)
+        {
+            int row = Mathf.FloorToInt(location.y / (graphHeight / gridSizeY));
+            int col = Mathf.FloorToInt(location.x / (graphWidth / gridSizeX));
+
+            // Check if the cell above is empty and mark it
+            if (row > 0 && !nodeGrid[row - 1][col].HasValue)
+            {
+                nodeGrid[row - 1][col] = Vector2.negativeInfinity;
+            }
+        }
+        return nodeGrid;
+    }
+    public (int row, int col) GetNodeGridPosition(Vector2 nodeLocation, List<List<Vector2?>> nodeGrid)
+    {
+        //loop through each row in the grid
+        for (int row = 0; row < nodeGrid.Count; row++)
+        {
+            //loop through each column in the row
+            for (int col = 0; col < nodeGrid[row].Count; col++)
+            {
+                //check if the grid cell is null before comparing
+                if (nodeGrid[row][col].HasValue)
+                {
+                    //check if the node location matches the grid cell value
+                    if (Vector2.Distance(nodeGrid[row][col].Value, nodeLocation) < 0.1f)
+                    {
+                        return (row, col);  //return co-ords
+                    }
+                }
+            }
+        }
+
+        return (-1, -1);  //if not found
+    }
     public void RegenerateNodes()
     {
-        //regenerate nodes in graph
         foreach (Transform child in graphContainer)
         {
             if (child.name != "GraphContainerBackground")
@@ -121,6 +215,7 @@ public class MapGraph : MonoBehaviour
                 Destroy(child.gameObject);
             }
         }
+        nodeManager.CleanNodes();
         GenerateGraph();
     }
 }

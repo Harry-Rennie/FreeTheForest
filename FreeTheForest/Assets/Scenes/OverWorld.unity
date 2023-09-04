@@ -1069,6 +1069,7 @@ MonoBehaviour:
   basicPrefab: {fileID: 8074084271344646365, guid: 9ada0f8834b922843870803b1878e2bd, type: 3}
   healPrefab: {fileID: 8074084271344646365, guid: 756f42e981248bf41a9691cf0b45b198, type: 3}
   upgradePrefab: {fileID: 8074084271344646365, guid: 2453bd5b6f13d14478a0405e5e7fa969, type: 3}
+  lineManager: {fileID: 794677079}
 --- !u!4 &1063975315
 Transform:
   m_ObjectHideFlags: 0
