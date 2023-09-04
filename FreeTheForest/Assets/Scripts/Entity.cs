@@ -2,6 +2,7 @@
 
 using System.Collections;
 using System.Collections.Generic;
+//using System.Diagnostics;
 using UnityEditor.Build.Content;
 using UnityEngine;
 
@@ -23,12 +24,17 @@ public class Entity : MonoBehaviour
     public List<Card> enemyCards;
 
     BattleManager battleManager;
-    PlayerInfoController gameManager;
+
 
     private void Awake()
     {
         battleManager = FindObjectOfType<BattleManager>();
         currentHealth = maxHealth; //TODO: IF PLAYER get player health from GAMEMANAGER
+        if (isPlayer)
+        {
+            currentHealth = PlayerInfoController.Instance.PlayerHealth;
+            Debug.Log("Player Health: " + currentHealth);
+        }
     }
 
 
