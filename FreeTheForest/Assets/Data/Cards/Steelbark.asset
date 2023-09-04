@@ -10,12 +10,13 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f6d5a2fb821bc4fa6988ef63e88642ee, type: 3}
-  m_Name: Block
+  m_Name: Steelbark
   m_EditorClassIdentifier: 
-  title: Block
-  description: Defend
+  title: Steelbark
+  description: Deal damage equal to your Offense plus twice your Block, then Lose
+    All Block
   image: {fileID: 0}
-  manaCost: 1
-  cardType: 1
-  effects: 01000000
-  values: 00000000
+  manaCost: 0
+  cardType: 0
+  effects: 0000000001000000
+  values: 02000000ffffffff

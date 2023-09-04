@@ -10,12 +10,12 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f6d5a2fb821bc4fa6988ef63e88642ee, type: 3}
-  m_Name: Block
+  m_Name: Restore
   m_EditorClassIdentifier: 
-  title: Block
-  description: Defend
+  title: Restore
+  description: Gain 3 @
   image: {fileID: 0}
-  manaCost: 1
+  manaCost: 0
   cardType: 1
-  effects: 01000000
-  values: 00000000
+  effects: 02000000
+  values: 03000000
