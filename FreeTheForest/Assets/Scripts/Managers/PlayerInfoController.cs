@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 
+/// <summary>
+/// This class is responsible for holding the player's deck and health.
+/// </summary>
 public class PlayerInfoController : MonoBehaviour
 {
     public TMP_Text m_TextMeshPro;
