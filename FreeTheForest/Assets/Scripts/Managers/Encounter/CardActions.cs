@@ -39,15 +39,33 @@ public class CardActions : MonoBehaviour
 
     private void AttackEnemy() //Deal damage to current target equal to Player Offense stat
     {
-        int damage = player.offense;
-        
-        target.TakeDamage(damage);
+        if (battleManager.playersTurn)
+        {
+            int damage = player.offense;
+
+            target.TakeDamage(damage);
+        }
+        else
+        {
+            int damage = target.offense;
+
+            player.TakeDamage(damage);
+        }
     }
 
     private void PerformBlock() //Player gains block equal to their Defense stat
     {
-        int block = player.defense;
+        if (battleManager.playersTurn)
+        {
+            int block = player.defense;
 
-        player.AddBlock(block);
+            player.AddBlock(block);
+        }
+        else
+        {
+            int block = target.defense;
+
+            target.AddBlock(block);
+        }
     }
 }
