@@ -29,11 +29,15 @@ public class Entity : MonoBehaviour
     private void Awake()
     {
         battleManager = FindObjectOfType<BattleManager>();
-        currentHealth = maxHealth; //TODO: IF PLAYER get player health from GAMEMANAGER
+         //TODO: IF PLAYER get player health from GAMEMANAGER
         if (isPlayer)
         {
             currentHealth = PlayerInfoController.Instance.PlayerHealth;
             Debug.Log("Player Health: " + currentHealth);
+        }
+        else
+        {
+            currentHealth = maxHealth;
         }
     }
 
