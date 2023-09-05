@@ -28,7 +28,19 @@ public class Entity : MonoBehaviour
     private void Awake()
     {
         battleManager = FindObjectOfType<BattleManager>();
-        currentHealth = maxHealth; //TODO: IF PLAYER get player health from GAMEMANAGER
+        gameManager = FindObjectOfType<PlayerInfoController>();
+        // assign stats from PlayerInfoController
+        if (isPlayer)
+        {
+            maxHealth = gameManager.MaxHealth;
+            currentHealth = gameManager.CurrentHealth;
+            offense = gameManager.Strength;
+            defense = gameManager.Defense;
+        }
+        else
+        {
+        currentHealth = maxHealth;
+        }
     }
 
 
