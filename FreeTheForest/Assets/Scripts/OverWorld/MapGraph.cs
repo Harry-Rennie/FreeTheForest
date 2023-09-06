@@ -1,13 +1,14 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
-using static UnityEngine.EventSystems.EventTrigger;
 
 public class MapGraph : MonoBehaviour
 {
     [SerializeField] private NodeManager nodeManager;
     [SerializeField] private LineManager lineManager;
+    [SerializeField] private GraphLayoutManager graphLayoutManager;
 
     //configuration of graph
     private RectTransform mGraph;
@@ -29,7 +30,44 @@ public class MapGraph : MonoBehaviour
 
     private void Start()
     {
-        GenerateGraph();
+        List<Vector2> nodeLocations;
+        List<string> nodePrefabNames;
+        //check if layout data is available
+        GraphLayoutData layoutData = graphLayoutManager.LoadGraphLayout();
+        if (layoutData != null)
+        {
+            nodeLocations = ConvertToVector2List(layoutData.nodePositions);
+            nodePrefabNames = layoutData.nodePrefabNames;
+        }
+        else
+        {
+            //generate locations and prefab names
+            nodePrefabNames = new List<string>(); //todo, after nodes have finished spawning, push their ordered layout of node types so they can be saved.
+            nodeLocations = GenerateRandomNodeLocations(numberOfNodes);
+            nodeLocations = NodeUtility.SortNodes(nodeLocations);
+            //make vectors serializable so we can save
+            List<SerializableVector2> serializableNodeLocations = nodeLocations.Select(v => new SerializableVector2(v)).ToList();
+            SaveData(serializableNodeLocations, nodePrefabNames);
+        }
+
+        GenerateNodeGrid(nodeLocations);
+        List<GameObject> nodes = SpawnNodes(nodeLocations, nodeGrid);
+        lineManager.ConnectNodes(nodes);
+        CheckRespawn();
+    }
+
+    private void SaveData(List<SerializableVector2> nodePositions, List<string> prefabNames)
+    {
+        graphLayoutManager.SaveGraphLayout(nodePositions, prefabNames);
+    }
+    private List<Vector2> ConvertToVector2List(List<SerializableVector2> serializableVectorList)
+    {
+        List<Vector2> vector2List = new List<Vector2>();
+        foreach (SerializableVector2 serializableVector in serializableVectorList)
+        {
+            vector2List.Add(serializableVector.ToVector2());
+        }
+        return vector2List;
     }
 
     private List<Vector2> GenerateRandomNodeLocations(int numberOfNodes)
@@ -208,6 +246,9 @@ public class MapGraph : MonoBehaviour
     }
     public void RegenerateNodes()
     {
+        //delete the current layout data from GraphLayoutManager to generate a new random layout next time (changing map)
+        graphLayoutManager.DeleteGraphLayout();
+
         foreach (Transform child in graphContainer)
         {
             if (child.name != "GraphContainerBackground")
