@@ -27,7 +27,7 @@ public class TrinketManager : MonoBehaviour
             int totalHealthBuff = 0;
             foreach (Trinket trinket in PlayerTrinkets)
             {
-                if (trinket.Equipped)
+                if (trinket.Equipped) 
                 {
                     totalHealthBuff += trinket.MaxHealthBuff;
                 }
@@ -100,6 +100,12 @@ public class TrinketManager : MonoBehaviour
         else
         {
             Debug.LogWarning("No trinkets found in Resources/Trinkets.");
+        }
+
+        // for all trinkets in PlayerTrinkets, equip the trinket
+        foreach (Trinket trinket in PlayerTrinkets)
+        {
+            EquipTrinket(trinket);
         }
 
     }
