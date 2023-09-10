@@ -14,9 +14,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Title: Ingrown Barbs
   Description: 
-  Image: {fileID: 21300000, guid: c170fb805091b41a0a6ccba5de22535f, type: 3}
+  Sprite: {fileID: 21300000, guid: c170fb805091b41a0a6ccba5de22535f, type: 3}
   Level: 0
   MaxHealthBuff: 0
   AttackBuff: 2
-  DefenseBuff: -1
+  DefenseBuff: -2
   Equipped: 1

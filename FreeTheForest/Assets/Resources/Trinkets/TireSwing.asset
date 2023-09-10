@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Title: Tire Swing
   Description: 
-  Image: {fileID: 21300000, guid: 70220d6116bfe4226a78aabb32638244, type: 3}
+  Sprite: {fileID: 21300000, guid: 70220d6116bfe4226a78aabb32638244, type: 3}
   Level: 0
   MaxHealthBuff: 0
   AttackBuff: -1
