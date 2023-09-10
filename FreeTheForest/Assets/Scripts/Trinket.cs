@@ -17,7 +17,7 @@ public class Trinket : ScriptableObject
     // Trinket description
     public string Description;
     // Trinket sprite
-    public Sprite Image;
+    public Sprite Sprite;
     // Trinket level (corresponds to the level of the dungeon that the trinket is found in)
     public int Level;
     // Trinket buffs or debuffs these stats
