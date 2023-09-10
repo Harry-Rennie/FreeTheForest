@@ -23,12 +23,14 @@ public class PlayerInfoPanel : MonoBehaviour
         Color targetColor = Color.red;
         playerInfoController = PlayerInfoController.instance;
         trinketManager = TrinketManager.instance;
-        // add all images withe the tag TrinketImage to the list of trinket images
+        // add all images with the tag TrinketImage to the list of trinket images
         foreach (GameObject trinketImage in GameObject.FindGameObjectsWithTag("TrinketImage"))
         {
             Debug.Log("Adding trinket image");  
             trinketImages.Add(trinketImage.GetComponent<Image>());
         }
+        // reverse the list of trinket images so that the trinkets are displayed in the correct order
+        trinketImages.Reverse();
         // debug log the contents of playerInfoController.PlayerTrinkets
         foreach (Trinket trinket in trinketManager.PlayerTrinkets)
         {
@@ -49,9 +51,10 @@ public class PlayerInfoPanel : MonoBehaviour
 
     public void UpdateStats()
     {
-        PlayerStats.text = "Health: " + playerInfoController.CurrentHealth + "/" + playerInfoController.MaxHealth + "\n" +
-            "Strength: " + playerInfoController.Strength + "\n" +
-            "Defense: " + playerInfoController.Defense;
+        PlayerStats.text = 
+        @$"Health: {playerInfoController.CurrentHealth}/{playerInfoController.MaxHealth} {getBuffString(trinketManager.TotalHealthBuff)}
+Strength: {playerInfoController.Strength} {getBuffString(trinketManager.TotalStrengthBuff)}
+Defense: {playerInfoController.Defense} {getBuffString(trinketManager.TotalDefenseBuff)}";
     }
 
     public void UpdateTrinkets()
@@ -62,4 +65,19 @@ public class PlayerInfoPanel : MonoBehaviour
             trinketImages[i].sprite = trinketManager.PlayerTrinkets[i].Sprite;
         }
     }
+
+    // this method takes an int and returns it as a string enclosed in parentheses
+    // if the int is negative, the string will be red
+    // if the int is positive, the string will be green
+    private string getBuffString(int buff)
+    {
+        string buffString = "";
+        if (buff != 0)
+        {
+            buffString = (buff > 0) ? $"<color=#18ba30>({buff})</color>" : $"<color=#FF0000>({buff})</color>";
+            return buffString;
+        }
+        return buffString;
+    }
+
 }
