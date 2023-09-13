@@ -4,6 +4,19 @@ using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Collections.Generic;
 
+//todo: remove debug logs when finished
+[Serializable]
+public class SerializableLine
+{
+    public SerializableVector2 startPoint;
+    public SerializableVector2 endPoint;
+
+    public SerializableLine(Vector2 startPoint, Vector2 endPoint)
+    {
+        this.startPoint = new SerializableVector2(startPoint);
+        this.endPoint = new SerializableVector2(endPoint);
+    }
+}
 // in progress, serializable data for saving and loading maps
 [Serializable]
 public class SerializableVector2
@@ -25,10 +38,23 @@ public class SerializableVector2
 }
 
 [Serializable]
+public class SerializableNode
+{
+    public SerializableVector2 position;
+    public string prefabName;
+    public List<SerializableLine> associatedLines;
+
+    public SerializableNode(Vector2 position, string prefabName)
+    {
+        this.position = new SerializableVector2(position);
+        this.prefabName = prefabName;
+        this.associatedLines = new List<SerializableLine>();
+    }
+}
+[Serializable]
 public class GraphLayoutData
 {
-    public List<SerializableVector2> nodePositions;
-    public List<string> nodePrefabNames;
+    public List<SerializableNode> nodes;
     //add other node data here as needed... save data
 }
 
@@ -41,15 +67,16 @@ public class GraphLayoutManager : MonoBehaviour
         layoutDataPath = Application.persistentDataPath + "/graph_layout.dat";
     }
 
-    public void SaveGraphLayout(List<SerializableVector2> nodePositions, List<string> nodePrefabNames)
+    public void SaveGraphLayout(List<SerializableNode> nodes)
     {
         try
         {
-            GraphLayoutData layoutData = new GraphLayoutData { nodePositions = nodePositions, nodePrefabNames = nodePrefabNames };
+            GraphLayoutData layoutData = new GraphLayoutData { nodes = nodes };
             using (FileStream file = File.Open(layoutDataPath, FileMode.Create, FileAccess.Write, FileShare.None))
             {
                 BinaryFormatter bf = new BinaryFormatter();
                 bf.Serialize(file, layoutData);
+                Debug.Log("File saved to:" + layoutDataPath);
             }
         }
         catch (Exception e)
@@ -58,7 +85,7 @@ public class GraphLayoutManager : MonoBehaviour
         }
     }
 
-    public GraphLayoutData LoadGraphLayout()
+    public List<SerializableNode> LoadGraphLayout()
     {
         if (File.Exists(layoutDataPath))
         {
@@ -68,7 +95,8 @@ public class GraphLayoutManager : MonoBehaviour
                 {
                     BinaryFormatter bf = new BinaryFormatter();
                     GraphLayoutData layoutData = (GraphLayoutData)bf.Deserialize(file);
-                    return layoutData;
+                    Debug.Log("File loaded from:" + layoutDataPath);
+                    return layoutData.nodes;
                 }
             }
             catch (Exception e)
@@ -77,7 +105,7 @@ public class GraphLayoutManager : MonoBehaviour
             }
         }
 
-        return null;
+        return new List<SerializableNode>();
     }
 
     public void DeleteGraphLayout()
@@ -92,7 +120,7 @@ public class GraphLayoutManager : MonoBehaviour
                 {
                     fs.Close();
                 }
-
+                Debug.Log("File deleted from:" + layoutDataPath);
                 File.Delete(layoutDataPath);
             }
         }

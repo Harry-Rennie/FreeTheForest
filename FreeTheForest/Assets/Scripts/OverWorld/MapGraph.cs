@@ -19,6 +19,7 @@ public class MapGraph : MonoBehaviour
     private float graphHeight;
     private float graphWidth;
     private List<List<Vector2?>> nodeGrid = new List<List<Vector2?>>();
+    private List<Vector2> nodeLocations;
     private void Awake()
     {
         //initializing graph and dimensions
@@ -30,44 +31,62 @@ public class MapGraph : MonoBehaviour
 
     private void Start()
     {
-        List<Vector2> nodeLocations;
-        List<string> nodePrefabNames;
-        //check if layout data is available
-        GraphLayoutData layoutData = graphLayoutManager.LoadGraphLayout();
-        if (layoutData != null)
+        //check if layout data is available (an existing list of serialized nodes)
+        List<SerializableNode> layoutData = graphLayoutManager.LoadGraphLayout();
+
+        if (layoutData.Count > 0)
         {
-            nodeLocations = ConvertToVector2List(layoutData.nodePositions);
-            nodePrefabNames = layoutData.nodePrefabNames;
+            SpawnFromSave(layoutData);
         }
-        else
+        if (layoutData.Count == 0)
         {
-            //generate locations and prefab names
-            nodePrefabNames = new List<string>(); //todo, after nodes have finished spawning, push their ordered layout of node types so they can be saved.
+            //no layout data - generate a new map
             nodeLocations = GenerateRandomNodeLocations(numberOfNodes);
             nodeLocations = NodeUtility.SortNodes(nodeLocations);
-            //make vectors serializable so we can save
-            List<SerializableVector2> serializableNodeLocations = nodeLocations.Select(v => new SerializableVector2(v)).ToList();
-            SaveData(serializableNodeLocations, nodePrefabNames);
+            GenerateNodeGrid(nodeLocations);
+            List<GameObject> nodes = SpawnNodes(nodeLocations, nodeGrid);
+            lineManager.ConnectNodes(nodes);
+            CheckRespawn(nodes);
         }
-
-        GenerateNodeGrid(nodeLocations);
-        List<GameObject> nodes = SpawnNodes(nodeLocations, nodeGrid);
-        lineManager.ConnectNodes(nodes);
-        CheckRespawn();
     }
 
-    private void SaveData(List<SerializableVector2> nodePositions, List<string> prefabNames)
+    //parses the data we need to recreate the map from the list of nodes.
+    private void SaveData(List<GameObject> nodes)
     {
-        graphLayoutManager.SaveGraphLayout(nodePositions, prefabNames);
-    }
-    private List<Vector2> ConvertToVector2List(List<SerializableVector2> serializableVectorList)
-    {
-        List<Vector2> vector2List = new List<Vector2>();
-        foreach (SerializableVector2 serializableVector in serializableVectorList)
+        List<SerializableNode> serializedNodes = new List<SerializableNode>();
+        foreach (GameObject node in nodes)
         {
-            vector2List.Add(serializableVector.ToVector2());
+            Vector2 nodePosition = node.GetComponent<RectTransform>().anchoredPosition;
+            string prefabName = node.name;
+            SerializableNode serializedNode = new SerializableNode(nodePosition, prefabName);
+            List<GameObject> lines = lineManager.GetLinesFromNode(node);
+            //probably will remove line saving, might be useful for now.
+            foreach (GameObject line in lines)
+            {
+                Vector2 startPoint = line.GetComponent<LineRenderer>().GetPosition(0);
+                Vector2 endPoint = line.GetComponent<LineRenderer>().GetPosition(1);
+                SerializableLine serializedLine = new SerializableLine(startPoint, endPoint);
+                serializedNode.associatedLines.Add(serializedLine);
+            }
+            serializedNodes.Add(serializedNode);
         }
-        return vector2List;
+        graphLayoutManager.SaveGraphLayout(serializedNodes);
+    }
+
+    private void SpawnFromSave(List<SerializableNode> layoutData)
+    {
+        List<GameObject> respawnNodes = new List<GameObject> ();
+
+        foreach (SerializableNode serializedNode in layoutData)
+        {
+            //spawn nodes based on the loaded layout
+            Vector2 nodePosition = serializedNode.position.ToVector2();
+            GameObject prefab = nodeManager.ParsePrefabName(serializedNode.prefabName);
+            GameObject spawnedNode = nodeManager.SpawnSpecificNode(prefab, nodePosition, graphContainer);
+            respawnNodes.Add(spawnedNode);
+        }
+        //instead of connecting the lines from save, currently just reconnecting as the logic is the same - have tested.
+        lineManager.ConnectNodes(respawnNodes);
     }
 
     private List<Vector2> GenerateRandomNodeLocations(int numberOfNodes)
@@ -148,13 +167,31 @@ public class MapGraph : MonoBehaviour
         GenerateNodeGrid(nodeLocations);
         List<GameObject> nodes = SpawnNodes(nodeLocations, nodeGrid);
         lineManager.ConnectNodes(nodes);
-        CheckRespawn();
+        CheckRespawn(nodes);
     }
 
-    //compares tags of parent child, respawns if they match condition, updates dictionary.
-    private void CheckRespawn()
+    //utility to grab correct prefab from string
+    public List<string> GetPrefabNamesFromMap()
+    {
+        List<string> prefabNames = new List<string>();
+
+        foreach (KeyValuePair<GameObject, GameObject> entry in lineManager.nodeParentMap)
+        {
+            GameObject childNode = entry.Key;
+            GameObject parentNode = entry.Value;
+            string prefabName = childNode.name;
+            prefabNames.Add(prefabName);
+        }
+
+        return prefabNames;
+    }
+
+    //compares tags of parent child, respawns if they match condition, updates dictionary and list of nodes.
+    private void CheckRespawn(List<GameObject> nodes)
     {
         bool hasDuplicate;
+        List<GameObject> updatedNodes = new List<GameObject>(); //store updated nodes
+
         do
         {
             hasDuplicate = false;
@@ -166,9 +203,10 @@ public class MapGraph : MonoBehaviour
                 GameObject childNode = entry.Key;
                 GameObject parentNode = entry.Value;
                 string tag = childNode.tag;
+
                 if (childNode.name == parentNode.name && (tag == "Heal" || tag == "Upgrade"))
                 {
-                    hasDuplicate = true; //rerun the check
+                    hasDuplicate = true; //keep checking
                     GameObject newChildNode = nodeManager.Respawn(childNode, graphContainer, tag);
                     keysToUpdate.Add(childNode);
                     newEntries[newChildNode] = parentNode;
@@ -185,8 +223,17 @@ public class MapGraph : MonoBehaviour
             }
         }
         while (hasDuplicate);
+        //updating dependencies and saving
+        updatedNodes.AddRange(nodes);
+        foreach (var entry in lineManager.nodeParentMap)
+        {
+            updatedNodes.Add(entry.Key);
+        }
+        nodes.Clear();
+        nodes.AddRange(updatedNodes);
+        SaveData(nodes);
     }
-    //refactor later out of this file
+
     private List<List<Vector2?>> GenerateNodeGrid(List<Vector2> nodeLocations)
     {
         List<List<Vector2?>> nodeGrid = new List<List<Vector2?>>();
