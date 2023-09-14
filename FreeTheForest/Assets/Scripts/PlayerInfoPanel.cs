@@ -5,6 +5,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using TMPro;
+using System.Linq;
 
 // This script controls the functionality of the player info panel
 // There are fields for player image, their stats, and their inventory
@@ -14,44 +15,43 @@ public class PlayerInfoPanel : MonoBehaviour
 {
     private PlayerInfoController playerInfoController;
     private TrinketManager trinketManager;
-    private List<Image> trinketImages = new List<Image>();
+    //private List<Image> trinketImages = new List<Image>();
+    public List<TrinketSlot> TrinketSlots = new List<TrinketSlot>();
     public TMP_Text PlayerStats;
-    
+
+    // singleton pattern
+    public static PlayerInfoPanel instance;
+    private void Awake()
+    {
+        if (instance != null)
+        {
+            Debug.LogWarning("More than one instance of PlayerInfoPanel found!");
+            return;
+        }
+        instance = this;
+    }
+
     // Start is called before the first frame update    
     void Start()
     {
-        Color targetColor = Color.red;
         playerInfoController = PlayerInfoController.instance;
         trinketManager = TrinketManager.instance;
-        // add all images with the tag TrinketImage to the list of trinket images
-        foreach (GameObject trinketImage in GameObject.FindGameObjectsWithTag("TrinketImage"))
-        {
-            Debug.Log("Adding trinket image");  
-            trinketImages.Add(trinketImage.GetComponent<Image>());
-        }
-        // reverse the list of trinket images so that the trinkets are displayed in the correct order
-        trinketImages.Reverse();
-        // debug log the contents of playerInfoController.PlayerTrinkets
-        foreach (Trinket trinket in trinketManager.PlayerTrinkets)
-        {
-            Debug.Log(trinket.Title);
-        }
-        // set each trinket sprite in trinketManager.PlayerTrinkets to the corresponding image in trinketImages
-        for (int i = 0; i < trinketManager.PlayerTrinkets.Count; i++)
-        {
-            trinketImages[i].sprite = trinketManager.PlayerTrinkets[i].Sprite;
-        }
+        // populate the list of TrinketSlots by finding all TrinketSlot components in the scene
+        TrinketSlots = FindObjectsOfType<TrinketSlot>().Reverse().ToList();
+
+        UpdateTrinkets();
+        UpdateStats();
     }
 
     public void Update()
     {
-        UpdateStats();
-        UpdateTrinkets();       
+        //UpdateStats();
+        //UpdateTrinkets();
     }
 
     public void UpdateStats()
     {
-        PlayerStats.text = 
+        PlayerStats.text =
         @$"Health: {playerInfoController.CurrentHealth}/{playerInfoController.MaxHealth} {getBuffString(trinketManager.TotalHealthBuff)}
 Strength: {playerInfoController.Strength} {getBuffString(trinketManager.TotalStrengthBuff)}
 Defense: {playerInfoController.Defense} {getBuffString(trinketManager.TotalDefenseBuff)}";
@@ -59,10 +59,12 @@ Defense: {playerInfoController.Defense} {getBuffString(trinketManager.TotalDefen
 
     public void UpdateTrinkets()
     {
-        // set each trinket sprite in trinketManager.PlayerTrinkets to the corresponding image in trinketImages
-        for (int i = 0; i < trinketManager.PlayerTrinkets.Count; i++)
+        for (int i = 0; i < TrinketSlots.Count; i++)
         {
-            trinketImages[i].sprite = trinketManager.PlayerTrinkets[i].Sprite;
+            if (i < trinketManager.PlayerTrinkets.Count)
+            {
+            TrinketSlots[i].SetTrinket(trinketManager.PlayerTrinkets[i]);
+            }
         }
     }
 
@@ -78,6 +80,11 @@ Defense: {playerInfoController.Defense} {getBuffString(trinketManager.TotalDefen
             return buffString;
         }
         return buffString;
+    }
+
+    public void TestClick()
+    {
+        Debug.Log("Clicked");
     }
 
 }
