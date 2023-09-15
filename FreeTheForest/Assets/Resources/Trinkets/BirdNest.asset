@@ -13,10 +13,10 @@ MonoBehaviour:
   m_Name: BirdNest
   m_EditorClassIdentifier: 
   Title: Bird Nest
-  Description: 
+  Description: Three speckled eggs lay in this downy nest
   Sprite: {fileID: 21300000, guid: 7a28d50d70978496fa18056b17b63cd8, type: 3}
   Level: 0
   MaxHealthBuff: 15
   AttackBuff: 0
   DefenseBuff: 0
-  Equipped: 1
+  Equipped: 0
