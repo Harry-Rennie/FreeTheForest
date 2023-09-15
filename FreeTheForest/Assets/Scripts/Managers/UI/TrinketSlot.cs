@@ -1,14 +1,19 @@
 using System;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
+using TMPro;
 
 // this class handles the graphics and click events for a trinket slot
 
-public class TrinketSlot : MonoBehaviour
+public class TrinketSlot : MonoBehaviour, IPointerClickHandler
 {
     public Button TrinketButton;
     public Image TrinketImage;
     private Trinket trinket;
+
+    [SerializeField]private GameObject trinketInfoPanel;
+
     [SerializeField]private Color pressedColour;
     [SerializeField]private Color normalColour;
 
@@ -18,6 +23,7 @@ public class TrinketSlot : MonoBehaviour
     {
         TrinketImage = GetComponent<Image>();
         TrinketButton = GetComponent<Button>();
+        //trinketInfoPanel = GetComponent<Panel>();
         TrinketButton.onClick.AddListener(OnClick);
         TrinketButton.onClick.AddListener(changeColour);
     }
@@ -56,4 +62,15 @@ public class TrinketSlot : MonoBehaviour
             TrinketButton.image.color = pressedColour;
         }
     }
+    
+    public virtual void OnPointerClick(PointerEventData eventData)
+{
+    if (eventData.button == PointerEventData.InputButton.Right)
+        {
+            Debug.Log("Right click");
+            // toggle the trinket info panel
+            trinketInfoPanel.SetActive(!trinketInfoPanel.activeSelf);
+            trinketInfoPanel.GetComponentInChildren<TMP_Text>().text = trinket.ToString();
+        }
+}
 }
