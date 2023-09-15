@@ -25,4 +25,23 @@ public class Trinket : ScriptableObject
     public int MaxHealthBuff, AttackBuff, DefenseBuff;
     // The trinket is equipped by default
     public bool Equipped = true;
+
+    // this method returns a string that describes the trinket
+    public override string ToString()
+    {
+        string trinketString = $"{Title}\n\n<i>{Description}</i>\n\n";
+        if (MaxHealthBuff != 0)
+        {
+            trinketString += $"Max Health: {MaxHealthBuff}\n";
+        }
+        if (AttackBuff != 0)
+        {
+            trinketString += $"Attack: {AttackBuff}\n";
+        }
+        if (DefenseBuff != 0)
+        {
+            trinketString += $"Defense: {DefenseBuff}\n";
+        }
+        return trinketString;
+    }
 }
