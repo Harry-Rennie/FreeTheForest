@@ -84,4 +84,14 @@ public class PlayerInfoPanel : MonoBehaviour
         }
         return buffString;
     }
+
+    #region Button Panel Methods
+    /// <summary>
+    /// This method is called when the "Main Menu" button is clicked.
+    /// </summary>
+    public void MainMenu()
+    {
+        SceneManager.LoadScene("TitleScreen");
+    }
+    #endregion
 }
