@@ -1,7 +1,6 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
 using UnityEngine;
 
@@ -10,6 +9,7 @@ using UnityEngine;
 /// It contains a list of all trinkets in the game.
 /// It also contains a list of all trinkets that the player has.
 /// It provides a method to award a random trinket from the list of all trinkets, based on the level of the dungeon.
+/// It also handles the equipping and unequipping of trinkets.
 ///</summary>
 
 public class TrinketManager : MonoBehaviour
