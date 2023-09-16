@@ -14,11 +14,12 @@ using UnityEngine;
 
 public class TrinketManager : MonoBehaviour
 {
-    public List<Trinket> AllTrinkets;
+    [NonSerialized] public List<Trinket> AllTrinkets;
     public List<Trinket> PlayerTrinkets;
-    public static TrinketManager instance;
+
     private PlayerInfoController playerInfoController;
 
+    #region Buff Properties
     // this property returns the total health buff from all equipped trinkets
     public int TotalHealthBuff
     {
@@ -69,20 +70,21 @@ public class TrinketManager : MonoBehaviour
             return totalDefenseBuff;
         }
     }
+    #endregion
 
+    #region Singleton
+    // singleton pattern
+    public static TrinketManager Instance;
     private void Awake()
     {
-        // implement a singleton pattern
-        if (instance == null)
-            instance = this;
-        else
+        if (Instance != null)
         {
-            Destroy(gameObject);
+            Debug.LogWarning("More than one instance of TrinketManager found.");
             return;
         }
-        DontDestroyOnLoad(gameObject);
-
+        Instance = this;
     }
+    #endregion
 
     // Start is called before the first frame update
     void Start()
@@ -90,7 +92,6 @@ public class TrinketManager : MonoBehaviour
         playerInfoController = PlayerInfoController.instance;
         // Load all Trinket assets from the "Resources/Trinkets" folder.
         AllTrinkets = Resources.LoadAll<Trinket>("Trinkets").ToList();
-
 
         // Check if the trinkets were loaded successfully.
         if (AllTrinkets.Count > 0)
@@ -110,6 +111,11 @@ public class TrinketManager : MonoBehaviour
 
     }
     
+    /// <summary>
+    /// This method returns a random trinket from the list of all trinkets that are at the specified level.
+    /// It is intended to be used when the player is in a shop or is awarded a trinket.
+    /// </summary>
+    /// <param name="level">The level of the dungeon that the trinket is found in.</param>
     public Trinket GetTrinket(int level)
     {
         // get a list of all trinkets that are at the specified level
@@ -120,6 +126,12 @@ public class TrinketManager : MonoBehaviour
 
         return trinket;
     }
+
+    /// <summary>
+    /// This method removes the trinket from the list of all trinkets and adds it to the list of player trinkets.
+    /// It also equips the trinket.
+    /// </summary>
+    /// <param name="trinket">The trinket to be added.</param>
     public void AddTrinket(Trinket trinket)
     {
         AllTrinkets.Remove(trinket);
@@ -127,6 +139,10 @@ public class TrinketManager : MonoBehaviour
         EquipTrinket(trinket);
     }
 
+    /// <summary>
+    /// This method applies the buffs from the trinket to the player stats.
+    /// </summary>
+    /// <param name="trinket">The trinket to be equipped.</param>
     public void EquipTrinket(Trinket trinket)
     {
         trinket.Equipped = true;
@@ -135,6 +151,10 @@ public class TrinketManager : MonoBehaviour
         playerInfoController.Defense += trinket.DefenseBuff;
     }
 
+    /// <summary>
+    /// This method removes the buffs from the trinket from the player stats.
+    /// </summary>
+    /// <param name="trinket">The trinket to be unequipped.</param>
     public void UnequipTrinket(Trinket trinket)
     {
         trinket.Equipped = false;

@@ -1,4 +1,3 @@
-//Using statements
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -6,71 +5,75 @@ using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using TMPro;
 using System.Linq;
+using System;
 
-// This script controls the functionality of the player info panel
-// There are fields for player image, their stats, and their inventory
-
-
+/// <summary>
+/// This class controls the functionality of the player info panel.
+/// </summary>
 public class PlayerInfoPanel : MonoBehaviour
 {
+    public List<TrinketSlot> TrinketSlots = new List<TrinketSlot>();
+    [SerializeField] private TMP_Text playerStats;
     private PlayerInfoController playerInfoController;
     private TrinketManager trinketManager;
-    //private List<Image> trinketImages = new List<Image>();
-    public List<TrinketSlot> TrinketSlots = new List<TrinketSlot>();
-    public TMP_Text PlayerStats;
 
+    #region Singleton
     // singleton pattern
-    public static PlayerInfoPanel instance;
+    public static PlayerInfoPanel Instance;
     private void Awake()
     {
-        if (instance != null)
+        if (Instance != null)
         {
-            Debug.LogWarning("More than one instance of PlayerInfoPanel found!");
+            Debug.LogWarning("More than one instance of PlayerInfoPanel found.");
             return;
         }
-        instance = this;
+        Instance = this;
     }
+    #endregion
 
-    // Start is called before the first frame update    
+    // Start is called before the first frame update
     void Start()
     {
+        // assign static managers to local variables
         playerInfoController = PlayerInfoController.instance;
-        trinketManager = TrinketManager.instance;
+        trinketManager = TrinketManager.Instance;
         // populate the list of TrinketSlots by finding all TrinketSlot components in the scene
         TrinketSlots = FindObjectsOfType<TrinketSlot>().Reverse().ToList();
-
+        // update the player info panel
         UpdateTrinkets();
         UpdateStats();
     }
 
-    public void Update()
-    {
-        //UpdateStats();
-        //UpdateTrinkets();
-    }
-
+    /// <summary>
+    /// This method updates the player stats in the player info panel.
+    /// It formats stats from the playerInfoController and trinketManager into a string.
+    /// </summary>
     public void UpdateStats()
     {
-        PlayerStats.text =
-        @$"Health: {playerInfoController.CurrentHealth}/{playerInfoController.MaxHealth} {getBuffString(trinketManager.TotalHealthBuff)}
-Strength: {playerInfoController.Strength} {getBuffString(trinketManager.TotalStrengthBuff)}
-Defense: {playerInfoController.Defense} {getBuffString(trinketManager.TotalDefenseBuff)}";
+        playerStats.text = @$"<b>Health:</b>      {playerInfoController.CurrentHealth}/{playerInfoController.MaxHealth} {getBuffString(trinketManager.TotalHealthBuff)}
+<b>Strength:</b>   {playerInfoController.Strength} {getBuffString(trinketManager.TotalStrengthBuff)}
+<b>Defense:</b>    {playerInfoController.Defense} {getBuffString(trinketManager.TotalDefenseBuff)}";
     }
 
+    /// <summary>
+    /// This method updates the trinkets in the player info panel based on the player trinkets in the trinketManager.
+    /// </summary>
     public void UpdateTrinkets()
     {
         for (int i = 0; i < TrinketSlots.Count; i++)
         {
+            // if the index is less than the number of player trinkets, set the trinket of the trinket slot
             if (i < trinketManager.PlayerTrinkets.Count)
             {
-            TrinketSlots[i].SetTrinket(trinketManager.PlayerTrinkets[i]);
+                TrinketSlots[i].SetTrinket(trinketManager.PlayerTrinkets[i]);
             }
         }
     }
 
-    // this method takes an int and returns it as a string enclosed in parentheses
-    // if the int is negative, the string will be red
-    // if the int is positive, the string will be green
+    /// <summary>
+    /// This method returns a string that describes the buff or debuff to the stat.
+    /// A positive buff is green, a negative buff is red.
+    /// </summary>
     private string getBuffString(int buff)
     {
         string buffString = "";
@@ -81,10 +84,4 @@ Defense: {playerInfoController.Defense} {getBuffString(trinketManager.TotalDefen
         }
         return buffString;
     }
-
-    public void TestClick()
-    {
-        Debug.Log("Clicked");
-    }
-
 }

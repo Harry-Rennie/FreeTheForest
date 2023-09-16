@@ -4,82 +4,85 @@ using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using TMPro;
 
-// this class handles the graphics and click events for a trinket slot
-
+/// <summary>
+/// This class controls the functionality of the trinket slots in the player info panel.
+/// </summary>
 public class TrinketSlot : MonoBehaviour, IPointerClickHandler
 {
-    public Button TrinketButton;
-    public Image TrinketImage;
+    private Image trinketImage;
     private Trinket trinket;
 
-    [SerializeField]private GameObject trinketInfoPanel;
+    [SerializeField] private GameObject trinketInfoPanel;
 
-    [SerializeField]private Color pressedColour;
-    [SerializeField]private Color normalColour;
+    [SerializeField] private Color unequippedColour;
+    [SerializeField] private Color equippedColour;
 
 
     // Start is called before the first frame update
     void Start()
     {
-        TrinketImage = GetComponent<Image>();
-        TrinketButton = GetComponent<Button>();
-        //trinketInfoPanel = GetComponent<Panel>();
-        TrinketButton.onClick.AddListener(OnClick);
-        TrinketButton.onClick.AddListener(changeColour);
+        // assign the image component to the trinketImage variable
+        trinketImage = GetComponent<Image>();
     }
 
+    /// <summary>
+    /// This method sets the trinket of the trinket slot.
+    /// </summary>
+    /// <param name="trinket">The trinket to be set.</param>
     public void SetTrinket(Trinket trinket)
     {
         this.trinket = trinket;
-        TrinketImage.sprite = trinket.Sprite;
+        trinketImage.sprite = trinket.Sprite;
+        trinketInfoPanel.GetComponentInChildren<TMP_Text>().text = trinket.ToString();
     }
 
-    public void OnClick()
+    /// <summary>
+    /// This method toggles the equipped status of the trinket.
+    /// It also updates the colour of the trinket image based on the equipped status.
+    /// </summary>
+    private void toggleEquipped()
     {
         if (trinket.Equipped)
         {
-            Debug.Log("Unequipping trinket " + trinket.Title + "...");
-            TrinketManager.instance.UnequipTrinket(trinket);
+            TrinketManager.Instance.UnequipTrinket(trinket);
+            trinketImage.color = unequippedColour;
         }
         else
         {
-            Debug.Log("Equipping trinket " + trinket.Title + "...");
-            TrinketManager.instance.EquipTrinket(trinket);
+            TrinketManager.Instance.EquipTrinket(trinket);
+            trinketImage.color = equippedColour;
         }
-        PlayerInfoPanel.instance.UpdateStats();
-        //PlayerInfoController.instance.UpdateTrinkets();
+        PlayerInfoPanel.Instance.UpdateStats();
     }
 
-      private void changeColour()
-    {
-        // Check if the button is already in the pressed color state
-        if (TrinketButton.image.color == pressedColour)
-        {
-            TrinketButton.image.color = normalColour;
-        }
-        else
-        {
-            TrinketButton.image.color = pressedColour;
-        }
-    }
-    
+
+    /// <summary>
+    /// This method is called when the trinket slot is clicked.
+    /// It utilises the IPointerClickHandler interface.
+    /// </summary>
+    /// <param name="eventData">The pointer event data.</param>
     public virtual void OnPointerClick(PointerEventData eventData)
-{
-    if (eventData.button == PointerEventData.InputButton.Right)
+    {
+        // if the left mouse button is clicked
+        if (eventData.button == PointerEventData.InputButton.Left)
         {
-            Debug.Log("Right click");
-            // toggle the trinket info panel
+            // toggle the equipped status of the trinket
+            toggleEquipped();
+        }
+        // if the right mouse button is clicked
+        else if (eventData.button == PointerEventData.InputButton.Right)
+        {         
             // check if any other panels are open in PlayerInfoPanel.instance.TrinketSlots
             // if so, close them
-            foreach (TrinketSlot slot in PlayerInfoPanel.instance.TrinketSlots)
+            foreach (TrinketSlot slot in PlayerInfoPanel.Instance.TrinketSlots)
             {
                 if (slot.trinketInfoPanel.activeSelf && slot != this)
                 {
                     slot.trinketInfoPanel.SetActive(false);
                 }
             }
-            trinketInfoPanel.SetActive(!trinketInfoPanel.activeSelf);
-            trinketInfoPanel.GetComponentInChildren<TMP_Text>().text = trinket.ToString();
+            // toggle the trinket info panel
+            trinketInfoPanel.SetActive(!trinketInfoPanel.activeSelf);           
         }
-}
+    }
 }
