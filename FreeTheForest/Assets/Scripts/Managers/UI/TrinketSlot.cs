@@ -69,6 +69,15 @@ public class TrinketSlot : MonoBehaviour, IPointerClickHandler
         {
             Debug.Log("Right click");
             // toggle the trinket info panel
+            // check if any other panels are open in PlayerInfoPanel.instance.TrinketSlots
+            // if so, close them
+            foreach (TrinketSlot slot in PlayerInfoPanel.instance.TrinketSlots)
+            {
+                if (slot.trinketInfoPanel.activeSelf && slot != this)
+                {
+                    slot.trinketInfoPanel.SetActive(false);
+                }
+            }
             trinketInfoPanel.SetActive(!trinketInfoPanel.activeSelf);
             trinketInfoPanel.GetComponentInChildren<TMP_Text>().text = trinket.ToString();
         }
