@@ -57,6 +57,11 @@ public class Entity : MonoBehaviour
 
         if(currentHealth<=0) //Die
         {
+            if (!isPlayer)
+            {
+                battleManager.AddKill();
+            }
+            
             Destroy(gameObject);
         }
     }

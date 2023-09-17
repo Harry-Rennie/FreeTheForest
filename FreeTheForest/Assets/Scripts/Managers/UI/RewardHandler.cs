@@ -20,11 +20,6 @@ public class RewardHandler : MonoBehaviour
         
     }
 
-    private void OnEnable()
-    {
-        //Select our three rewards and load them into the cards
-        
-    }
 
     private void GenerateRewards()
     {
