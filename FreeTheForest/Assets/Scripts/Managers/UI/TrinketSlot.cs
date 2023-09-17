@@ -63,6 +63,11 @@ public class TrinketSlot : MonoBehaviour, IPointerClickHandler
     /// <param name="eventData">The pointer event data.</param>
     public virtual void OnPointerClick(PointerEventData eventData)
     {
+        // if the trinket is null, return
+        if (trinket == null)
+        {
+            return;
+        }
         // if the left mouse button is clicked
         if (eventData.button == PointerEventData.InputButton.Left)
         {
