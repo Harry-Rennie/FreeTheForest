@@ -14,6 +14,7 @@ public class PlayerInfoController : MonoBehaviour
     public int Strength;
     public int Defense;
     public List<Card> playerDeck = new List<Card>(); //Holds the players current deck as a list of cards.
+    public List<Card> cardLibrary = new List<Card>(); //Holds all possible reward cards.
 
     public List<Enemy> currentEnemies = new List<Enemy>(); //Battle reads from here to load in enemies to battle scene.
 
