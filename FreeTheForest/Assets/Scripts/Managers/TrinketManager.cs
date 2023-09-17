@@ -80,10 +80,13 @@ public class TrinketManager : MonoBehaviour
         if (Instance != null)
         {
             Debug.LogWarning("More than one instance of TrinketManager found.");
+            // destroy myself
+            Destroy(gameObject);
             return;
         }
         Instance = this;
-    }
+        DontDestroyOnLoad(gameObject);
+    } 
     #endregion
 
     // Start is called before the first frame update
