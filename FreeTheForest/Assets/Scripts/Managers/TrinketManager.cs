@@ -4,7 +4,7 @@ using System.Linq;
 using UnityEngine;
 
 ///<summary>
-/// This singleton class manages the trinkets in the game.
+/// This class manages the trinkets in the game.
 /// It contains a list of all trinkets in the game.
 /// It also contains a list of all trinkets that the player has.
 /// It provides a method to award a random trinket from the list of all trinkets, based on the level of the dungeon.

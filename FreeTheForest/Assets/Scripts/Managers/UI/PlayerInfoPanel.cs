@@ -42,7 +42,7 @@ public class PlayerInfoPanel : MonoBehaviour
 
     /// <summary>
     /// This method updates the player stats in the player info panel.
-    /// It formats stats from the playerInfoController and trinketManager into a string.
+    /// It formats stats from playerInfoController and trinketManager into a string.
     /// </summary>
     public void UpdateStats()
     {
@@ -52,7 +52,7 @@ public class PlayerInfoPanel : MonoBehaviour
     }
 
     /// <summary>
-    /// This method updates the trinkets in the player info panel based on the player trinkets in the trinketManager.
+    /// This method updates the trinkets in the player info panel based on the player trinkets in trinketManager.
     /// </summary>
     public void UpdateTrinkets()
     {

@@ -19,10 +19,11 @@ public class TrinketSlot : MonoBehaviour, IPointerClickHandler
     /// <param name="trinket">The trinket to be set.</param>
     public void SetTrinket(Trinket trinket)
     {
-        //trinketImage = GetComponent<Image>();
         this.trinket = trinket;
         trinketImage.sprite = trinket.Sprite;
+        // update right click info panel
         trinketInfoPanel.GetComponentInChildren<TMP_Text>().text = trinket.ToString();
+        // update colour of trinket image based on equipped status
         trinketImage.color = (trinket.Equipped) ? equippedColour : unequippedColour;
     }
 
