@@ -109,7 +109,10 @@ public class TrinketManager : MonoBehaviour
         // for all trinkets in PlayerTrinkets, equip the trinket
         foreach (Trinket trinket in PlayerTrinkets)
         {
-            EquipTrinket(trinket);
+            if (trinket.Equipped)
+            {
+                EquipTrinket(trinket);
+            }
         }
 
     }

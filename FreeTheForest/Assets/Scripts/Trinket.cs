@@ -20,7 +20,7 @@ public class Trinket : ScriptableObject
     // Trinket buffs or debuffs these stats
     // A positive value buffs the stat, a negative value debuffs the stat
     public int MaxHealthBuff, AttackBuff, DefenseBuff;
-    public bool Equipped = true;
+    public bool Equipped;
 
     // this method returns a string that describes the trinket
     public override string ToString()

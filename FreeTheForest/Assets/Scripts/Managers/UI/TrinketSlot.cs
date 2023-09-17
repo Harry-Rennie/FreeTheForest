@@ -34,6 +34,7 @@ public class TrinketSlot : MonoBehaviour, IPointerClickHandler
         this.trinket = trinket;
         trinketImage.sprite = trinket.Sprite;
         trinketInfoPanel.GetComponentInChildren<TMP_Text>().text = trinket.ToString();
+        trinketImage.color = (trinket.Equipped) ? equippedColour : unequippedColour;
     }
 
     /// <summary>
