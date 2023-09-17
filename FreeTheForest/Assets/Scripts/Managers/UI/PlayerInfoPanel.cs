@@ -12,7 +12,7 @@ using System;
 /// </summary>
 public class PlayerInfoPanel : MonoBehaviour
 {
-    public List<TrinketSlot> TrinketSlots = new List<TrinketSlot>();
+    public List<TrinketSlot> TrinketSlots;
     [SerializeField] private TMP_Text playerStats;
     private PlayerInfoController playerInfoController;
     private TrinketManager trinketManager;
@@ -37,8 +37,7 @@ public class PlayerInfoPanel : MonoBehaviour
         // assign static managers to local variables
         playerInfoController = PlayerInfoController.instance;
         trinketManager = TrinketManager.Instance;
-        // populate the list of TrinketSlots by finding all TrinketSlot components in the scene
-        TrinketSlots = FindObjectsOfType<TrinketSlot>().Reverse().ToList();
+
         // update the player info panel
         UpdateTrinkets();
         UpdateStats();

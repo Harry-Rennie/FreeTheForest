@@ -19,7 +19,7 @@ public class TrinketSlot : MonoBehaviour, IPointerClickHandler
 
 
     // Start is called before the first frame update
-    void Start()
+    void Awake()
     {
         // assign the image component to the trinketImage variable
         trinketImage = GetComponent<Image>();
@@ -31,6 +31,7 @@ public class TrinketSlot : MonoBehaviour, IPointerClickHandler
     /// <param name="trinket">The trinket to be set.</param>
     public void SetTrinket(Trinket trinket)
     {
+        //trinketImage = GetComponent<Image>();
         this.trinket = trinket;
         trinketImage.sprite = trinket.Sprite;
         trinketInfoPanel.GetComponentInChildren<TMP_Text>().text = trinket.ToString();
