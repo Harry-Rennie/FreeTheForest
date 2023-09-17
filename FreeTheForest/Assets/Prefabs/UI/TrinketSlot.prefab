@@ -93,6 +93,7 @@ MonoBehaviour:
   trinketInfoPanel: {fileID: 6588690951550396394}
   unequippedColour: {r: 1, g: 1, b: 1, a: 0.36078432}
   equippedColour: {r: 1, g: 1, b: 1, a: 1}
+  trinketImage: {fileID: 2715035108117729864}
 --- !u!114 &3734090578790814488
 MonoBehaviour:
   m_ObjectHideFlags: 0

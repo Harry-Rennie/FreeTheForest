@@ -8,21 +8,10 @@ using TMPro;
 /// </summary>
 public class TrinketSlot : MonoBehaviour, IPointerClickHandler
 {
-    private Image trinketImage;
-    private Trinket trinket;
-
     [SerializeField] private GameObject trinketInfoPanel;
-
-    [SerializeField] private Color unequippedColour;
-    [SerializeField] private Color equippedColour;
-
-
-    // Start is called before the first frame update
-    void Awake()
-    {
-        // assign the image component to the trinketImage variable
-        trinketImage = GetComponent<Image>();
-    }
+    [SerializeField] private Color unequippedColour, equippedColour;
+    [SerializeField] private Image trinketImage;
+    private Trinket trinket;
 
     /// <summary>
     /// This method sets the trinket of the trinket slot.
@@ -77,7 +66,7 @@ public class TrinketSlot : MonoBehaviour, IPointerClickHandler
         }
         // if the right mouse button is clicked
         else if (eventData.button == PointerEventData.InputButton.Right)
-        {         
+        {
             // check if any other panels are open in PlayerInfoPanel.instance.TrinketSlots
             // if so, close them
             foreach (TrinketSlot slot in PlayerInfoPanel.Instance.TrinketSlots)
@@ -88,7 +77,7 @@ public class TrinketSlot : MonoBehaviour, IPointerClickHandler
                 }
             }
             // toggle the trinket info panel
-            trinketInfoPanel.SetActive(!trinketInfoPanel.activeSelf);           
+            trinketInfoPanel.SetActive(!trinketInfoPanel.activeSelf);
         }
     }
 }
