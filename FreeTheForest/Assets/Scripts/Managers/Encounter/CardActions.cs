@@ -41,11 +41,29 @@ public class CardActions : MonoBehaviour
                     case Card.CardEffect.Draw:
                         DrawCards(card.values[i]);
                         break;
+                    case Card.CardEffect.BuffSelf:
+                        ApplySelfBuff(card.values[i]);
+                        break;
                     default:
                         Debug.Log("Something gone wrong with Performing Action");
                         break;
                 }
             }
+        }
+    }
+
+    private void ApplySelfBuff(int mode)
+    {
+        switch (mode)
+        {
+            case 0:
+                GrowthBuff buff = new GrowthBuff();
+                buff.target = player;
+                player.AddBuff(buff);
+                break;
+            default:
+                Debug.Log("Something gone wrong with Self Buff mode");
+                break;
         }
     }
 
