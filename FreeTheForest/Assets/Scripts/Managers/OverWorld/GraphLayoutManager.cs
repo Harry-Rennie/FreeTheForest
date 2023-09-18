@@ -17,7 +17,6 @@ public class SerializableLine
         this.endPoint = new SerializableVector2(endPoint);
     }
 }
-// in progress, serializable data for saving and loading maps
 [Serializable]
 public class SerializableVector2
 {
@@ -67,6 +66,7 @@ public class GraphLayoutManager : MonoBehaviour
         layoutDataPath = Application.persistentDataPath + "/graph_layout.dat";
     }
 
+    //Mocks our data using serializable custom classes above, saves to binary with binary formatter.
     public void SaveGraphLayout(List<SerializableNode> nodes)
     {
         try

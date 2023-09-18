@@ -73,6 +73,10 @@ public class MapGraph : MonoBehaviour
         graphLayoutManager.SaveGraphLayout(serializedNodes);
     }
 
+    ///<summary>
+    /// Spawn nodes based on the loaded layout data.
+    ///</summary>
+    //// <param name="layoutData">A custom serialized list of node objects with relevant data necessary to recreate a previous session from file.</param>
     private void SpawnFromSave(List<SerializableNode> layoutData)
     {
         List<GameObject> respawnNodes = new List<GameObject> ();
@@ -89,6 +93,10 @@ public class MapGraph : MonoBehaviour
         lineManager.ConnectNodes(respawnNodes);
     }
 
+    ///<summary>
+    /// Generate random positions for nodes based on grid dimensions.
+    ///</summary>
+    //// <param name="numberOfNodes">The amount of nodes to be spawned on the map.</param>
     private List<Vector2> GenerateRandomNodeLocations(int numberOfNodes)
     {
         //generate random positions for nodes based on grid dimensions
@@ -140,9 +148,14 @@ public class MapGraph : MonoBehaviour
         return randomNodeLocations;
     }
 
+    ///<summary>
+    ////Spawn nodes based locations and type inside of the grid.
+    ///</summary>
+    //// <param name="nodeLocations">Semi-random list of vectors used to determine where nodes will spawn.</param>
+    //// <param name="nodeGrid">2D list that keeps track of which cell contains a node (or doesn't).</param>
     private List<GameObject> SpawnNodes(List<Vector2> nodeLocations, List<List<Vector2?>> nodeGrid)
     {
-        //spawn nodes based locations and type
+        
         List<GameObject> nodes = new List<GameObject>();
         nodes.Add(nodeManager.SpawnBossNode(nodeLocations[0], graphContainer));
         for (int i = 1; i < nodeLocations.Count - 3; i++)
@@ -159,6 +172,9 @@ public class MapGraph : MonoBehaviour
         return nodes;
     }
 
+    ///<summary>
+    ////Spawns a new graph of nodes.
+    ///</summary>
     private void GenerateGraph()
     {
         //generate nodes and connect them
@@ -170,7 +186,9 @@ public class MapGraph : MonoBehaviour
         CheckRespawn(nodes);
     }
 
-    //utility to grab correct prefab from string
+    /// <summary>
+    ////utility to grab correct prefab from string
+    /// </summary>
     public List<string> GetPrefabNamesFromMap()
     {
         List<string> prefabNames = new List<string>();
@@ -186,7 +204,9 @@ public class MapGraph : MonoBehaviour
         return prefabNames;
     }
 
-    //compares tags of parent child, respawns if they match condition, updates dictionary and list of nodes.
+    /// <summary>
+    ////compares tags of parent child, respawns if they match condition, updates dictionary and list of nodes.
+    /// </summary>
     private void CheckRespawn(List<GameObject> nodes)
     {
         bool hasDuplicate;
@@ -234,6 +254,10 @@ public class MapGraph : MonoBehaviour
         SaveData(nodes);
     }
 
+    /// <summary>
+    /// Generates grid of nodes based on node locations.
+    /// </summary>
+    //// <param name="nodeLocations">Semi-random list of vectors used to determine where nodes will spawn.</param>
     private List<List<Vector2?>> GenerateNodeGrid(List<Vector2> nodeLocations)
     {
         List<List<Vector2?>> nodeGrid = new List<List<Vector2?>>();
@@ -269,6 +293,13 @@ public class MapGraph : MonoBehaviour
         }
         return nodeGrid;
     }
+    
+
+    /// <summary>
+    /// Utility function to get the grid position of a node.
+    /// </summary>
+    //// <param name="nodeLocation"></param>
+    //// <param name="nodeGrid"></param>
     public (int row, int col) GetNodeGridPosition(Vector2 nodeLocation, List<List<Vector2?>> nodeGrid)
     {
         //loop through each row in the grid
@@ -291,6 +322,10 @@ public class MapGraph : MonoBehaviour
 
         return (-1, -1);  //if not found
     }
+
+    /// <summary>
+    /// A Cleanup function before regenerating the graph.
+    /// </summary>
     public void RegenerateNodes()
     {
         //delete the current layout data from GraphLayoutManager to generate a new random layout next time (changing map)
