@@ -56,10 +56,21 @@ public class CardActions : MonoBehaviour
     {
         switch (mode)
         {
-            case 0:
-                GrowthBuff buff = new GrowthBuff();
-                buff.target = player;
-                player.AddBuff(buff);
+            case 0: //Add 1 Growth
+                GrowthBuff gbuff = new GrowthBuff();
+                gbuff.target = player;
+                player.AddBuff(gbuff);
+                break;
+            case 1: //Add 16 Poison
+                PoisonBuff pbuff = new PoisonBuff();
+                pbuff.target = player;
+                for (int i = 0; i < 16; i++)
+                {
+                    player.AddBuff(pbuff);
+                }
+                break;
+            case -1: //Cleanse All
+                player.CleanseBuffs();
                 break;
             default:
                 Debug.Log("Something gone wrong with Self Buff mode");
