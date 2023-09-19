@@ -38,10 +38,17 @@ public class CardDisplay : MonoBehaviour
         battleManager.selectedCard = this;
     }
 
-    //Tell manager this card is no longer selected
+    //Tell manager this card is no longer selected OR Choose the card for reward if battle is over.
     public void DeselectCard()
     {
-        battleManager.selectedCard = null;
+        if (battleManager.EnemyCount > 0) 
+        { 
+            battleManager.selectedCard = null; 
+        }
+        else
+        {
+            battleManager.AddCard(this.card);
+        }
     }
 
     public void HandleDrag()
@@ -52,10 +59,13 @@ public class CardDisplay : MonoBehaviour
     //Attempt to play the card
     public void HandleEndDrag()
     {
-        if (battleManager.energy < card.manaCost) //Check if there is enough energy to play the card
-            return;
+        if (battleManager.EnemyCount > 0) //Check if enemies exist
+        {
+            if (battleManager.energy < card.manaCost) //Check if there is enough energy to play the card
+                return;
 
-        battleManager.PlayCard(this); //Tell manager to play self
+            battleManager.PlayCard(this); //Tell manager to play self
+        }
     }
 
 }

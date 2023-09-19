@@ -95,6 +95,9 @@ public class CardActions : MonoBehaviour
                     player.TakeDamage(damage);
                 }
                 break;
+            case 9000: //DEBUG ATTACK MODE: Kill Target
+                target.TakeDamage(9999);
+                break;
             default:
                 Debug.Log("Something gone wrong with Attack Mode");
                 break;

@@ -6,6 +6,7 @@ using UnityEngine;
 using TMPro;
 using System.Xml;
 using UnityEditor.Build.Content;
+using UnityEngine.SceneManagement;
 
 public class BattleManager : MonoBehaviour
 {
@@ -27,9 +28,11 @@ public class BattleManager : MonoBehaviour
 
     [Header("Enemies")]
     public List<Entity> enemies = new List<Entity>();
+    public int EnemyCount = 0;
     
     CardActions cardActions;
     PlayerInfoController gameManager;
+    public GameObject RewardPanel;
 
     public void Awake()
     {
@@ -84,6 +87,8 @@ public class BattleManager : MonoBehaviour
 
             ent.gameObject.SetActive(true);
         }
+
+        EnemyCount = gameManager.currentEnemies.Count;
     }
 
     //Load CardDisplay game object with given Card data and make visible.
@@ -111,6 +116,29 @@ public class BattleManager : MonoBehaviour
         card.gameObject.SetActive(false); //Deactivate the gameObject
         cardsInHand.Remove(card.card); //Remove the Hand list item
         deck.Discard(card.card); //Put the card into the Discard pile of the Deck object.
+    }
+
+    public void AddKill() //Subtract our enemy counter for checking Battle End
+    {
+        EnemyCount--;
+
+        if (EnemyCount <= 0)
+        {
+            OpenReward();
+        }
+    }
+
+    public void OpenReward() //Complete the battle and return to main map screen
+    {
+        RewardPanel.SetActive(true);
+    }
+
+    public void AddCard(Card card) //Add reward card to main Player Deck
+    {
+        gameManager.playerDeck.Add(card);
+
+        SceneLoader.SceneNames = new List<string> { "OverWorld" }; //Return to overworld
+        SceneManager.LoadScene("OverWorld");
     }
 
     public void EndTurn()
