@@ -88,25 +88,32 @@ public class Entity : MonoBehaviour
 
     public void AddBuff(BuffBase buff)
     {
-        Debug.Log(buff);
-        if (buffs.Contains(buff))
+        bool buffFound = false;
+
+        for (int i = 0; i < buffs.Count; i++)
         {
-            buffs[buffs.IndexOf(buff)].Activate();
+            if (buffs[i].buffName == buff.buffName)
+            {
+                buffFound = true;
+                buffs[i].Activate();
+            }
         }
-        else
+
+        if (!buffFound)
         {
             buffs.Add(buff);
             buff.Activate();
         }
     }
 
-    public void CleanseBuffs()
+    public void CleanseBuffs() //Wipe all buffs on an entity
     {
         foreach (BuffBase buff in buffs)
         {
             buff.End();
-            buffs.Remove(buff);
         }
+
+        buffs.Clear();
     }
 
 }
