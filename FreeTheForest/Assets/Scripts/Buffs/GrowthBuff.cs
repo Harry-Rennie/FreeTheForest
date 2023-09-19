@@ -8,6 +8,7 @@ public class GrowthBuff : BuffBase
     {
         isPermanent = true;
         canStack= true;
+        buffName = "Growth";
     }
 
     public override void End()
@@ -22,5 +23,10 @@ public class GrowthBuff : BuffBase
         target.offense++;
         target.defense++;
         target.battleManager.energyGain++;
+    }
+
+    public override void Tick()
+    {
+        //For growth, nothing.
     }
 }
