@@ -14,8 +14,8 @@ GameObject:
   - component: {fileID: -9101990000201551972}
   - component: {fileID: 8752113426913974954}
   m_Layer: 0
-  m_Name: BasicMob
-  m_TagString: Basic
+  m_Name: Continue
+  m_TagString: Heal
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -67,7 +67,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 79c843b82176b5b439843fb1bd483538, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 3336336e2a65ad141b0b8bae6d94ec66, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -89,8 +89,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b924ca48ce5c64b4fb9c73e335efff35, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  sceneNames:
-  - Battle
+  encounterButtons: []
 --- !u!114 &8752113426913974954
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -137,7 +136,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: -9101990000201551972}
         m_TargetAssemblyTypeName: Navigation, Assembly-CSharp
-        m_MethodName: LoadEncounter
+        m_MethodName: Continue
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}

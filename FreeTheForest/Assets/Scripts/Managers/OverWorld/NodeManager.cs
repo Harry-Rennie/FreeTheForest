@@ -147,6 +147,27 @@ public class NodeManager : MonoBehaviour
         }
         return newNode;
     }
+
+    public GameObject ParsePrefabName(string prefabName)
+    {
+        if(prefabName.Contains("Heal"))
+        {
+            return healPrefab;
+        }
+        if(prefabName.Contains("Upgrade"))
+        {
+            return upgradePrefab;
+        }
+        if(prefabName.Contains("Basic"))
+        {
+            return basicPrefab;
+        }
+        if(prefabName.Contains("Boss"))
+        {
+            return bossPrefab;
+        }
+        return null;
+    }
     public void CleanNodes()
     {
         foreach (var node in nodesAddedSoFar)

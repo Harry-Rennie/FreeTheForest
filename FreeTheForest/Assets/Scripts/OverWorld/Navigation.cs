@@ -15,7 +15,18 @@ public class Navigation : MonoBehaviour
 
     public void LoadEncounter()
     {
-        SceneLoader.SceneNames = new List<string> { "Battle" };
+        SceneLoader.SceneNames.Add("Battle");
         SceneManager.LoadScene("Battle");
+
+    }
+
+    public void LoadHeal()
+    {
+        SceneManager.LoadScene("Heal");
+    }
+
+    public void Continue()
+    {
+        SceneManager.LoadScene("Overworld");
     }
 }
