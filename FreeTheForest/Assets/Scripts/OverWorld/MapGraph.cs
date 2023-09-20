@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class MapGraph : MonoBehaviour
 {
@@ -14,12 +15,13 @@ public class MapGraph : MonoBehaviour
     private RectTransform mGraph;
     [SerializeField] private RectTransform graphContainer;
     [SerializeField] private int numberOfNodes;
-    [SerializeField] private int gridSizeX = 8;
+    [SerializeField] private int gridSizeX = 7;
     [SerializeField] private int gridSizeY = 7;
     private float graphHeight;
     private float graphWidth;
     private List<List<Vector2?>> nodeGrid = new List<List<Vector2?>>();
     private List<Vector2> nodeLocations;
+    private List<GameObject> nodes;
     private void Awake()
     {
         //initializing graph and dimensions
@@ -44,13 +46,43 @@ public class MapGraph : MonoBehaviour
             nodeLocations = GenerateRandomNodeLocations(numberOfNodes);
             nodeLocations = NodeUtility.SortNodes(nodeLocations);
             GenerateNodeGrid(nodeLocations);
-            List<GameObject> nodes = SpawnNodes(nodeLocations, nodeGrid);
+            nodes = SpawnNodes(nodeLocations, nodeGrid);
             lineManager.ConnectNodes(nodes);
             CheckRespawn(nodes);
+            SaveData(nodes);
+            CheckProgress(nodes);
+        }
+    }
+
+
+    /// <summary>
+    /// Checks if the player has made progress in the game and enables next potential nodes based on floor number vs grid and connections.
+    /// </summary>
+    /// <param name="nodes"></param>
+    private void CheckProgress(List<GameObject> nodes)
+    {   
+        List<Vector2> progressPositions = new List<Vector2>();
+        foreach (GameObject node in nodes)
+        {
+            progressPositions.Add(node.GetComponent<RectTransform>().anchoredPosition);
+        }
+        List<List<Vector2>> nodeCheck = GenerateNodeGrid(progressPositions);
+        for (int row = 0; row < nodeCheck.Count; row++)
+        {
+            for (int col = 0; col < nodeCheck[row].Count; col++)
+            {
+                Vector2 nodeLocation = nodeCheck[row][col];
+                Debug.Log($"Node found at Row {row}, Col {col}, Location: {nodeLocation}");
+                if (nodeLocation.x == float.NegativeInfinity && nodeLocation.y == float.NegativeInfinity)
+                {
+                    Debug.Log("node location is negative infinity so dont do anything here...");
+                }
+            }
         }
     }
 
     //parses the data we need to recreate the map from the list of nodes.
+    //may need to serialize node grid as well.
     private void SaveData(List<GameObject> nodes)
     {
         List<SerializableNode> serializedNodes = new List<SerializableNode>();
@@ -184,6 +216,8 @@ public class MapGraph : MonoBehaviour
         List<GameObject> nodes = SpawnNodes(nodeLocations, nodeGrid);
         lineManager.ConnectNodes(nodes);
         CheckRespawn(nodes);
+        SaveData(nodes);
+        CheckProgress(nodes);
     }
 
     /// <summary>
@@ -250,49 +284,45 @@ public class MapGraph : MonoBehaviour
             updatedNodes.Add(entry.Key);
         }
         nodes.Clear();
-        nodes.AddRange(updatedNodes);
-        SaveData(nodes);
+        nodes.AddRange(updatedNodes);        
     }
 
     /// <summary>
     /// Generates grid of nodes based on node locations.
     /// </summary>
     //// <param name="nodeLocations">Semi-random list of vectors used to determine where nodes will spawn.</param>
-    private List<List<Vector2?>> GenerateNodeGrid(List<Vector2> nodeLocations)
+private List<List<Vector2>> GenerateNodeGrid(List<Vector2> nodeLocations)
+{
+    List<List<Vector2>> nodeGrid = new List<List<Vector2>>();
+
+    for (int y = 0; y < gridSizeY; y++)
     {
-        List<List<Vector2?>> nodeGrid = new List<List<Vector2?>>();
-
-        for (int y = 0; y < gridSizeY; y++)
+        List<Vector2> newRow = new List<Vector2>();
+        int nodesInRow = 0; //initialize the count of nodes in this row
+        for (int x = 0; x < gridSizeX; x++)
         {
-            List<Vector2?> newRow = new List<Vector2?>();
-            for (int x = 0; x < gridSizeX; x++)
-            {
-                newRow.Add(null);
-            }
-            nodeGrid.Add(newRow);
+            newRow.Add(Vector2.negativeInfinity);
         }
 
         foreach (var location in nodeLocations)
         {
             int row = Mathf.FloorToInt(location.y / (graphHeight / gridSizeY));
             int col = Mathf.FloorToInt(location.x / (graphWidth / gridSizeX));
-            nodeGrid[row][col] = location;
-        }
 
-        // Mark empty cells based on node locations and dimensions
-        foreach (var location in nodeLocations)
-        {
-            int row = Mathf.FloorToInt(location.y / (graphHeight / gridSizeY));
-            int col = Mathf.FloorToInt(location.x / (graphWidth / gridSizeX));
-
-            // Check if the cell above is empty and mark it
-            if (row > 0 && !nodeGrid[row - 1][col].HasValue)
+            //check if the location is within this row
+            if (row == y)
             {
-                nodeGrid[row - 1][col] = Vector2.negativeInfinity;
+                newRow[col] = location;
+                nodesInRow++; //increment the count of nodes in this row
             }
         }
-        return nodeGrid;
+
+        nodeGrid.Add(newRow);
     }
+
+    return nodeGrid;
+}
+
     
 
     /// <summary>
@@ -312,7 +342,7 @@ public class MapGraph : MonoBehaviour
                 if (nodeGrid[row][col].HasValue)
                 {
                     //check if the node location matches the grid cell value
-                    if (Vector2.Distance(nodeGrid[row][col].Value, nodeLocation) < 0.1f)
+                    if (Vector2.Distance(nodeGrid[row][col].Value, nodeLocation) < 1f)
                     {
                         return (row, col);  //return co-ords
                     }

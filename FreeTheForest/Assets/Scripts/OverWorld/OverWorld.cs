@@ -8,6 +8,8 @@ public class OverWorld : MonoBehaviour
 
     void Awake()
     {
+        //this needs a error check
+        if(PlayerInfoPanel.Instance != null)
         PlayerInfoPanel.Instance.ActivateUI();
     }
     // Start is called before the first frame update

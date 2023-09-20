@@ -13,6 +13,8 @@ public class PlayerInfoController : MonoBehaviour
     public int CurrentHealth;
     public int Strength;
     public int Defense;
+    //serialized while testing
+    [SerializeField] public int floorNumber = 0;
     public List<Card> playerDeck = new List<Card>(); //Holds the players current deck as a list of cards.
     public List<Card> cardLibrary = new List<Card>(); //Holds all possible reward cards.
     
