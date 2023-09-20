@@ -15,9 +15,8 @@ public class PlayerInfoController : MonoBehaviour
     public int Defense;
     public List<Card> playerDeck = new List<Card>(); //Holds the players current deck as a list of cards.
     public List<Card> cardLibrary = new List<Card>(); //Holds all possible reward cards.
-
+    
     public List<Enemy> currentEnemies = new List<Enemy>(); //Battle reads from here to load in enemies to battle scene.
-
     private void Awake()
     {
         if (instance == null)
@@ -32,6 +31,26 @@ public class PlayerInfoController : MonoBehaviour
 
     void Start()
     {
-        // You can perform other initialization logic here if needed.
+    }
+
+    public void GainHealth(int amount)
+    {
+
+    }
+
+    public void LoseHealth(int amount)
+    {
+
+    }
+
+    public int HealNode(float percentageHeal)
+    {
+        int amountToHeal = Mathf.RoundToInt(percentageHeal * MaxHealth);
+        CurrentHealth += amountToHeal;
+        if (CurrentHealth > MaxHealth)
+            CurrentHealth = MaxHealth;
+        
+        PlayerInfoPanel.Instance.UpdateStats();
+        return amountToHeal;
     }
 }

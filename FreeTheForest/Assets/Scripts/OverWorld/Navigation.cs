@@ -16,7 +16,7 @@ public class Navigation : MonoBehaviour
     public void LoadEncounter()
     {
         SceneLoader.SceneNames.Add("Battle");
-        SceneManager.LoadScene("Battle");
+        SceneManager.LoadSceneAsync("Battle");
 
     }
 

@@ -34,7 +34,6 @@ public class PlayerInfoPanel : MonoBehaviour
         // assign static managers to local variables
         playerInfoController = PlayerInfoController.instance;
         trinketManager = TrinketManager.Instance;
-
         // update the player info panel
         UpdateTrinkets();
         UpdateStats();
@@ -87,7 +86,21 @@ public class PlayerInfoPanel : MonoBehaviour
     /// </summary>
     public void MainMenu()
     {
+        DeactivateUI();
         SceneManager.LoadScene("TitleScreen");
     }
     #endregion
+
+    /// <summary>
+    /// Deactivates PlayerUI when in a scene that doesn't need it. Todo: reset stats properly for new game
+    /// </summary>
+    public void DeactivateUI()
+    {
+        gameObject.SetActive(false);
+    }
+
+    public void ActivateUI()
+    {
+        gameObject.SetActive(true);
+    }
 }
