@@ -72,10 +72,22 @@ public class MapGraph : MonoBehaviour
             for (int col = 0; col < nodeCheck[row].Count; col++)
             {
                 Vector2 nodeLocation = nodeCheck[row][col];
-                Debug.Log($"Node found at Row {row}, Col {col}, Location: {nodeLocation}");
-                if (nodeLocation.x == float.NegativeInfinity && nodeLocation.y == float.NegativeInfinity)
+                if (nodeLocation.x != float.NegativeInfinity && nodeLocation.y != float.NegativeInfinity)
                 {
-                    Debug.Log("node location is negative infinity so dont do anything here...");
+                    foreach(GameObject node in nodes)
+                    {
+                        if(node.GetComponent<RectTransform>().anchoredPosition == nodeLocation)
+                        {
+                            if(row == 0)
+                            {
+                                node.GetComponent<Button>().interactable = true;
+                            }
+                        }
+                    }
+                    if(row == 0)
+                    {
+                    
+                    }
                 }
             }
         }
