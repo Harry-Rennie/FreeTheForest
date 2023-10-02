@@ -31,6 +31,6 @@ A 2D roguelike card-battler, developed in Unity.
 ---
 # Credits
 ---
-Harry - Producer, Developer
-Ben - Game design, Developer
-Johnathan - Sound design, Developer 
+- Harry - Producer, Developer
+- Ben - Game design, Developer
+- Johnathan - Sound design, Developer 
