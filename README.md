@@ -18,15 +18,19 @@ A 2D roguelike card-battler, developed in Unity.
 ---
  - Outline game loop rules.
 
-## Outline other mechanics and keywords
+## Mechanics
+ - Outline keywords and other pertinent game mechanics.
 
 # Sound
+---
 - outline sound aesthetic, how sound was created and why.
 
 # Art and Animation
+---
 - outline aesthetic, and planning toward aesthetic, how and why.
 
 # Prospective Features
+---
 - mention nice to haves, if we continue development.
 
 # Credits
