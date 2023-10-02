@@ -8,6 +8,7 @@
 - [Production](#production)
 
 # Introduction
+---
 Collect cards, grow your forest, and escape a dystopian machine metropolis using powerful rewards gained along the way.
 
 ## What is it?
@@ -28,7 +29,6 @@ A 2D roguelike card-battler, developed in Unity.
 # Prospective Features
 - mention nice to haves, if we continue development.
 
----
 # Credits
 ---
 - Harry - Producer, Developer
