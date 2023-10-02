@@ -19,12 +19,15 @@ public class PlayerInfoPanel : MonoBehaviour
     public static PlayerInfoPanel Instance;
     private void Awake()
     {
-        if (Instance != null)
+        if (Instance == null)
         {
-            Debug.LogWarning("More than one instance of PlayerInfoPanel found.");
+            Instance = this;
+        }
+        else if(Instance != null)
+        {
+          //  Debug.LogWarning("More than one instance of PlayerInfoPanel found.");
             return;
         }
-        Instance = this;
     }
     #endregion
 

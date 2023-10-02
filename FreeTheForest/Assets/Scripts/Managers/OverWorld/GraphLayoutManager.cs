@@ -76,7 +76,7 @@ public class GraphLayoutManager : MonoBehaviour
             {
                 BinaryFormatter bf = new BinaryFormatter();
                 bf.Serialize(file, layoutData);
-                Debug.Log("File saved to:" + layoutDataPath);
+               // Debug.Log("File saved to:" + layoutDataPath);
             }
         }
         catch (Exception e)
@@ -95,7 +95,7 @@ public class GraphLayoutManager : MonoBehaviour
                 {
                     BinaryFormatter bf = new BinaryFormatter();
                     GraphLayoutData layoutData = (GraphLayoutData)bf.Deserialize(file);
-                    Debug.Log("File loaded from:" + layoutDataPath);
+                  // Debug.Log("File loaded from:" + layoutDataPath);
                     return layoutData.nodes;
                 }
             }
@@ -120,7 +120,7 @@ public class GraphLayoutManager : MonoBehaviour
                 {
                     fs.Close();
                 }
-                Debug.Log("File deleted from:" + layoutDataPath);
+             //   Debug.Log("File deleted from:" + layoutDataPath);
                 File.Delete(layoutDataPath);
             }
         }

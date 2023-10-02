@@ -13,6 +13,11 @@ public class PlayerInfoController : MonoBehaviour
     public int CurrentHealth;
     public int Strength;
     public int Defense;
+    public GameObject LastNodeVisited { get; set; }
+    public Vector2 lastPosition;
+
+    [SerializeField] private GraphLayoutManager graphLayoutManager;
+
     //serialized while testing
     [SerializeField] public int floorNumber = 0;
     public List<Card> playerDeck = new List<Card>(); //Holds the players current deck as a list of cards.
@@ -54,5 +59,15 @@ public class PlayerInfoController : MonoBehaviour
         
         PlayerInfoPanel.Instance.UpdateStats();
         return amountToHeal;
+    }
+    public void SetLastNodeVisited(GameObject node)
+    {
+        LastNodeVisited = node;
+        lastPosition = node.GetComponent<RectTransform>().anchoredPosition;
+    }
+
+    public GameObject GetLastNodeVisited()
+    {
+        return LastNodeVisited;
     }
 }

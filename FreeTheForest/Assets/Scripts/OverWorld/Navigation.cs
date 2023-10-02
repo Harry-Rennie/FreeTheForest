@@ -17,7 +17,6 @@ public class Navigation : MonoBehaviour
     {
         SceneLoader.SceneNames.Add("Battle");
         SceneManager.LoadSceneAsync("Battle");
-
     }
 
     public void LoadHeal()
@@ -27,6 +26,7 @@ public class Navigation : MonoBehaviour
 
     public void Continue()
     {
+        //need additional logic to not duplicate node objects in scene
         SceneManager.LoadScene("Overworld");
     }
 }

@@ -22,6 +22,8 @@ public class MapGraph : MonoBehaviour
     private List<List<Vector2?>> nodeGrid = new List<List<Vector2?>>();
     private List<Vector2> nodeLocations;
     private List<GameObject> nodes;
+    private PlayerInfoController gameManager;
+    private Vector2 lastNodePos;
     private void Awake()
     {
         //initializing graph and dimensions
@@ -29,13 +31,13 @@ public class MapGraph : MonoBehaviour
         graphHeight = mGraph.rect.height;
         graphWidth = mGraph.rect.width;
         graphContainer = transform.Find("GraphContainer").GetComponent<RectTransform>();
+        gameManager = FindObjectOfType<PlayerInfoController>();
     }
 
     private void Start()
     {
         //check if layout data is available (an existing list of serialized nodes)
         List<SerializableNode> layoutData = graphLayoutManager.LoadGraphLayout();
-
         if (layoutData.Count > 0)
         {
             SpawnFromSave(layoutData);
@@ -50,8 +52,13 @@ public class MapGraph : MonoBehaviour
             lineManager.ConnectNodes(nodes);
             CheckRespawn(nodes);
             SaveData(nodes);
-            CheckProgress(nodes);
         }
+        CheckProgress(nodes);
+        if(gameManager.lastPosition != null)
+        {
+        lastNodePos = gameManager.lastPosition;
+        }
+        Debug.Log(lastNodePos);
     }
 
 
@@ -83,10 +90,6 @@ public class MapGraph : MonoBehaviour
                                 node.GetComponent<Button>().interactable = true;
                             }
                         }
-                    }
-                    if(row == 0)
-                    {
-                    
                     }
                 }
             }
@@ -135,6 +138,7 @@ public class MapGraph : MonoBehaviour
         }
         //instead of connecting the lines from save, currently just reconnecting as the logic is the same - have tested.
         lineManager.ConnectNodes(respawnNodes);
+        nodes = respawnNodes;
     }
 
     ///<summary>
