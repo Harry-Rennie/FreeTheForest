@@ -9,6 +9,8 @@ public class MapGraph : MonoBehaviour
 {
     [SerializeField] private NodeManager nodeManager;
     [SerializeField] private LineManager lineManager;
+
+    [SerializeField] private LineDrawer lineDrawer;
     [SerializeField] private GraphLayoutManager graphLayoutManager;
 
     //configuration of graph
@@ -53,17 +55,69 @@ public class MapGraph : MonoBehaviour
             CheckRespawn(nodes);
             SaveData(nodes);
         }
-        CheckProgress(nodes);
-        if(gameManager.lastPosition != null)
+        if(gameManager.floorNumber == 0 && gameManager.lastPosition != null)
         {
-        lastNodePos = gameManager.lastPosition;
+            //if you have no progress, enable first row of nodes.
+            CheckProgress(nodes);
         }
-        Debug.Log(lastNodePos);
+        if(gameManager.lastPosition != null && gameManager.floorNumber > 0)
+        {
+            lastNodePos = gameManager.lastPosition;
+            IncrementFloor(nodes);
+        }
     }
 
-
     /// <summary>
-    /// Checks if the player has made progress in the game and enables next potential nodes based on floor number vs grid and connections.
+    /// Increments the floor number and updates the interactability accordingly.
+    /// </summary>
+    /// <param name="nodes"></param>
+    private void IncrementFloor(List<GameObject> nodes)
+    {
+        List<Vector2> progressPositions = new List<Vector2>();
+        foreach (GameObject node in nodes)
+        {
+            progressPositions.Add(node.GetComponent<RectTransform>().anchoredPosition);
+        }
+        List<List<Vector2>> nodeCheck = GenerateNodeGrid(progressPositions);
+        for (int row = 0; row < nodeCheck.Count; row++)
+        {
+            for (int col = 0; col < nodeCheck[row].Count; col++)
+            {
+                Vector2 nodeLocation = nodeCheck[row][col];
+                if (nodeLocation.x != float.NegativeInfinity && nodeLocation.y != float.NegativeInfinity)
+                {
+                    foreach(GameObject node in nodes)
+                    {
+                        if(node.GetComponent<RectTransform>().anchoredPosition == nodeLocation)
+                        {
+                            if(row <= gameManager.floorNumber)
+                            {
+                                //this ensures every node below the floor you are currently on is disabled.
+                                node.GetComponent<Button>().interactable = false;
+                            }
+                            if(row >= gameManager.floorNumber && lastNodePos != null)
+                            {
+                                //using utility from line manager to determine which nodes are above the last node visited, and connected via a line.
+                                GameObject lastNode = nodes.Find(x => x.GetComponent<RectTransform>().anchoredPosition == lastNodePos);
+                                List<GameObject> upperNodes = lineManager.GetUpperNodes(lastNode, nodes);
+                                foreach(GameObject parentNode in upperNodes)
+                                {
+                                    if(lineDrawer.HasLineBetween(lastNode, parentNode))
+                                    {
+                                        parentNode.GetComponent<Button>().interactable = true;
+                                    }
+                                }
+                            }
+
+                        }
+                            
+                    }
+                }
+            }
+        }
+    }
+    /// <summary>
+    /// Initializes first row of nodes to be interactable for start of game.
     /// </summary>
     /// <param name="nodes"></param>
     private void CheckProgress(List<GameObject> nodes)
@@ -233,7 +287,10 @@ public class MapGraph : MonoBehaviour
         lineManager.ConnectNodes(nodes);
         CheckRespawn(nodes);
         SaveData(nodes);
-        CheckProgress(nodes);
+        if(gameManager.floorNumber == 0)
+        {
+            CheckProgress(nodes);
+        }
     }
 
     /// <summary>
