@@ -102,7 +102,7 @@ public class MapGraph : MonoBehaviour
                                 List<GameObject> upperNodes = lineManager.GetUpperNodes(lastNode, nodes);
                                 foreach(GameObject parentNode in upperNodes)
                                 {
-                                    if(lineDrawer.HasLineBetween(lastNode, parentNode))
+                                    if(lineDrawer.HasLineBetween(lastNode, parentNode) || lineDrawer.HasLineBetween(parentNode, lastNode))
                                     {
                                         parentNode.GetComponent<Button>().interactable = true;
                                     }
