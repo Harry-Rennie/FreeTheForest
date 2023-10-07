@@ -24,6 +24,11 @@ public class Navigation : MonoBehaviour
         SceneManager.LoadScene("Heal");
     }
 
+    public void LoadUpgrade()
+    {
+        SceneManager.LoadScene("Upgrade");
+    }
+
     public void Continue()
     {
         //need additional logic to not duplicate node objects in scene

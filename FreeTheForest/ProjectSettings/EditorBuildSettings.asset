@@ -20,9 +20,12 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/MainMenu.unity
     guid: ea35c84e9aafd48ab82e0d4060d4f403
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/PlayerInfoPanel.unity
     guid: b99295ef498654b5697e13f52d2200cf
+  - enabled: 1
+    path: Assets/Scenes/Upgrade.unity
+    guid: 5f4f3bce81127b249bac500acd03981c
   - enabled: 1
     path: Assets/Scenes/Heal.unity
     guid: 26aebce83ee427d4182c216dca650d1b
