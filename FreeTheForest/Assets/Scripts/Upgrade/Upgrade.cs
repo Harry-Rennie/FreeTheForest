@@ -18,23 +18,36 @@ public class Upgrade : MonoBehaviour
         Canvas canvasComponent = controller.GetComponent<Canvas>();
         canvasComponent.renderMode = RenderMode.ScreenSpaceCamera;
         canvasComponent.worldCamera = camera.GetComponent<Camera>();
+
+        maxHealth.interactable = true;
+        strength.interactable = true;
+        defense.interactable = true;
     }
     public void GainMaxHealth()
     {
         PlayerInfoController.instance.MaxHealth += 5;
         PlayerInfoPanel.Instance.UpdateStats();
+        maxHealth.interactable = false;
+        strength.interactable = false;
+        defense.interactable = false;
     }
 
     public void GainStrength()
     {
         PlayerInfoController.instance.Strength += 1;
         PlayerInfoPanel.Instance.UpdateStats();
+        maxHealth.interactable = false;
+        strength.interactable = false;
+        defense.interactable = false;
     }
 
     public void GainDefense()
     {
         PlayerInfoController.instance.Defense += 1;
         PlayerInfoPanel.Instance.UpdateStats();
+        maxHealth.interactable = false;
+        strength.interactable = false;
+        defense.interactable = false;
     }
 
 }
