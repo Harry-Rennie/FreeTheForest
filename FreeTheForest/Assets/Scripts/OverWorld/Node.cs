@@ -15,6 +15,7 @@ public class Node : MonoBehaviour
     {
         Debug.Log("Node Completed");
         gameManager.floorNumber++;
+        gameManager.SetCurrentEnemies();
         gameManager.SetLastNodeVisited(node);
     }
 }

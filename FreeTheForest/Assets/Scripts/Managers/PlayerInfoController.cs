@@ -70,4 +70,9 @@ public class PlayerInfoController : MonoBehaviour
     {
         return LastNodeVisited;
     }
+
+    public void SetCurrentEnemies()
+    {
+        currentEnemies = MobManager.Instance.BattleGrid[floorNumber][0];
+    }
 }
