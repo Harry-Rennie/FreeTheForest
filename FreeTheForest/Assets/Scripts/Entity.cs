@@ -56,6 +56,11 @@ public class Entity : MonoBehaviour
         }
 
         Debug.Log($"Dealt {amount} damage");
+        if(isPlayer)
+        {
+            gameManager.CurrentHealth -= amount;
+            PlayerInfoPanel.Instance.UpdateStats();
+        }
 
         currentHealth -= amount; //Take damage
 
@@ -65,7 +70,8 @@ public class Entity : MonoBehaviour
             {
                 battleManager.AddKill();
             }
-            
+            //you die (player)
+
             Destroy(gameObject);
         }
     }
