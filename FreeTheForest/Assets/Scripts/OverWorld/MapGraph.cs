@@ -3,23 +3,29 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class MapGraph : MonoBehaviour
 {
     [SerializeField] private NodeManager nodeManager;
     [SerializeField] private LineManager lineManager;
+
+    [SerializeField] private LineDrawer lineDrawer;
     [SerializeField] private GraphLayoutManager graphLayoutManager;
 
     //configuration of graph
     private RectTransform mGraph;
     [SerializeField] private RectTransform graphContainer;
     [SerializeField] private int numberOfNodes;
-    [SerializeField] private int gridSizeX = 8;
+    [SerializeField] private int gridSizeX = 7;
     [SerializeField] private int gridSizeY = 7;
     private float graphHeight;
     private float graphWidth;
     private List<List<Vector2?>> nodeGrid = new List<List<Vector2?>>();
     private List<Vector2> nodeLocations;
+    private List<GameObject> nodes;
+    private PlayerInfoController gameManager;
+    private Vector2 lastNodePos;
     private void Awake()
     {
         //initializing graph and dimensions
@@ -27,13 +33,13 @@ public class MapGraph : MonoBehaviour
         graphHeight = mGraph.rect.height;
         graphWidth = mGraph.rect.width;
         graphContainer = transform.Find("GraphContainer").GetComponent<RectTransform>();
+        gameManager = FindObjectOfType<PlayerInfoController>();
     }
 
     private void Start()
     {
         //check if layout data is available (an existing list of serialized nodes)
         List<SerializableNode> layoutData = graphLayoutManager.LoadGraphLayout();
-
         if (layoutData.Count > 0)
         {
             SpawnFromSave(layoutData);
@@ -44,13 +50,108 @@ public class MapGraph : MonoBehaviour
             nodeLocations = GenerateRandomNodeLocations(numberOfNodes);
             nodeLocations = NodeUtility.SortNodes(nodeLocations);
             GenerateNodeGrid(nodeLocations);
-            List<GameObject> nodes = SpawnNodes(nodeLocations, nodeGrid);
+            nodes = SpawnNodes(nodeLocations, nodeGrid);
             lineManager.ConnectNodes(nodes);
             CheckRespawn(nodes);
+            SaveData(nodes);
+        }
+        if(gameManager.floorNumber == 0 && gameManager.lastPosition != null)
+        {
+            //if you have no progress, enable first row of nodes.
+            CheckProgress(nodes);
+        }
+        if(gameManager.lastPosition != null && gameManager.floorNumber > 0)
+        {
+            lastNodePos = gameManager.lastPosition;
+            IncrementFloor(nodes);
+        }
+    }
+
+    /// <summary>
+    /// Increments the floor number and updates the interactability accordingly.
+    /// </summary>
+    /// <param name="nodes"></param>
+    private void IncrementFloor(List<GameObject> nodes)
+    {
+        List<Vector2> progressPositions = new List<Vector2>();
+        foreach (GameObject node in nodes)
+        {
+            progressPositions.Add(node.GetComponent<RectTransform>().anchoredPosition);
+        }
+        List<List<Vector2>> nodeCheck = GenerateNodeGrid(progressPositions);
+        for (int row = 0; row < nodeCheck.Count; row++)
+        {
+            for (int col = 0; col < nodeCheck[row].Count; col++)
+            {
+                Vector2 nodeLocation = nodeCheck[row][col];
+                if (nodeLocation.x != float.NegativeInfinity && nodeLocation.y != float.NegativeInfinity)
+                {
+                    foreach(GameObject node in nodes)
+                    {
+                        if(node.GetComponent<RectTransform>().anchoredPosition == nodeLocation)
+                        {
+                            if(row <= gameManager.floorNumber)
+                            {
+                                //this ensures every node below the floor you are currently on is disabled.
+                                node.GetComponent<Button>().interactable = false;
+                            }
+                            if(row >= gameManager.floorNumber && lastNodePos != null)
+                            {
+                                //using utility from line manager to determine which nodes are above the last node visited, and connected via a line.
+                                GameObject lastNode = nodes.Find(x => x.GetComponent<RectTransform>().anchoredPosition == lastNodePos);
+                                List<GameObject> upperNodes = lineManager.GetUpperNodes(lastNode, nodes);
+                                foreach(GameObject parentNode in upperNodes)
+                                {
+                                    if(lineDrawer.HasLineBetween(lastNode, parentNode) || lineDrawer.HasLineBetween(parentNode, lastNode))
+                                    {
+                                        parentNode.GetComponent<Button>().interactable = true;
+                                    }
+                                }
+                            }
+
+                        }
+                            
+                    }
+                }
+            }
+        }
+    }
+    /// <summary>
+    /// Initializes first row of nodes to be interactable for start of game.
+    /// </summary>
+    /// <param name="nodes"></param>
+    private void CheckProgress(List<GameObject> nodes)
+    {   
+        List<Vector2> progressPositions = new List<Vector2>();
+        foreach (GameObject node in nodes)
+        {
+            progressPositions.Add(node.GetComponent<RectTransform>().anchoredPosition);
+        }
+        List<List<Vector2>> nodeCheck = GenerateNodeGrid(progressPositions);
+        for (int row = 0; row < nodeCheck.Count; row++)
+        {
+            for (int col = 0; col < nodeCheck[row].Count; col++)
+            {
+                Vector2 nodeLocation = nodeCheck[row][col];
+                if (nodeLocation.x != float.NegativeInfinity && nodeLocation.y != float.NegativeInfinity)
+                {
+                    foreach(GameObject node in nodes)
+                    {
+                        if(node.GetComponent<RectTransform>().anchoredPosition == nodeLocation)
+                        {
+                            if(row == 0)
+                            {
+                                node.GetComponent<Button>().interactable = true;
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
 
     //parses the data we need to recreate the map from the list of nodes.
+    //may need to serialize node grid as well.
     private void SaveData(List<GameObject> nodes)
     {
         List<SerializableNode> serializedNodes = new List<SerializableNode>();
@@ -91,6 +192,7 @@ public class MapGraph : MonoBehaviour
         }
         //instead of connecting the lines from save, currently just reconnecting as the logic is the same - have tested.
         lineManager.ConnectNodes(respawnNodes);
+        nodes = respawnNodes;
     }
 
     ///<summary>
@@ -184,6 +286,11 @@ public class MapGraph : MonoBehaviour
         List<GameObject> nodes = SpawnNodes(nodeLocations, nodeGrid);
         lineManager.ConnectNodes(nodes);
         CheckRespawn(nodes);
+        SaveData(nodes);
+        if(gameManager.floorNumber == 0)
+        {
+            CheckProgress(nodes);
+        }
     }
 
     /// <summary>
@@ -250,49 +357,45 @@ public class MapGraph : MonoBehaviour
             updatedNodes.Add(entry.Key);
         }
         nodes.Clear();
-        nodes.AddRange(updatedNodes);
-        SaveData(nodes);
+        nodes.AddRange(updatedNodes);        
     }
 
     /// <summary>
     /// Generates grid of nodes based on node locations.
     /// </summary>
     //// <param name="nodeLocations">Semi-random list of vectors used to determine where nodes will spawn.</param>
-    private List<List<Vector2?>> GenerateNodeGrid(List<Vector2> nodeLocations)
+private List<List<Vector2>> GenerateNodeGrid(List<Vector2> nodeLocations)
+{
+    List<List<Vector2>> nodeGrid = new List<List<Vector2>>();
+
+    for (int y = 0; y < gridSizeY; y++)
     {
-        List<List<Vector2?>> nodeGrid = new List<List<Vector2?>>();
-
-        for (int y = 0; y < gridSizeY; y++)
+        List<Vector2> newRow = new List<Vector2>();
+        int nodesInRow = 0; //initialize the count of nodes in this row
+        for (int x = 0; x < gridSizeX; x++)
         {
-            List<Vector2?> newRow = new List<Vector2?>();
-            for (int x = 0; x < gridSizeX; x++)
-            {
-                newRow.Add(null);
-            }
-            nodeGrid.Add(newRow);
+            newRow.Add(Vector2.negativeInfinity);
         }
 
         foreach (var location in nodeLocations)
         {
             int row = Mathf.FloorToInt(location.y / (graphHeight / gridSizeY));
             int col = Mathf.FloorToInt(location.x / (graphWidth / gridSizeX));
-            nodeGrid[row][col] = location;
-        }
 
-        // Mark empty cells based on node locations and dimensions
-        foreach (var location in nodeLocations)
-        {
-            int row = Mathf.FloorToInt(location.y / (graphHeight / gridSizeY));
-            int col = Mathf.FloorToInt(location.x / (graphWidth / gridSizeX));
-
-            // Check if the cell above is empty and mark it
-            if (row > 0 && !nodeGrid[row - 1][col].HasValue)
+            //check if the location is within this row
+            if (row == y)
             {
-                nodeGrid[row - 1][col] = Vector2.negativeInfinity;
+                newRow[col] = location;
+                nodesInRow++; //increment the count of nodes in this row
             }
         }
-        return nodeGrid;
+
+        nodeGrid.Add(newRow);
     }
+
+    return nodeGrid;
+}
+
     
 
     /// <summary>
@@ -312,7 +415,7 @@ public class MapGraph : MonoBehaviour
                 if (nodeGrid[row][col].HasValue)
                 {
                     //check if the node location matches the grid cell value
-                    if (Vector2.Distance(nodeGrid[row][col].Value, nodeLocation) < 0.1f)
+                    if (Vector2.Distance(nodeGrid[row][col].Value, nodeLocation) < 1f)
                     {
                         return (row, col);  //return co-ords
                     }

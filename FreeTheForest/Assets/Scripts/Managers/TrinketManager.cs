@@ -78,7 +78,7 @@ public class TrinketManager : MonoBehaviour
     {
         if (Instance != null)
         {
-            Debug.LogWarning("More than one instance of TrinketManager found.");
+          //  Debug.LogWarning("More than one instance of TrinketManager found.");
             // destroy myself
             Destroy(gameObject);
             return;

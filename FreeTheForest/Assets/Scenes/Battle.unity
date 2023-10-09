@@ -485,7 +485,7 @@ Transform:
   m_GameObject: {fileID: 265315584}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 643.4187, y: -303.15613, z: -5161.881}
+  m_LocalPosition: {x: 192, y: -306, z: -5161.881}
   m_LocalScale: {x: 59, y: 59, z: 59}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -1003,8 +1003,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -225, y: -421}
-  m_SizeDelta: {x: 100, y: 100}
+  m_AnchoredPosition: {x: -59, y: -421}
+  m_SizeDelta: {x: 758.22, y: 220.31}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &534756102
 MonoBehaviour:
@@ -3153,6 +3153,9 @@ MonoBehaviour:
   CurrentHealth: 0
   Strength: 0
   Defense: 0
+  lastPosition: {x: 0, y: 0}
+  graphLayoutManager: {fileID: 0}
+  floorNumber: 0
   playerDeck:
   - {fileID: 11400000, guid: 379b4da2af0008c4a81696633787b511, type: 2}
   - {fileID: 11400000, guid: 379b4da2af0008c4a81696633787b511, type: 2}
@@ -3935,6 +3938,7 @@ GameObject:
   - component: {fileID: 1780280016}
   - component: {fileID: 1780280015}
   - component: {fileID: 1780280014}
+  - component: {fileID: 1780280017}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -4016,6 +4020,22 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1780280017
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1780280013}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c49b4cc203aa6414fae5c798d1d0e7d6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_EventMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_MaxRayIntersections: 0
 --- !u!1001 &1804035842
 PrefabInstance:
   m_ObjectHideFlags: 0

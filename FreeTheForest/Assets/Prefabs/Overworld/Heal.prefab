@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 8608819820681363343}
   - component: {fileID: -9101990000201551972}
   - component: {fileID: 8752113426913974954}
+  - component: {fileID: 7731624686654097642}
   m_Layer: 0
   m_Name: Heal
   m_TagString: Heal
@@ -146,3 +147,28 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+      - m_Target: {fileID: 7731624686654097642}
+        m_TargetAssemblyTypeName: Node, Assembly-CSharp
+        m_MethodName: NodeClicked
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+--- !u!114 &7731624686654097642
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8074084271344646365}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: be2287a46f18e3d40a1390adec794f3b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  node: {fileID: 8074084271344646365}
