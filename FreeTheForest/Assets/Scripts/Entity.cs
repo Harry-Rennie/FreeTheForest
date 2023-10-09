@@ -16,13 +16,16 @@ public class Entity : MonoBehaviour
     public int offense;
     public int defense;
 
+    [Header("Buffs")]
+    public List<BuffBase> buffs;
+
     [Header("Player Check")]
     public bool isPlayer;
 
     [Header("Enemy Actions")]
     public List<Card> enemyCards;
 
-    BattleManager battleManager;
+    public BattleManager battleManager;
     PlayerInfoController gameManager;
 
     private void Awake()
@@ -41,6 +44,7 @@ public class Entity : MonoBehaviour
         {
         currentHealth = maxHealth;
         }
+        buffs= new List<BuffBase>();
     }
 
 
@@ -85,6 +89,36 @@ public class Entity : MonoBehaviour
         }
 
         return amount;
+    }
+
+    public void AddBuff(BuffBase buff)
+    {
+        bool buffFound = false;
+
+        for (int i = 0; i < buffs.Count; i++)
+        {
+            if (buffs[i].buffName == buff.buffName)
+            {
+                buffFound = true;
+                buffs[i].Activate();
+            }
+        }
+
+        if (!buffFound)
+        {
+            buffs.Add(buff);
+            buff.Activate();
+        }
+    }
+
+    public void CleanseBuffs() //Wipe all buffs on an entity
+    {
+        foreach (BuffBase buff in buffs)
+        {
+            buff.End();
+        }
+
+        buffs.Clear();
     }
 
 }

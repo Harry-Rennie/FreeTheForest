@@ -171,6 +171,7 @@ public class BattleManager : MonoBehaviour
         battleCounter++;
 
         //TODO: FUTURE CONTENT: Process buffs
+        ProcessBuffs();
 
         //Draw the player their next hand
         DrawCards(drawAmount);
@@ -180,5 +181,55 @@ public class BattleManager : MonoBehaviour
 
         //Set turn to yes
         playersTurn = true;
+    }
+
+    private void ProcessBuffs()
+    {
+        //Process player buffs
+        foreach (BuffBase buff in player.buffs)
+        {
+            if (buff.eachTurn)
+            {
+                buff.Tick();
+            }
+            
+            if (!buff.isPermanent)
+            {
+                buff.stacks--;
+                if (buff.stacks <= 0)
+                {
+                    buff.End();
+                }
+            }
+        }
+
+        //Remove all playerBuffs that have a stack of 0
+        player.buffs.RemoveAll(buff => buff.stacks <= 0);
+
+        //Now do it for each enemy
+        foreach (Entity enemy in enemies)
+        {
+            if (enemy.gameObject.activeSelf)
+            {
+                foreach (BuffBase buff in enemy.buffs)
+                {
+                    if (buff.eachTurn)
+                    {
+                        buff.Tick();
+                    }
+
+                    if (!buff.isPermanent)
+                    {
+                        buff.stacks--;
+                        if (buff.stacks <= 0)
+                        {
+                            buff.End();
+                        }
+                    }
+                }
+
+                enemy.buffs.RemoveAll(buff => buff.stacks <= 0);
+            }
+        }
     }
 }
