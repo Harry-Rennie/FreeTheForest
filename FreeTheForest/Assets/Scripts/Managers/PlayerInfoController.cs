@@ -13,10 +13,17 @@ public class PlayerInfoController : MonoBehaviour
     public int CurrentHealth;
     public int Strength;
     public int Defense;
+    public GameObject LastNodeVisited { get; set; }
+    public Vector2 lastPosition;
+
+    [SerializeField] private GraphLayoutManager graphLayoutManager;
+
+    //serialized while testing
+    [SerializeField] public int floorNumber = 0;
     public List<Card> playerDeck = new List<Card>(); //Holds the players current deck as a list of cards.
-
+    public List<Card> cardLibrary = new List<Card>(); //Holds all possible reward cards.
+    
     public List<Enemy> currentEnemies = new List<Enemy>(); //Battle reads from here to load in enemies to battle scene.
-
     private void Awake()
     {
         if (instance == null)
@@ -31,6 +38,36 @@ public class PlayerInfoController : MonoBehaviour
 
     void Start()
     {
-        // You can perform other initialization logic here if needed.
+    }
+
+    public void GainHealth(int amount)
+    {
+
+    }
+
+    public void LoseHealth(int amount)
+    {
+
+    }
+
+    public int HealNode(float percentageHeal)
+    {
+        int amountToHeal = Mathf.RoundToInt(percentageHeal * MaxHealth);
+        CurrentHealth += amountToHeal;
+        if (CurrentHealth > MaxHealth)
+            CurrentHealth = MaxHealth;
+        
+        PlayerInfoPanel.Instance.UpdateStats();
+        return amountToHeal;
+    }
+    public void SetLastNodeVisited(GameObject node)
+    {
+        LastNodeVisited = node;
+        lastPosition = node.GetComponent<RectTransform>().anchoredPosition;
+    }
+
+    public GameObject GetLastNodeVisited()
+    {
+        return LastNodeVisited;
     }
 }

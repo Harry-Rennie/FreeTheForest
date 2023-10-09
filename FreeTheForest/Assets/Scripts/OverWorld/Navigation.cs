@@ -15,7 +15,23 @@ public class Navigation : MonoBehaviour
 
     public void LoadEncounter()
     {
-        SceneLoader.SceneNames = new List<string> { "Battle" };
-        SceneManager.LoadScene("Battle");
+        SceneLoader.SceneNames.Add("Battle");
+        SceneManager.LoadSceneAsync("Battle");
+    }
+
+    public void LoadHeal()
+    {
+        SceneManager.LoadScene("Heal");
+    }
+
+    public void LoadUpgrade()
+    {
+        SceneManager.LoadScene("Upgrade");
+    }
+
+    public void Continue()
+    {
+        //need additional logic to not duplicate node objects in scene
+        SceneManager.LoadScene("Overworld");
     }
 }
