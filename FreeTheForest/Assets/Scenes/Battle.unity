@@ -591,6 +591,7 @@ MonoBehaviour:
   defense: 5
   isPlayer: 1
   enemyCards: []
+  battleManager: {fileID: 0}
 --- !u!1001 &387538994
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2528,17 +2529,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_TextMeshPro: {fileID: 0}
+  MaxHealth: 75
+  CurrentHealth: 75
+  Strength: 5
+  Defense: 5
   playerDeck:
-  - {fileID: 11400000, guid: b4b4d4673cb77404caa5afb14ffd80a6, type: 2}
-  - {fileID: 11400000, guid: b4b4d4673cb77404caa5afb14ffd80a6, type: 2}
-  - {fileID: 11400000, guid: b4b4d4673cb77404caa5afb14ffd80a6, type: 2}
-  - {fileID: 11400000, guid: b4b4d4673cb77404caa5afb14ffd80a6, type: 2}
-  - {fileID: 11400000, guid: b4b4d4673cb77404caa5afb14ffd80a6, type: 2}
-  - {fileID: 11400000, guid: 0c91da6c3ef651c4b9b0e07d277392c3, type: 2}
-  - {fileID: 11400000, guid: 0c91da6c3ef651c4b9b0e07d277392c3, type: 2}
-  - {fileID: 11400000, guid: 0c91da6c3ef651c4b9b0e07d277392c3, type: 2}
-  - {fileID: 11400000, guid: 0c91da6c3ef651c4b9b0e07d277392c3, type: 2}
-  - {fileID: 11400000, guid: 0c91da6c3ef651c4b9b0e07d277392c3, type: 2}
+  - {fileID: 11400000, guid: ce950cd2a51cc2940a10875376c5d45c, type: 2}
+  - {fileID: 11400000, guid: ce950cd2a51cc2940a10875376c5d45c, type: 2}
+  - {fileID: 11400000, guid: 3609c1cf994aba4469875583e251ea8b, type: 2}
+  - {fileID: 11400000, guid: ce950cd2a51cc2940a10875376c5d45c, type: 2}
+  - {fileID: 11400000, guid: ce950cd2a51cc2940a10875376c5d45c, type: 2}
   currentEnemies:
   - {fileID: 11400000, guid: 1c0e0a676bde91a4d85f6ab750710a11, type: 2}
 --- !u!4 &1501504310

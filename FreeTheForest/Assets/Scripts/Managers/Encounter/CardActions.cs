@@ -41,8 +41,11 @@ public class CardActions : MonoBehaviour
                     case Card.CardEffect.Draw:
                         DrawCards(card.values[i]);
                         break;
-                    case Card.CardEffect.BuffSelf:
-                        ApplySelfBuff(card.values[i]);
+                    case Card.CardEffect.PoisonSelf:
+                        ApplySelfPoison(card.values[i]);
+                        break;
+                    case Card.CardEffect.GrowthSelf:
+                        ApplySelfGrowth(card.values[i]);
                         break;
                     default:
                         Debug.Log("Something gone wrong with Performing Action");
@@ -52,29 +55,23 @@ public class CardActions : MonoBehaviour
         }
     }
 
-    private void ApplySelfBuff(int mode)
+    private void ApplySelfPoison(int stacks)
     {
-        switch (mode)
+        PoisonBuff pbuff = new PoisonBuff();
+        pbuff.target = player;
+        for (int i = 0; i < stacks; i++)
         {
-            case 0: //Add 1 Growth
-                GrowthBuff gbuff = new GrowthBuff();
-                gbuff.target = player;
-                player.AddBuff(gbuff);
-                break;
-            case 1: //Add 16 Poison
-                PoisonBuff pbuff = new PoisonBuff();
-                pbuff.target = player;
-                for (int i = 0; i < 16; i++)
-                {
-                    player.AddBuff(pbuff);
-                }
-                break;
-            case -1: //Cleanse All
-                player.CleanseBuffs();
-                break;
-            default:
-                Debug.Log("Something gone wrong with Self Buff mode");
-                break;
+            player.AddBuff(pbuff);
+        }
+    }
+
+    private void ApplySelfGrowth(int stacks)
+    {
+        GrowthBuff gbuff = new GrowthBuff();
+        gbuff.target = player;
+        for (int i = 0; i < stacks; i++)
+        {
+            player.AddBuff(gbuff);
         }
     }
 
