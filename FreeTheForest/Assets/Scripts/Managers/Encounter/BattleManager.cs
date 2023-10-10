@@ -11,8 +11,11 @@ using UnityEngine.SceneManagement;
 public class BattleManager : MonoBehaviour
 {
     [Header("Cards")]
-    public Deck deck = new Deck();
-    public List<Card> cardsInHand = new List<Card>();
+    public Deck deck;
+    public List<Card> cardsInHand;
+    public List<Card> discardPile;
+    public List<Card> exilePile;
+
     public CardDisplay selectedCard;
     public List<CardDisplay> handCardObjects;
 
@@ -27,8 +30,8 @@ public class BattleManager : MonoBehaviour
     public int battleCounter;
 
     [Header("Enemies")]
-    public List<Entity> enemies = new List<Entity>();
-    public int EnemyCount = 0;
+    [SerializeField] public List<Entity> enemies;
+    public int EnemyCount;
     
     CardActions cardActions;
     PlayerInfoController gameManager;
@@ -38,23 +41,20 @@ public class BattleManager : MonoBehaviour
     {
         gameManager = FindObjectOfType<PlayerInfoController>();
         cardActions = GetComponent<CardActions>();
-
         StartBattle();
     }
 
     //Function initializes the battle state, loading in the deck from GameManager and drawing the opening hand.
     public void StartBattle()
     {
-        LoadEnemies();
-        battleCounter = 0;
-        
         deck = new Deck();
         cardsInHand = new List<Card>();
-
-        deck.DiscardPile.AddRange(gameManager.playerDeck); //Add cards from GM to discard pile of new empty deck
+        deck.AddCards(gameManager.playerDeck);
+        battleCounter = 0;
+        energy = maxEnergy;
 
         DrawCards(drawAmount);
-        energy = maxEnergy;
+        LoadEnemies();
     }
 
     //Draw cards. Loop over Deck card draw X times. Load returned card into hand.
@@ -73,22 +73,19 @@ public class BattleManager : MonoBehaviour
 
     public void LoadEnemies()
     {
-        for(int i = 0; i < gameManager.currentEnemies.Count; i++)
-        {
-            Entity ent = enemies[i];
-            Enemy curEnemy = gameManager.currentEnemies[i];
-
-            ent.name = curEnemy.title;
-            ent.offense = curEnemy.offense;
-            ent.defense = curEnemy.defense;
-            ent.maxHealth = curEnemy.health;
-            ent.currentHealth = curEnemy.health;
-            ent.enemyCards = curEnemy.Actions;
-
-            ent.gameObject.SetActive(true);
-        }
-
         EnemyCount = gameManager.currentEnemies.Count;
+        List<Enemy> curEnemies = gameManager.currentEnemies;
+        //loop thorugh cur enemies
+        for(int i = 0; i < EnemyCount; i++)
+        {   
+            enemies[i].name = curEnemies[i].title;
+            enemies[i].offense = curEnemies[i].offense;
+            enemies[i].defense = curEnemies[i].defense;
+            enemies[i].maxHealth = curEnemies[i].health;
+            enemies[i].currentHealth = curEnemies[i].health;
+            enemies[i].enemyCards = curEnemies[i].Actions;
+            enemies[i].gameObject.SetActive(true);
+        }
     }
 
     //Load CardDisplay game object with given Card data and make visible.
@@ -158,7 +155,7 @@ public class BattleManager : MonoBehaviour
         //Go through each enemy and execute their actions
         foreach(Entity enemy in enemies)
         {
-            if (enemy.gameObject.activeSelf)
+            if (enemy != null && enemy.gameObject.activeSelf)
             {
                 int roll = battleCounter % enemy.enemyCards.Count;
 
@@ -171,11 +168,10 @@ public class BattleManager : MonoBehaviour
         battleCounter++;
 
         //TODO: FUTURE CONTENT: Process buffs
-        ProcessBuffs();
+        // ProcessBuffs();
 
         //Draw the player their next hand
         DrawCards(drawAmount);
-
         //Restore energy
         energy += energyGain;
 

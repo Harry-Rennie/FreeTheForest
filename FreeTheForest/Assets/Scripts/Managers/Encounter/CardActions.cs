@@ -7,6 +7,7 @@ using UnityEngine;
 public class CardActions : MonoBehaviour
 {
     Card card;
+    [SerializeField] PlayerAnimator PlayerSprite;
     public Entity target;
     public Entity player;
     BattleManager battleManager;
@@ -31,6 +32,7 @@ public class CardActions : MonoBehaviour
                 {
                     case Card.CardEffect.Attack:
                         AttackEnemy(card.values[i]); //Call the relevant effect with the current "values" as argument
+                        PlayerSprite.Attack();
                         break;
                     case Card.CardEffect.Block:
                         PerformBlock(card.values[i]);

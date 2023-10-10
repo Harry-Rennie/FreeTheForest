@@ -15,6 +15,7 @@ public class PlayerInfoController : MonoBehaviour
     public int Defense;
     public GameObject LastNodeVisited { get; set; }
     public Vector2 lastPosition;
+    public int EnemyCount;
 
     [SerializeField] private GraphLayoutManager graphLayoutManager;
 
@@ -74,5 +75,6 @@ public class PlayerInfoController : MonoBehaviour
     public void SetCurrentEnemies()
     {
         currentEnemies = MobManager.Instance.BattleGrid[floorNumber][0];
+        EnemyCount = currentEnemies.Count;
     }
 }
