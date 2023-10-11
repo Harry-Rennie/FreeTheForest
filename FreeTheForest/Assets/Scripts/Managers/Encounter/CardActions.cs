@@ -23,7 +23,6 @@ public class CardActions : MonoBehaviour
     {
         card = _card;
         target = _entity;
-
         if (card.effects != null) //Check that we have a card that does stuff
         {
             for (int i = 0; i < card.effects.Count; i++) //Loop through the effects

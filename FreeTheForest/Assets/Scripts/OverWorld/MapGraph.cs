@@ -21,6 +21,8 @@ public class MapGraph : MonoBehaviour
     [SerializeField] private int gridSizeY = 7;
     private float graphHeight;
     private float graphWidth;
+    private float cellHeight;
+    private float cellWidth;
     private List<List<Vector2?>> nodeGrid = new List<List<Vector2?>>();
     private List<Vector2> nodeLocations;
     private List<GameObject> nodes;

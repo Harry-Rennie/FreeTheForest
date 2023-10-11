@@ -35,7 +35,7 @@ public class MobManager : MonoBehaviour
     /// This should be replaced with a function that gets the maximum x and y values of the overworld tree
     /// </todo>
     private int overworldX = 1;
-    private int overworldY = 5;
+    private int overworldY = 7;
 
         #region Singleton
     // singleton pattern

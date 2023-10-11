@@ -10,7 +10,7 @@ public class PlayerAnimator : MonoBehaviour
     {
         animator = GetComponent<Animator>();
         //stop animator
-        animator.enabled = false;
+        StopAnimator();
     }
     void Start()
     {
@@ -28,5 +28,17 @@ public class PlayerAnimator : MonoBehaviour
         //start animator
         animator.enabled = true;
         animator.SetTrigger("attackTrigger");
+    }
+
+    public void SetIdle()
+    {
+        //start animator
+        animator.enabled = true;
+        animator.SetTrigger("idleTrigger");
+    }
+    public void StopAnimator()
+    {
+        //stop animator
+        animator.enabled = false;
     }
 }
