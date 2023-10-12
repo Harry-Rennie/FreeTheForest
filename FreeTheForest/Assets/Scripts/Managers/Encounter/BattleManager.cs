@@ -128,6 +128,12 @@ public class BattleManager : MonoBehaviour
     public void OpenReward() //Complete the battle and return to main map screen
     {
         RewardPanel.SetActive(true);
+        int goldToGain = Random.Range(8, 28);
+        for(int i = 0; i < goldToGain; i++)
+        {
+            gameManager.Gold +=1;
+            PlayerInfoPanel.Instance.UpdateStats();
+        }
     }
 
     public void AddCard(Card card) //Add reward card to main Player Deck

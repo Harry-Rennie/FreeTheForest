@@ -13,6 +13,8 @@ public class PlayerInfoController : MonoBehaviour
     public int CurrentHealth;
     public int Strength;
     public int Defense;
+    public int Gold;
+    public int Energy;
     public GameObject LastNodeVisited { get; set; }
     public Vector2 lastPosition;
     public int EnemyCount;
@@ -39,6 +41,8 @@ public class PlayerInfoController : MonoBehaviour
 
     void Start()
     {
+        Energy = 3;
+        Gold = 25;
     }
 
     public void GainHealth(int amount)

@@ -61,6 +61,7 @@ public class MapGraph : MonoBehaviour
         {
             //if you have no progress, enable first row of nodes.
             CheckProgress(nodes);
+            gameManager.Gold = 0;
         }
         if(gameManager.lastPosition != null && gameManager.floorNumber > 0)
         {
