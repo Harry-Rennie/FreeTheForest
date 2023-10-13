@@ -13,9 +13,6 @@ public class BattleManager : MonoBehaviour
     [Header("Cards")]
     public Deck deck;
     public List<Card> cardsInHand;
-    public List<Card> discardPile;
-    public List<Card> exilePile;
-
     public CardDisplay selectedCard;
     public List<CardDisplay> handCardObjects;
 
@@ -49,7 +46,7 @@ public class BattleManager : MonoBehaviour
     {
         deck = new Deck();
         cardsInHand = new List<Card>();
-        deck.AddCards(gameManager.playerDeck);
+        deck.DiscardPile.AddRange(gameManager.playerDeck);
         battleCounter = 0;
         energy = maxEnergy;
 
