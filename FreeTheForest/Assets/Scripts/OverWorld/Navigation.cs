@@ -31,7 +31,7 @@ public class Navigation : MonoBehaviour
 
     public void Continue()
     {
-        //need additional logic to not duplicate node objects in scene
+        PlayerInfoPanel.Instance.UpdateStats();
         SceneManager.LoadScene("Overworld");
     }
 }

@@ -63,6 +63,11 @@ public class PlayerInfoPanel : MonoBehaviour
         floorNumber.text = @$"{playerInfoController.floorNumber + 1}";
     }
 
+    public void UpdateGold()
+    {
+        gold.text = @$"{playerInfoController.Gold}";
+    }
+
     /// <summary>
     /// This method updates the trinkets in the player info panel based on the player trinkets in trinketManager.
     /// </summary>
