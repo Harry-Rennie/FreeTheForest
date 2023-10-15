@@ -17,6 +17,7 @@ public class Deck : MonoBehaviour
     /// <param name="card">The card to add to the Deck.</param>
     public void AddCard(Card card) => MainDeck.Add(card);
 
+    public void AddCards(List<Card> cards) => MainDeck.AddRange(cards);
     /// <summary>
     /// Removes a card from the Deck.
     /// </summary>
@@ -41,6 +42,7 @@ public class Deck : MonoBehaviour
     /// <returns>The drawn card from the Deck, or null if both Deck and discard pile are empty.</returns>
     public Card DrawCard()
     {
+
         // check if Deck is empty
         if (MainDeck.Count == 0)
         {

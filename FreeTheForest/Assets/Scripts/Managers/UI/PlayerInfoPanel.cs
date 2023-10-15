@@ -10,7 +10,13 @@ using TMPro;
 public class PlayerInfoPanel : MonoBehaviour
 {
     public List<TrinketSlot> TrinketSlots;
-    [SerializeField] private TMP_Text playerStats;
+    [SerializeField] public TMP_Text strength;
+    [SerializeField] public TMP_Text defense;
+    [SerializeField] public TMP_Text gold;
+    [SerializeField] public TMP_Text energy;
+    [SerializeField] public TMP_Text health;
+    [SerializeField] public TMP_Text floorNumber;
+
     private PlayerInfoController playerInfoController;
     private TrinketManager trinketManager;
 
@@ -48,9 +54,18 @@ public class PlayerInfoPanel : MonoBehaviour
     /// </summary>
     public void UpdateStats()
     {
-        playerStats.text = @$"<b>Health:</b>      {playerInfoController.CurrentHealth}/{playerInfoController.MaxHealth} {getBuffString(trinketManager.TotalHealthBuff)}
-<b>Strength:</b>   {playerInfoController.Strength} {getBuffString(trinketManager.TotalStrengthBuff)}
-<b>Defense:</b>    {playerInfoController.Defense} {getBuffString(trinketManager.TotalDefenseBuff)}";
+        health.text = @$"{playerInfoController.CurrentHealth}/{playerInfoController.MaxHealth} {getBuffString(trinketManager.TotalHealthBuff)}";
+        strength.text = @$"{playerInfoController.Strength} {getBuffString(trinketManager.TotalStrengthBuff)}";
+        defense.text = @$"{playerInfoController.Defense} {getBuffString(trinketManager.TotalDefenseBuff)}";
+        gold.text = @$"{playerInfoController.Gold}";
+        energy.text = @$"{playerInfoController.Energy}";
+        //we dont want to visually display 0 based floors
+        floorNumber.text = @$"{playerInfoController.floorNumber + 1}";
+    }
+
+    public void UpdateGold()
+    {
+        gold.text = @$"{playerInfoController.Gold}";
     }
 
     /// <summary>

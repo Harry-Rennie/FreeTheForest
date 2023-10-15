@@ -21,6 +21,8 @@ public class MapGraph : MonoBehaviour
     [SerializeField] private int gridSizeY = 7;
     private float graphHeight;
     private float graphWidth;
+    private float cellHeight;
+    private float cellWidth;
     private List<List<Vector2?>> nodeGrid = new List<List<Vector2?>>();
     private List<Vector2> nodeLocations;
     private List<GameObject> nodes;
@@ -59,6 +61,7 @@ public class MapGraph : MonoBehaviour
         {
             //if you have no progress, enable first row of nodes.
             CheckProgress(nodes);
+            gameManager.Gold = 0;
         }
         if(gameManager.lastPosition != null && gameManager.floorNumber > 0)
         {
