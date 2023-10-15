@@ -17,6 +17,10 @@ public class PlayerInfoPanel : MonoBehaviour
     [SerializeField] public TMP_Text health;
     [SerializeField] public TMP_Text floorNumber;
 
+    [SerializeField] public Button saveButton;
+    [SerializeField] public Button noSave;
+    [SerializeField] public GameObject savePanel;
+
     private PlayerInfoController playerInfoController;
     private TrinketManager trinketManager;
 
@@ -105,10 +109,27 @@ public class PlayerInfoPanel : MonoBehaviour
     public void MainMenu()
     {
         DeactivateUI();
+        //reset game
+        playerInfoController.ResetPlayerInfo();
         SceneManager.LoadScene("TitleScreen");
     }
     #endregion
 
+    public void ShowSavePanel()
+    {
+        savePanel.SetActive(true);
+    }
+    public void SaveOption()
+    {
+        savePanel.SetActive(false);
+        MainMenu();
+    }
+
+    public void NoSaveOption()
+    {
+        savePanel.SetActive(false);
+        MainMenu();
+    }
     /// <summary>
     /// Deactivates PlayerUI when in a scene that doesn't need it. Todo: reset stats properly for new game
     /// </summary>

@@ -41,8 +41,7 @@ public class PlayerInfoController : MonoBehaviour
 
     void Start()
     {
-        Energy = 3;
-        Gold = 25;
+        ResetPlayerInfo();
     }
 
     public void GainHealth(int amount)
@@ -80,5 +79,16 @@ public class PlayerInfoController : MonoBehaviour
     {
         currentEnemies = MobManager.Instance.BattleGrid[floorNumber][0];
         EnemyCount = currentEnemies.Count;
+    }
+
+    public void ResetPlayerInfo()
+    {
+        MaxHealth = 100;
+        CurrentHealth = 100;
+        Strength = 1000;
+        Defense = 1;
+        Gold = 25;
+        Energy = 3;
+        floorNumber = 0;
     }
 }

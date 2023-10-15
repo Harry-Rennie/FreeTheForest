@@ -12,6 +12,7 @@ public class TitleScreen : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        Clean();
         if(volumeOn.activeSelf == true)
         {
             audioManager.GetComponent<AudioManager>().PlayMusic("ForestTheme");
@@ -21,8 +22,24 @@ public class TitleScreen : MonoBehaviour
             audioManager.GetComponent<AudioManager>().PlayMusic("ForestTheme");
             audioManager.GetComponent<AudioManager>().ToggleMusic();
         }
+    }
 
-        SceneManager.LoadSceneAsync("MainMenu", LoadSceneMode.Additive);      
+    void Clean()
+    {
+        //if playerinfocontroller exists, destroy it
+        if (PlayerInfoController.instance != null)
+        {
+            Destroy(PlayerInfoController.instance.gameObject);
+        }
+        if (TrinketManager.Instance != null)
+        {
+            Destroy(TrinketManager.Instance.gameObject);
+        }
+        if (MobManager.Instance != null)
+        {
+            Destroy(MobManager.Instance.gameObject);
+        }
+
     }
 
 }
