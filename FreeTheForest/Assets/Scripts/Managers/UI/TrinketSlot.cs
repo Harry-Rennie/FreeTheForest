@@ -54,6 +54,7 @@ public class TrinketSlot : MonoBehaviour, IPointerClickHandler
     /// <param name="eventData">The pointer event data.</param>
     public virtual void OnPointerClick(PointerEventData eventData)
     {
+        //raycast down and try find trinketslot game object
         // if the trinket is null, return
         if (trinket == null)
         {

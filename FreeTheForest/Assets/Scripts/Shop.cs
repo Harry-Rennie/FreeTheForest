@@ -57,6 +57,7 @@ public class Shop : MonoBehaviour
         {
             int randomIndex = Random.Range(0, cardLibrary.Count);
             cardsForSale.Add(cardLibrary[randomIndex]);
+            cardLibrary.RemoveAt(randomIndex); //stopping duplicate cards in shop
         }
         for (int i = 0; i < cardsForSale.Count; i++)
         {
