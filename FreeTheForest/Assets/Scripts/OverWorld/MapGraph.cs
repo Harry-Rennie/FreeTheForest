@@ -29,6 +29,7 @@ public class MapGraph : MonoBehaviour
     private List<GameObject> nodes;
     private PlayerInfoController gameManager;
     private Vector2 lastNodePos;
+    private float scrollToPosition;
     private void Awake()
     {
         //initializing graph and dimensions
@@ -67,7 +68,12 @@ public class MapGraph : MonoBehaviour
         {
             lastNodePos = gameManager.lastPosition;
             IncrementFloor(nodes);
+            //move the map down by the amount of rows you have progressed.
+            float scrollGridPositionChange = (graphHeight / gridSizeY) * gameManager.floorNumber + 50f;
+            graphContainer.anchoredPosition = new Vector2(graphContainer.anchoredPosition.x, graphContainer.anchoredPosition.y - scrollGridPositionChange);
+            lineManager.SnapLines(scrollGridPositionChange);
         }
+
     }
 
     /// <summary>
@@ -108,6 +114,7 @@ public class MapGraph : MonoBehaviour
                                     if(lineDrawer.HasLineBetween(lastNode, parentNode) || lineDrawer.HasLineBetween(parentNode, lastNode))
                                     {
                                         parentNode.GetComponent<Button>().interactable = true;
+                                        scrollToPosition = parentNode.GetComponent<RectTransform>().anchoredPosition.y;
                                     }
                                 }
                             }
@@ -129,7 +136,6 @@ public class MapGraph : MonoBehaviour
         foreach (GameObject node in nodes)
         {
             progressPositions.Add(node.GetComponent<RectTransform>().anchoredPosition);
-            Debug.Log("Adding position:" + node.GetComponent<RectTransform>().anchoredPosition);
         }
         List<List<Vector2>> nodeCheck = GenerateNodeGrid(progressPositions);
         for (int row = 0; row < nodeCheck.Count; row++)
@@ -143,7 +149,7 @@ public class MapGraph : MonoBehaviour
                     {
                         if(node.GetComponent<RectTransform>().anchoredPosition == nodeLocation)
                         {
-                            if(row == 1)
+                            if(row == 0)
                             {
                                 node.GetComponent<Button>().interactable = true;
                             }

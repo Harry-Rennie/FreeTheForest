@@ -12,14 +12,13 @@ public class LineManager : MonoBehaviour
     [SerializeField] public float scrollPositionSensitivity; // Adjust this factor as needed        
     public Vector2 previousScrollPosition;
     private float scrollPositionChange;
-    private bool initialScrollUpdate = true;
     private float initialGraphY;
     //connect given nodes based on their position
 
     public void Start()
     {
-            initialGraphY = graphContainer.anchoredPosition.y;
-            scrollRect = graphContainer.transform.GetComponent<ScrollRect>();
+        initialGraphY = graphContainer.anchoredPosition.y;
+        scrollRect = graphContainer.transform.GetComponent<ScrollRect>();
         if (scrollRect != null)
         {
             scrollRect.onValueChanged.AddListener(OnScrollValueChanged);
@@ -30,11 +29,8 @@ public class LineManager : MonoBehaviour
 public void Update()
 {
     float graphContainerPositionY = graphContainer.anchoredPosition.y;
-
     // Calculate the change in graphContainerPositionY relative to the initial position
     float scrollPositionChange = (graphContainerPositionY - initialGraphY) * scrollPositionSensitivity;
-        scrollRect.enabled = true;
-            // Adjust the lines based on the scaled scrollPositionChange
         AdjustLines(scrollPositionChange);
 
         // Update the initial position
@@ -44,8 +40,6 @@ public void Update()
     public void OnScrollValueChanged(Vector2 value)
     {
         previousScrollPosition = value;
-        Debug.Log("Scroll position changed to: " + value);
-        initialScrollUpdate = false;
     }
 
     public void AdjustLines(float scrollPositionChange)
@@ -68,6 +62,29 @@ public void Update()
         //the need to move in opp y direction
         
         Vector3 offset = new Vector3(0f, scrollPositionChange, 0f);
+
+        lr.SetPosition(0, lineStart + offset);
+        lr.SetPosition(1, lineEnd + offset);
+    }
+}
+public void SnapLines(float scrollLinePositionChange)
+{
+    // Get all line objects from the graph container
+    List<GameObject> lines = graphContainer.transform.Cast<Transform>()
+        .SelectMany(child => child.Cast<Transform>())
+        .Where(child => child.name.StartsWith("Line"))
+        .Select(child => child.gameObject)
+        .ToList();
+
+    // Offset each line by the scroll position change
+    foreach (GameObject line in lines)
+    {
+        LineRenderer lr = line.GetComponent<LineRenderer>();
+        Vector3 lineStart = lr.GetPosition(0);
+        Vector3 lineEnd = lr.GetPosition(1);
+
+        // Create a Vector3 offset with the Y component adjusted by scrollLinePositionChange
+        Vector3 offset = new Vector3(0f, -scrollLinePositionChange * scrollPositionSensitivity, 0f); // Use a negative offset to move the lines down
 
         lr.SetPosition(0, lineStart + offset);
         lr.SetPosition(1, lineEnd + offset);
