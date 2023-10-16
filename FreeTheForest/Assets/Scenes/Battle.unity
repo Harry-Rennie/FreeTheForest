@@ -312,8 +312,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   deck: {fileID: 0}
   cardsInHand: []
-  discardPile: []
-  exilePile: []
   selectedCard: {fileID: 0}
   handCardObjects:
   - {fileID: 1571020532}
@@ -635,6 +633,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 445304782535641922, guid: bdd548904a0892441a71e6ca1e87a679, type: 3}
       propertyPath: m_Layer
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1614072963706237808, guid: bdd548904a0892441a71e6ca1e87a679, type: 3}
+      propertyPath: m_Enabled
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2385813484790286139, guid: bdd548904a0892441a71e6ca1e87a679, type: 3}
@@ -992,6 +994,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 445304782535641922, guid: bdd548904a0892441a71e6ca1e87a679, type: 3}
       propertyPath: m_Layer
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1614072963706237808, guid: bdd548904a0892441a71e6ca1e87a679, type: 3}
+      propertyPath: m_Enabled
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2385813484790286139, guid: bdd548904a0892441a71e6ca1e87a679, type: 3}
@@ -2847,6 +2853,10 @@ PrefabInstance:
       propertyPath: m_Layer
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 1614072963706237808, guid: bdd548904a0892441a71e6ca1e87a679, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2385813484790286139, guid: bdd548904a0892441a71e6ca1e87a679, type: 3}
       propertyPath: m_Layer
       value: 0
@@ -3478,6 +3488,8 @@ MonoBehaviour:
   CurrentHealth: 0
   Strength: 0
   Defense: 0
+  Gold: 0
+  Energy: 0
   lastPosition: {x: 0, y: 0}
   EnemyCount: 0
   graphLayoutManager: {fileID: 0}
