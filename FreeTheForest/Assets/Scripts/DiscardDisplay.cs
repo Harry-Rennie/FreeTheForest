@@ -129,7 +129,7 @@ public class DiscardDisplay : MonoBehaviour
         // calculate the amount of cards that can fit in a row
         int amtCardsPerRow = compendiumWidth / cardCellWidth;
         // calculate the amount of rows needed to display all the cards
-        int rows = (int)Mathf.Ceil((float)deck.DiscardPile.Count + deck.ExiledPile.Count / amtCardsPerRow);
+        int rows = (int)Mathf.Ceil((float)(deck.DiscardPile.Count + deck.ExiledPile.Count) / amtCardsPerRow);
 
         // set the height of the cardContainer to the height of the cards * the amount of rows, or the minimum height of the compendium
         cardContainerRect.sizeDelta = (rows > minCompendiumHeight / cardCellHeight) ?
