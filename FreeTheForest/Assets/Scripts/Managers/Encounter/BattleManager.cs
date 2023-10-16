@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 using System.Xml;
-using UnityEditor.Build.Content;
 using UnityEngine.SceneManagement;
 
 public class BattleManager : MonoBehaviour
