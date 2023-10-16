@@ -45,7 +45,7 @@ public class DrawDisplay : MonoBehaviour
     {
         battleManager = FindObjectOfType<BattleManager>();
         deck = battleManager.deck;
-        testDraw(20);
+        testDraw(15);
         // resize the height of the compendium if necessary
         setCompendiumWidth();
         // populate the compendium with the player's cards
@@ -98,16 +98,16 @@ public class DrawDisplay : MonoBehaviour
 
     private void testDraw(int drawAmt = 30)
     {
-        Card testCard = new Card();
 
-        testCard.title = "New Card";
-        testCard.description = "New Card Description";
-        testCard.manaCost = 0;
+
 
 
         for (int i = 0; i < drawAmt; i++)
         {
-            // add card to draw pile
+            Card testCard = new Card();
+            testCard.title = "New Card " + i;
+            testCard.description = "New Card Description";
+            testCard.manaCost = 0;
             deck.AddCard(testCard);
 
         }

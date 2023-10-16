@@ -9,7 +9,7 @@ using UnityEngine.UI;
 /// </summary>
 public class DiscardDisplay : MonoBehaviour
 {
-    public float Val { get; set; }
+    public float Val { get; set; } = 0;
     /// <summary>
     /// The UI element that contains the ScrollRect.
     /// </summary>
@@ -54,10 +54,11 @@ public class DiscardDisplay : MonoBehaviour
         displayCards();
     }
 
-    private void Update()
-    {
-        ScrollRect.verticalNormalizedPosition = Val;
-    }
+    // private void Update()
+    // {
+    //     ScrollRect.verticalNormalizedPosition = Val;
+    // }
+
     /// <summary>
     /// This function displays all the cards in the player's deck in the compendium.
     /// </summary>
@@ -152,22 +153,23 @@ public class DiscardDisplay : MonoBehaviour
 
     private void testDiscard(int discardAmt = 5, int exileAmt = 5)
     {
-        Card testCard = new Card();
-
-        testCard.title = "New Card";
-        testCard.description = "New Card Description";
-        testCard.manaCost = 0;
-
 
         for (int i = 0; i < discardAmt; i++)
         {
-            Card card = new Card();
+                        Card testCard = new Card();
+            testCard.title = "New Card " + i;
+            testCard.description = "New Card Description";
+            testCard.manaCost = 0;
+
             // add card to discard pile with playerDeck.Discard(card);
             deck.Discard(testCard);
         }
         for (int i = 0; i < exileAmt; i++)
         {
-            Card card = new Card();
+                        Card testCard = new Card();
+            testCard.title = "New Card " + i;
+            testCard.description = "New Card Description";
+            testCard.manaCost = 0;
             // add card to discard pile with playerDeck.Discard(card);
             deck.ExileCard(testCard);
         }
