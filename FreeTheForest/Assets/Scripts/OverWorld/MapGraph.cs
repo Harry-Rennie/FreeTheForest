@@ -15,6 +15,7 @@ public class MapGraph : MonoBehaviour
 
     //configuration of graph
     private RectTransform mGraph;
+    private ScrollRect scrollRect;
     [SerializeField] private RectTransform graphContainer;
     [SerializeField] private int numberOfNodes;
     [SerializeField] private int gridSizeX = 7;
@@ -128,6 +129,7 @@ public class MapGraph : MonoBehaviour
         foreach (GameObject node in nodes)
         {
             progressPositions.Add(node.GetComponent<RectTransform>().anchoredPosition);
+            Debug.Log("Adding position:" + node.GetComponent<RectTransform>().anchoredPosition);
         }
         List<List<Vector2>> nodeCheck = GenerateNodeGrid(progressPositions);
         for (int row = 0; row < nodeCheck.Count; row++)
@@ -141,7 +143,7 @@ public class MapGraph : MonoBehaviour
                     {
                         if(node.GetComponent<RectTransform>().anchoredPosition == nodeLocation)
                         {
-                            if(row == 0)
+                            if(row == 1)
                             {
                                 node.GetComponent<Button>().interactable = true;
                             }

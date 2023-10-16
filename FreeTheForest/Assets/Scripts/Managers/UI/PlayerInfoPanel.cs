@@ -20,6 +20,7 @@ public class PlayerInfoPanel : MonoBehaviour
     [SerializeField] public Button saveButton;
     [SerializeField] public Button noSave;
     [SerializeField] public GameObject savePanel;
+    [SerializeField] public GameObject settingsPanel;
 
     private PlayerInfoController playerInfoController;
     private TrinketManager trinketManager;
@@ -129,6 +130,11 @@ public class PlayerInfoPanel : MonoBehaviour
     {
         savePanel.SetActive(false);
         MainMenu();
+    }
+
+    public void ShowSettingsPanel()
+    {
+        settingsPanel.SetActive(true);
     }
     /// <summary>
     /// Deactivates PlayerUI when in a scene that doesn't need it. Todo: reset stats properly for new game
