@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -8,6 +9,7 @@ using UnityEngine.UI;
 /// </summary>
 public class DiscardDisplay : MonoBehaviour
 {
+    public float Val { get; set; }
     /// <summary>
     /// The UI element that contains the ScrollRect.
     /// </summary>
@@ -52,6 +54,10 @@ public class DiscardDisplay : MonoBehaviour
         displayCards();
     }
 
+    private void Update()
+    {
+        ScrollRect.verticalNormalizedPosition = Val;
+    }
     /// <summary>
     /// This function displays all the cards in the player's deck in the compendium.
     /// </summary>
@@ -137,6 +143,11 @@ public class DiscardDisplay : MonoBehaviour
 
         // scroll to the top of the compendium
         ScrollRect.verticalNormalizedPosition = 1;
+    }
+
+    public void SetVNPos(float val)
+    {
+        ScrollRect.verticalNormalizedPosition = val;
     }
 
     private void testDiscard(int discardAmt = 5, int exileAmt = 5)
