@@ -11,10 +11,10 @@ public class BattleManager : MonoBehaviour
 {
     [Header("Cards")]
     public Deck deck;
-    public List<Card> cardsInHand;
+    private List<Card> _cardsInHand = new List<Card>();
     public CardDisplay selectedCard;
     public List<CardDisplay> handCardObjects;
-
+    [SerializeField] public Hand handManager;
     [Header("Stats")]
     public Entity cardTarget;
     public Entity player;
@@ -33,6 +33,21 @@ public class BattleManager : MonoBehaviour
     PlayerInfoController gameManager;
     public GameObject RewardPanel;
 
+    public List<Card> cardsInHand
+    {
+        get { return _cardsInHand; } // Getter to access the cardsInHand list
+        set
+        {
+            if (_cardsInHand.Count != value.Count)
+            {
+                // Perform the action you want when cardsInHand changes size here
+                Debug.Log("cardsInHand size changed");
+                // You can also check if the new size is larger or smaller if needed.
+            }
+
+            _cardsInHand = value; // Set the new value
+        }
+    }
     public void Awake()
     {
         gameManager = FindObjectOfType<PlayerInfoController>();
@@ -57,14 +72,25 @@ public class BattleManager : MonoBehaviour
     public void DrawCards(int amount)
     {
         int cardsDrawn = 0;
-        
-        while(cardsDrawn<amount && cardsInHand.Count<=10) //While we have cards to draw AND our hand is not full...
+        List<Card> newCardsInHand = new List<Card>(cardsInHand); // Create a copy of the current hand
+        while (cardsDrawn < amount && newCardsInHand.Count <= 10) // While we have cards to draw AND our hand is not full...
         {
-            Card cardDrawn = deck.DrawCard(); //Get the card from the deck
-            cardsInHand.Add(cardDrawn); //Put the card in the Hand list
-            DisplayCardInHand(cardDrawn); //Display the card
+            Card cardDrawn = deck.DrawCard(); // Get the card from the deck
+            newCardsInHand.Add(cardDrawn); // Put the card in the Hand list (in the copy)
+            cardsInHand = newCardsInHand; //update the hand with the copy, which triggers the action
+            DisplayCardInHand(cardDrawn); // Display the card
             cardsDrawn++;
         }
+    }
+
+    //debug method for testing
+    public void DrawCard()
+    {
+        Card cardDrawn = deck.DrawCard();
+        List<Card> newCardsInHand = new List<Card>(cardsInHand);
+        newCardsInHand.Add(cardDrawn);
+        cardsInHand = newCardsInHand; //this triggers the action
+        DisplayCardInHand(cardDrawn);
     }
 
     public void LoadEnemies()
@@ -107,7 +133,9 @@ public class BattleManager : MonoBehaviour
     public void DiscardCard(CardDisplay card)
     {
         card.gameObject.SetActive(false); //Deactivate the gameObject
-        cardsInHand.Remove(card.card); //Remove the Hand list item
+        List<Card> newCardsInHand = new List<Card>(cardsInHand);
+        newCardsInHand.Remove(card.card);//Remove the Hand list item
+        cardsInHand = newCardsInHand;//trigger action
         deck.Discard(card.card); //Put the card into the Discard pile of the Deck object.
     }
 
