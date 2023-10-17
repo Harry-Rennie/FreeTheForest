@@ -12,7 +12,6 @@ public class BattleManager : MonoBehaviour
     [Header("Cards")]
     public Deck deck;
     private List<Card> _cardsInHand = new List<Card>();
-    public CardDisplay selectedCard;
     public List<CardDisplay> handCardObjects;
     [SerializeField] public Hand handManager;
     [Header("Stats")]
@@ -33,6 +32,9 @@ public class BattleManager : MonoBehaviour
     PlayerInfoController gameManager;
     public GameObject RewardPanel;
 
+    [SerializeField] public GameObject battleCanvas;
+    private TargetSlot targetSlot;
+    public CardDisplay selectedCard;
     public List<Card> cardsInHand
     {
         get { return _cardsInHand; } // Getter to access the cardsInHand list
@@ -42,6 +44,7 @@ public class BattleManager : MonoBehaviour
             {
                 // Perform the action you want when cardsInHand changes size here
                 Debug.Log("cardsInHand size changed");
+                handManager.heldCards = value;
                 // You can also check if the new size is larger or smaller if needed.
             }
 
@@ -55,6 +58,26 @@ public class BattleManager : MonoBehaviour
         StartBattle();
     }
 
+    void Start()
+    {
+        targetSlot = FindObjectOfType<TargetSlot>();
+        targetSlot.OnChildChanged.AddListener(OnTargetSlotChildChanged);
+    }
+
+    private void OnTargetSlotChildChanged()
+    {
+       //if the target slot has only one child, set the card target to that child
+         if(targetSlot.transform.childCount == 1)
+         {
+              selectedCard = targetSlot.transform.GetChild(0).GetComponent<CardDisplay>();
+              //TODO HERE: now we have clamped the card and can select our target with left mouse, while indicating what is happening on screen.
+            //   BeginTargeting();
+         }
+         else
+         {
+              selectedCard = null;
+         }
+    }
     //Function initializes the battle state, loading in the deck from GameManager and drawing the opening hand.
     public void StartBattle()
     {
