@@ -17,7 +17,7 @@ public static class NodeUtility
         return false;
     }
 
-    //sorts from top to bottom
+    //sorts locations from top to bottom
     public static List<Vector2> SortNodes(List<Vector2> nodeLocations)
     {
         nodeLocations.Sort((node1, node2) =>

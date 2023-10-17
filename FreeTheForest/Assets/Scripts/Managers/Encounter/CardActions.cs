@@ -7,6 +7,7 @@ using UnityEngine;
 public class CardActions : MonoBehaviour
 {
     Card card;
+    [SerializeField] PlayerAnimator PlayerSprite;
     public Entity target;
     public Entity player;
     BattleManager battleManager;
@@ -22,7 +23,6 @@ public class CardActions : MonoBehaviour
     {
         card = _card;
         target = _entity;
-
         if (card.effects != null) //Check that we have a card that does stuff
         {
             for (int i = 0; i < card.effects.Count; i++) //Loop through the effects
@@ -31,6 +31,10 @@ public class CardActions : MonoBehaviour
                 {
                     case Card.CardEffect.Attack:
                         AttackEnemy(card.values[i]); //Call the relevant effect with the current "values" as argument
+                        if(battleManager.playersTurn)
+                        {
+                            PlayerSprite.Attack();
+                        }
                         break;
                     case Card.CardEffect.Block:
                         PerformBlock(card.values[i]);
@@ -41,11 +45,37 @@ public class CardActions : MonoBehaviour
                     case Card.CardEffect.Draw:
                         DrawCards(card.values[i]);
                         break;
+                    case Card.CardEffect.PoisonSelf:
+                        ApplySelfPoison(card.values[i]);
+                        break;
+                    case Card.CardEffect.GrowthSelf:
+                        ApplySelfGrowth(card.values[i]);
+                        break;
                     default:
                         Debug.Log("Something gone wrong with Performing Action");
                         break;
                 }
             }
+        }
+    }
+
+    private void ApplySelfPoison(int stacks)
+    {
+        PoisonBuff pbuff = new PoisonBuff();
+        pbuff.target = player;
+        for (int i = 0; i < stacks; i++)
+        {
+            player.AddBuff(pbuff);
+        }
+    }
+
+    private void ApplySelfGrowth(int stacks)
+    {
+        GrowthBuff gbuff = new GrowthBuff();
+        gbuff.target = player;
+        for (int i = 0; i < stacks; i++)
+        {
+            player.AddBuff(gbuff);
         }
     }
 
@@ -94,6 +124,9 @@ public class CardActions : MonoBehaviour
 
                     player.TakeDamage(damage);
                 }
+                break;
+            case 9000: //DEBUG ATTACK MODE: Kill Target
+                target.TakeDamage(9999);
                 break;
             default:
                 Debug.Log("Something gone wrong with Attack Mode");

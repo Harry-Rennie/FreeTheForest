@@ -6,12 +6,13 @@ using UnityEngine;
 using TMPro;
 using System.Xml;
 using UnityEditor.Build.Content;
+using UnityEngine.SceneManagement;
 
 public class BattleManager : MonoBehaviour
 {
     [Header("Cards")]
-    public Deck deck = new Deck();
-    public List<Card> cardsInHand = new List<Card>();
+    public Deck deck;
+    public List<Card> cardsInHand;
     public CardDisplay selectedCard;
     public List<CardDisplay> handCardObjects;
 
@@ -26,32 +27,31 @@ public class BattleManager : MonoBehaviour
     public int battleCounter;
 
     [Header("Enemies")]
-    public List<Entity> enemies = new List<Entity>();
+    [SerializeField] public List<Entity> enemies;
+    public int EnemyCount;
     
     CardActions cardActions;
     PlayerInfoController gameManager;
+    public GameObject RewardPanel;
 
     public void Awake()
     {
         gameManager = FindObjectOfType<PlayerInfoController>();
         cardActions = GetComponent<CardActions>();
-
         StartBattle();
     }
 
     //Function initializes the battle state, loading in the deck from GameManager and drawing the opening hand.
     public void StartBattle()
     {
-        LoadEnemies();
-        battleCounter = 0;
-        
         deck = new Deck();
         cardsInHand = new List<Card>();
-
-        deck.DiscardPile.AddRange(gameManager.playerDeck); //Add cards from GM to discard pile of new empty deck
+        deck.DiscardPile.AddRange(gameManager.playerDeck);
+        battleCounter = 0;
+        energy = maxEnergy;
 
         DrawCards(drawAmount);
-        energy = maxEnergy;
+        LoadEnemies();
     }
 
     //Draw cards. Loop over Deck card draw X times. Load returned card into hand.
@@ -70,19 +70,18 @@ public class BattleManager : MonoBehaviour
 
     public void LoadEnemies()
     {
-        for(int i = 0; i < gameManager.currentEnemies.Count; i++)
-        {
-            Entity ent = enemies[i];
-            Enemy curEnemy = gameManager.currentEnemies[i];
-
-            ent.name = curEnemy.title;
-            ent.offense = curEnemy.offense;
-            ent.defense = curEnemy.defense;
-            ent.maxHealth = curEnemy.health;
-            ent.currentHealth = curEnemy.health;
-            ent.enemyCards = curEnemy.Actions;
-
-            ent.gameObject.SetActive(true);
+        EnemyCount = gameManager.currentEnemies.Count;
+        List<Enemy> curEnemies = gameManager.currentEnemies;
+        //loop thorugh cur enemies
+        for(int i = 0; i < EnemyCount; i++)
+        {   
+            enemies[i].name = curEnemies[i].title;
+            enemies[i].offense = curEnemies[i].offense;
+            enemies[i].defense = curEnemies[i].defense;
+            enemies[i].maxHealth = curEnemies[i].health;
+            enemies[i].currentHealth = curEnemies[i].health;
+            enemies[i].enemyCards = curEnemies[i].Actions;
+            enemies[i].gameObject.SetActive(true);
         }
     }
 
@@ -113,6 +112,35 @@ public class BattleManager : MonoBehaviour
         deck.Discard(card.card); //Put the card into the Discard pile of the Deck object.
     }
 
+    public void AddKill() //Subtract our enemy counter for checking Battle End
+    {
+        EnemyCount--;
+
+        if (EnemyCount <= 0)
+        {
+            OpenReward();
+        }
+    }
+
+    public void OpenReward() //Complete the battle and return to main map screen
+    {
+        RewardPanel.SetActive(true);
+        int goldToGain = Random.Range(8, 28);
+        for(int i = 0; i < goldToGain; i++)
+        {
+            gameManager.Gold +=1;
+            PlayerInfoPanel.Instance.UpdateStats();
+        }
+    }
+
+    public void AddCard(Card card) //Add reward card to main Player Deck
+    {
+        gameManager.playerDeck.Add(card);
+
+        SceneLoader.SceneNames = new List<string> { "OverWorld" }; //Return to overworld
+        SceneManager.LoadScene("OverWorld");
+    }
+
     public void EndTurn()
     {
         //Set turn to no
@@ -130,7 +158,7 @@ public class BattleManager : MonoBehaviour
         //Go through each enemy and execute their actions
         foreach(Entity enemy in enemies)
         {
-            if (enemy.gameObject.activeSelf)
+            if (enemy != null && enemy.gameObject.activeSelf)
             {
                 int roll = battleCounter % enemy.enemyCards.Count;
 
@@ -143,14 +171,64 @@ public class BattleManager : MonoBehaviour
         battleCounter++;
 
         //TODO: FUTURE CONTENT: Process buffs
+        // ProcessBuffs();
 
         //Draw the player their next hand
         DrawCards(drawAmount);
-
         //Restore energy
         energy += energyGain;
 
         //Set turn to yes
         playersTurn = true;
+    }
+
+    private void ProcessBuffs()
+    {
+        //Process player buffs
+        foreach (BuffBase buff in player.buffs)
+        {
+            if (buff.eachTurn)
+            {
+                buff.Tick();
+            }
+            
+            if (!buff.isPermanent)
+            {
+                buff.stacks--;
+                if (buff.stacks <= 0)
+                {
+                    buff.End();
+                }
+            }
+        }
+
+        //Remove all playerBuffs that have a stack of 0
+        player.buffs.RemoveAll(buff => buff.stacks <= 0);
+
+        //Now do it for each enemy
+        foreach (Entity enemy in enemies)
+        {
+            if (enemy.gameObject.activeSelf)
+            {
+                foreach (BuffBase buff in enemy.buffs)
+                {
+                    if (buff.eachTurn)
+                    {
+                        buff.Tick();
+                    }
+
+                    if (!buff.isPermanent)
+                    {
+                        buff.stacks--;
+                        if (buff.stacks <= 0)
+                        {
+                            buff.End();
+                        }
+                    }
+                }
+
+                enemy.buffs.RemoveAll(buff => buff.stacks <= 0);
+            }
+        }
     }
 }

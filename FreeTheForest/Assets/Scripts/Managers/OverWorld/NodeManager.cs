@@ -1,5 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
+using Unity.UI;
 
 public class NodeManager : MonoBehaviour
 {
@@ -93,6 +95,8 @@ public class NodeManager : MonoBehaviour
         nodeTransform.sizeDelta = new Vector2(50, 50);
         nodeTransform.anchorMin = new Vector2(0, 0);
         nodeTransform.anchorMax = new Vector2(0, 0);
+        Button nodeButton = node.GetComponent<UnityEngine.UI.Button>();
+        nodeButton.interactable = false;
     }
     
     //this is dirty. the method checks the nodes after they have been spawned, and replaces the ones causing undesired consecutive spawning. Ideally this is done before.
@@ -146,6 +150,27 @@ public class NodeManager : MonoBehaviour
             line.transform.SetParent(newNode.transform);
         }
         return newNode;
+    }
+
+    public GameObject ParsePrefabName(string prefabName)
+    {
+        if(prefabName.Contains("Heal"))
+        {
+            return healPrefab;
+        }
+        if(prefabName.Contains("Upgrade"))
+        {
+            return upgradePrefab;
+        }
+        if(prefabName.Contains("Basic"))
+        {
+            return basicPrefab;
+        }
+        if(prefabName.Contains("Boss"))
+        {
+            return bossPrefab;
+        }
+        return null;
     }
     public void CleanNodes()
     {

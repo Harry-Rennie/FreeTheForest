@@ -16,19 +16,35 @@ public class Entity : MonoBehaviour
     public int offense;
     public int defense;
 
+    [Header("Buffs")]
+    public List<BuffBase> buffs;
+
     [Header("Player Check")]
     public bool isPlayer;
 
     [Header("Enemy Actions")]
     public List<Card> enemyCards;
 
-    BattleManager battleManager;
+    public BattleManager battleManager;
     PlayerInfoController gameManager;
 
     private void Awake()
     {
         battleManager = FindObjectOfType<BattleManager>();
-        currentHealth = maxHealth; //TODO: IF PLAYER get player health from GAMEMANAGER
+        gameManager = FindObjectOfType<PlayerInfoController>();
+        // assign stats from PlayerInfoController
+        if (isPlayer)
+        {
+            maxHealth = gameManager.MaxHealth;
+            currentHealth = gameManager.CurrentHealth;
+            offense = gameManager.Strength;
+            defense = gameManager.Defense;
+        }
+        else
+        {
+        currentHealth = maxHealth;
+        }
+        buffs= new List<BuffBase>();
     }
 
 
@@ -40,11 +56,22 @@ public class Entity : MonoBehaviour
         }
 
         Debug.Log($"Dealt {amount} damage");
+        if(isPlayer)
+        {
+            gameManager.CurrentHealth -= amount;
+            PlayerInfoPanel.Instance.UpdateStats();
+        }
 
         currentHealth -= amount; //Take damage
 
         if(currentHealth<=0) //Die
         {
+            if (!isPlayer)
+            {
+                battleManager.AddKill();
+            }
+            //you die (player)
+
             Destroy(gameObject);
         }
     }
@@ -68,6 +95,36 @@ public class Entity : MonoBehaviour
         }
 
         return amount;
+    }
+
+    public void AddBuff(BuffBase buff)
+    {
+        bool buffFound = false;
+
+        for (int i = 0; i < buffs.Count; i++)
+        {
+            if (buffs[i].buffName == buff.buffName)
+            {
+                buffFound = true;
+                buffs[i].Activate();
+            }
+        }
+
+        if (!buffFound)
+        {
+            buffs.Add(buff);
+            buff.Activate();
+        }
+    }
+
+    public void CleanseBuffs() //Wipe all buffs on an entity
+    {
+        foreach (BuffBase buff in buffs)
+        {
+            buff.End();
+        }
+
+        buffs.Clear();
     }
 
 }

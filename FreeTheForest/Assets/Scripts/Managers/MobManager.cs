@@ -16,7 +16,7 @@ using UnityEngine;
 public class BattleTemplate
 {
     public int MinRow, MaxRow;
-    public List<GameObject> enemies;
+    public List<Enemy> enemies;
 }
 
 /// <summary>
@@ -27,17 +27,35 @@ public class MobManager : MonoBehaviour
 
     [SerializeField]
     public List<BattleTemplate> BattleTemplates;
-    public List<List<List<GameObject>>> BattleGrid { get; private set; }
+    public List<List<List<Enemy>>> BattleGrid { get; private set; }
+
 
 
     /// <todo>
     /// This should be replaced with a function that gets the maximum x and y values of the overworld tree
     /// </todo>
-    private int overworldX = 5;
-    private int overworldY = 5;
+    private int overworldX = 1;
+    private int overworldY = 7;
+
+        #region Singleton
+    // singleton pattern
+    public static MobManager Instance;
+    private void Awake()
+    {
+        if (Instance == null)
+            Instance = this;
+        else
+        {
+            Destroy(gameObject);
+            return;
+        }
+        DontDestroyOnLoad(gameObject);
+    }
+    #endregion
 
     void Start()
     {
+        
         BattleGrid = GenBattleGrid(overworldX, overworldY);
         printGrid();
     }
@@ -47,9 +65,9 @@ public class MobManager : MonoBehaviour
     /// </summary>
     /// <param name="row">The row to generate a battle for</param>
     /// <returns>A list of enemies</returns>
-    public List<GameObject> GenBattle(int row)
+    public List<Enemy> GenBattle(int row)
     {
-        List<GameObject> enemies = new List<GameObject>();
+        List<Enemy> enemies = new List<Enemy>();
         List<BattleTemplate> possibleTemplates = new List<BattleTemplate>();
 
         foreach (BattleTemplate template in BattleTemplates)
@@ -83,18 +101,18 @@ public class MobManager : MonoBehaviour
     /// The second dimension is a list of battles
     /// The third dimension is a list of enemies for each battle
     ///</returns>
-    public List<List<List<GameObject>>> GenBattleGrid(int x, int y)
+    public List<List<List<Enemy>>> GenBattleGrid(int x, int y)
     {
-        List<List<List<GameObject>>> grid = new List<List<List<GameObject>>>();
+        List<List<List<Enemy>>> grid = new List<List<List<Enemy>>>();
         // loop through rows
         for (int i = 0; i < y; i++)
         {
-            List<List<GameObject>> row = new List<List<GameObject>>();
+            List<List<Enemy>> row = new List<List<Enemy>>();
             // loop through possible nodes
             for (int j = 0; j < x; j++)
             {
                 // generate battle suitable for the row
-                List<GameObject> enemies = GenBattle(i);
+                List<Enemy> enemies = GenBattle(i);
                 // add battle to row
                 row.Add(enemies);
             }
@@ -116,7 +134,7 @@ public class MobManager : MonoBehaviour
             string battleString = "";
             gridString += "Row " + i + ":\n";
             // for each battle
-            foreach (List<GameObject> battle in BattleGrid[i])
+            foreach (List<Enemy> battle in BattleGrid[i])
             {
                 string enemies = string.Join(", ", battle.Select(enemy => enemy.name)) + " | ";
                 battleString += enemies;

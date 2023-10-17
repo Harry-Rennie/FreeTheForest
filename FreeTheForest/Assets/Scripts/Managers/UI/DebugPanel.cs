@@ -22,7 +22,6 @@ public class DebugPanel : MonoBehaviour
 
     public void ReturnToOverWorld()
     {
-        SceneLoader.SceneNames = new List<string> { "OverWorld" };
-        SceneManager.LoadScene("OverWorld");
+        SceneManager.LoadScene("Overworld");
     }
 }
