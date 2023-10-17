@@ -16,10 +16,29 @@ A 2D roguelike card-battler, developed in Unity.
 
 # Gameplay
 ---
- - Outline game loop rules.
+## Draw phase
 
-## Mechanics
- - Outline keywords and other pertinent game mechanics.
+## Turn Phase
+
+## Enemy Turn phase
+
+## Player death
+
+## Mechanics & Keywords
+- Health
+- Defense
+- Strength
+- Energy
+- Gold
+
+- Attack
+- Block
+- Growth
+- AOE (area of effect)
+- Poison
+- Thorns
+- Stun
+- Exiled
 
 # Sound
 ---
