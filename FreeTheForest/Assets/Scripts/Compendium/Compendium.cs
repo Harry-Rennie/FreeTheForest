@@ -62,15 +62,14 @@ public class Compendium : MonoBehaviour
             GameObject compendiumCard = Instantiate(compendiumCardPrefab);
             // set the parent of the compendiumCard to the cardContainer
             compendiumCard.transform.SetParent(cardContainer.transform);
-            // for reasons unknown to me, the scale and z position of the card is changed to weird values when the parent is set
-            // these lines of code resets the scale and z position to their original values
+            // because the scale and z position of the card is changed to weird values when the parent is set
+            // these lines of code reset the scale and z position to their original values
             compendiumCard.transform.localScale = new Vector3(1, 1, 1);
             compendiumCard.GetComponent<RectTransform>().localPosition = new Vector3(0, 0, 0);
 
             // display the card info
             compendiumCard.GetComponent<CompendiumCard>().DisplayCard(card);
         }
-
     }
 
     /// <summary>
@@ -97,8 +96,8 @@ public class Compendium : MonoBehaviour
         int rows = (int)Mathf.Ceil((float)playerCards.Count / amtCardsPerRow);
 
         // set the height of the cardContainer to the height of the cards * the amount of rows, or the minimum height of the compendium
-        cardContainerRect.sizeDelta = (rows > minCompendiumHeight / cardCellHeight) ?
-            new Vector2(cardContainerRect.sizeDelta.x, cardCellHeight * rows) : new Vector2(cardContainerRect.sizeDelta.x, minCompendiumHeight);
+        cardContainerRect.sizeDelta = 
+            new Vector2(cardContainerRect.sizeDelta.x, (rows > minCompendiumHeight / cardCellHeight) ? cardCellHeight * rows : minCompendiumHeight);
 
         // scroll to the top of the compendium
         scrollRect.GetComponent<ScrollRect>().verticalNormalizedPosition = 1;
