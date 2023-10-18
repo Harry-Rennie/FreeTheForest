@@ -23,6 +23,7 @@ public class BattleManager : MonoBehaviour
     public int drawAmount = 5;
     public bool playersTurn = true;
     public int battleCounter;
+    public bool targeting = false;
 
     [Header("Enemies")]
     [SerializeField] public List<Entity> enemies;
@@ -34,7 +35,11 @@ public class BattleManager : MonoBehaviour
 
     [SerializeField] public GameObject battleCanvas;
     private TargetSlot targetSlot;
+    private LineRenderer targetLine;
     public CardDisplay selectedCard;
+
+    public delegate void ClearTargetingEvent();
+    public event ClearTargetingEvent OnClearTargeting;
     public List<Card> cardsInHand
     {
         get { return _cardsInHand; } // Getter to access the cardsInHand list
@@ -61,23 +66,96 @@ public class BattleManager : MonoBehaviour
     void Start()
     {
         targetSlot = FindObjectOfType<TargetSlot>();
+        targetLine = FindObjectOfType<LineRenderer>();
+        targetLine.material = new Material(Shader.Find("Sprites/Default"));
+        targetLine.startWidth = 0.05f; //set line width
+        targetLine.endWidth = 0.05f;
+        targetLine.positionCount = 0;
         targetSlot.OnChildChanged.AddListener(OnTargetSlotChildChanged);
     }
 
+void Update()
+{
+    if (targeting)
+    {
+        if (Input.GetMouseButtonDown(1))
+        {
+            ClearTargeting();
+            return;
+        }
+        int numPoints = 50;
+        targetLine.positionCount = numPoints;
+        float cardSlotWidth = targetSlot.GetComponent<RectTransform>().rect.width / 2;
+        float cardSlotHeight = targetSlot.GetComponent<RectTransform>().rect.height / 2;
+        Vector2 cardSlotMidY = new Vector2(targetSlot.transform.position.x - cardSlotWidth, targetSlot.transform.position.y - cardSlotHeight + 55f);
+
+        Vector2 canvasMousePosition;
+        RectTransform canvasRect = battleCanvas.GetComponent<RectTransform>();
+        RectTransformUtility.ScreenPointToLocalPointInRectangle(canvasRect, Input.mousePosition, Camera.main, out canvasMousePosition);
+
+        Vector2 startPoint = cardSlotMidY;
+        Vector2 endPoint = canvasMousePosition;
+        
+        //control point for the quadratic Bezier curve.
+        Vector2 controlPoint = (startPoint + endPoint) / 2 + Vector2.up * 80; //adjust magic number to change angle of curve
+
+        for (int i = 0; i < numPoints; i++)
+        {
+            float t = i / (float)(numPoints - 1);
+            Vector2 pointOnCurve = QuadraticBezierCurve(startPoint, controlPoint, endPoint, t);
+            targetLine.SetPosition(i, pointOnCurve);
+        }
+    }
+}
+    //couldnt get .lerp to work so used bezier quadratic for curve
+   private Vector2 QuadraticBezierCurve(Vector2 p0, Vector2 p1, Vector2 p2, float t) 
+   {
+        //lerping between 2 points equation: (1 - t) * (1 - t) * p0 + 2 * (1 - t) * t * p1 + t * t * p2;
+        Vector2 pointOnCurve = (1 - t) * (1 - t) * p0 + 2 * (1 - t) * t * p1 + t * t * p2;
+        return pointOnCurve;
+    }
     private void OnTargetSlotChildChanged()
     {
        //if the target slot has only one child, set the card target to that child
          if(targetSlot.transform.childCount == 1)
          {
               selectedCard = targetSlot.transform.GetChild(0).GetComponent<CardDisplay>();
-              //TODO HERE: now we have clamped the card and can select our target with left mouse, while indicating what is happening on screen.
-            //   BeginTargeting();
+            BeginTargeting();
          }
          else
          {
               selectedCard = null;
          }
     }
+
+    private void BeginTargeting()
+    {
+        if (selectedCard == null) //check if a card is selected for targeting
+        {
+            targeting = false;
+            return;
+        }
+        else
+        {
+            targeting = true;
+        }
+    }
+
+    private void ClearTargeting()
+    {
+        if (selectedCard == null)
+        {
+            return;
+        }
+        targeting = false;
+
+        if (targetLine != null)
+        {
+            targetLine.positionCount = 0; //clear the LineRenderer
+        }
+        OnClearTargeting?.Invoke();
+    }
+
     //Function initializes the battle state, loading in the deck from GameManager and drawing the opening hand.
     public void StartBattle()
     {
@@ -90,7 +168,6 @@ public class BattleManager : MonoBehaviour
         DrawCards(drawAmount);
         LoadEnemies();
     }
-
     //Draw cards. Loop over Deck card draw X times. Load returned card into hand.
     public void DrawCards(int amount)
     {

@@ -41,7 +41,7 @@ public class FocusOnHover : MonoBehaviour
             return;
         }
         _basePosition = _canvas.transform.position;
-        setScale(1.2f);
+        setScale(1f);
         _canvas.sortingOrder = _baseSortOrder + 100;
         _canvas.transform.position = new Vector3(_canvas.transform.position.x, _canvas.transform.position.y, _canvas.transform.position.z);
     }
@@ -83,7 +83,7 @@ private void OnMouseDown()
         if (Input.GetMouseButtonDown(0))
         {
             _basePosition = _canvas.transform.position;
-            setScale(1.2f);
+            setScale(1f);
             _canvas.sortingOrder = _baseSortOrder + 100;
             _canvas.transform.position = new Vector3(_canvas.transform.position.x, _canvas.transform.position.y, _canvas.transform.position.z);
         }

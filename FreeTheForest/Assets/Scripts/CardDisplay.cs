@@ -15,11 +15,14 @@ public class CardDisplay : MonoBehaviour
     public TextMeshProUGUI manaCost;
 
     private bool isSelected = false;
+    private bool deselect = false;
     private Vector3 originalPosition;
     private Transform parentSlot;
     private Transform battleCanvas;
     private Transform targetSlot; //reference to the target slot
     private Transform originalCardSlot; //reference to the original card slot
+    private BattleManager battleManager;
+    private int sortingOrder;
 
     private void Awake()
     {
@@ -28,6 +31,23 @@ public class CardDisplay : MonoBehaviour
         originalCardSlot = parentSlot; //store the original card slot
         battleCanvas = GameObject.Find("BattleCanvas").transform;
         targetSlot = GameObject.Find("TargetSlot").transform; //assign the target slot in the Inspector
+    }
+
+    private void Start()
+    {
+        battleManager = FindObjectOfType<BattleManager>();
+        battleManager.OnClearTargeting += HandleClearTargeting;
+    }
+
+    private void OnDisable()
+    {   //unsubscribing
+        battleManager.OnClearTargeting -= HandleClearTargeting;
+    }
+
+    private void HandleClearTargeting()
+    {
+        deselect = true;
+        DeselectCard();
     }
 
     // Load card blank TMPro text objects with the data from the Card scriptable object.
@@ -45,6 +65,10 @@ public class CardDisplay : MonoBehaviour
         {
             return;
         }
+        if(Input.GetMouseButtonDown(1))
+        {
+            return;
+        }
         if (!isSelected)
         {
             CardDisplay previouslySelectedCard = GetSelectedCard();
@@ -54,20 +78,20 @@ public class CardDisplay : MonoBehaviour
                 // Deselect the previously selected card and return it to its original card slot
                 previouslySelectedCard.DeselectCard();
             }
-
+            deselect = false;
             isSelected = true;
             originalPosition = transform.position;
+            sortingOrder= transform.parent.gameObject.GetComponent<Canvas>().sortingOrder;
             parentSlot = transform.parent;
-
             //move the card to the target slot
             transform.SetParent(targetSlot);
             transform.position = targetSlot.position;
             //scale the card up when it is in the targeting slot
-            transform.localScale = new Vector3(1.2f, 1.2f, transform.localScale.z);
+            transform.localScale = new Vector3(1f, 1f, transform.localScale.z);
         }
     }
 
-    private CardDisplay GetSelectedCard()
+    public CardDisplay GetSelectedCard()
     {
         CardDisplay[] allCards = FindObjectsOfType<CardDisplay>();
         foreach (CardDisplay cardDisplay in allCards)
@@ -85,18 +109,20 @@ public class CardDisplay : MonoBehaviour
     {
         if (isSelected)
         {
-            if (Input.GetMouseButtonUp(1) && isSelected)
+            if (deselect && isSelected)
             {
                 isSelected = false;
                 transform.position = originalPosition;
                 transform.SetParent(originalCardSlot);
                 transform.localScale = new Vector3(0.8f, 0.8f, transform.localScale.z);
+                originalCardSlot.GetComponent<Canvas>().sortingOrder = sortingOrder - 100;
             }
             if(targetSlot.childCount > 1)
             {
                 CardDisplay cardToReturn = targetSlot.GetChild(0).GetComponent<CardDisplay>();
                 cardToReturn.transform.position = cardToReturn.originalPosition;
                 cardToReturn.transform.SetParent(cardToReturn.originalCardSlot);
+                originalCardSlot.GetComponent<Canvas>().sortingOrder = sortingOrder - 100;
             }
         }
     }
