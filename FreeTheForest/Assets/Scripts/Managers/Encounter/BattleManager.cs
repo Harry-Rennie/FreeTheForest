@@ -303,7 +303,7 @@ void Update()
         battleCounter++;
 
         //TODO: FUTURE CONTENT: Process buffs
-        ProcessBuffs();
+        // ProcessBuffs();
 
         //Draw the player their next hand
         DrawCards(drawAmount);
