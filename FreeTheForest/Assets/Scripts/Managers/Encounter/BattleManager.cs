@@ -40,6 +40,8 @@ public class BattleManager : MonoBehaviour
 
     public delegate void ClearTargetingEvent();
     public event ClearTargetingEvent OnClearTargeting;
+
+    public bool battleOver;
     public List<Card> cardsInHand
     {
         get { return _cardsInHand; } // Getter to access the cardsInHand list
@@ -72,6 +74,7 @@ public class BattleManager : MonoBehaviour
         targetLine.endWidth = 0.05f;
         targetLine.positionCount = 0;
         targetSlot.OnChildChanged.AddListener(OnTargetSlotChildChanged);
+        battleOver = false;
     }
 
 void Update()
@@ -117,6 +120,7 @@ void Update()
     private void OnTargetSlotChildChanged()
     {
        //if the target slot has only one child, set the card target to that child
+        
          if(targetSlot.transform.childCount == 1)
          {
               selectedCard = targetSlot.transform.GetChild(0).GetComponent<CardDisplay>();
@@ -224,7 +228,7 @@ void Update()
         cardActions.PerformAction(card.card, cardTarget); //Tell CardActions to perform action based on Card name and Target if necessary
 
         energy -= card.card.manaCost; //Reduce energy by card cost (CardActions checks for enough mana)
-
+        ClearTargeting();
         selectedCard = null; //Drop the referenced card
         
         DiscardCard(card);
@@ -251,6 +255,7 @@ void Update()
 
     public void OpenReward() //Complete the battle and return to main map screen
     {
+        battleOver = true;
         RewardPanel.SetActive(true);
         int goldToGain = Random.Range(8, 28);
         for(int i = 0; i < goldToGain; i++)
@@ -298,7 +303,7 @@ void Update()
         battleCounter++;
 
         //TODO: FUTURE CONTENT: Process buffs
-        // ProcessBuffs();
+        ProcessBuffs();
 
         //Draw the player their next hand
         DrawCards(drawAmount);

@@ -61,7 +61,11 @@ public class CardDisplay : MonoBehaviour
 
     public void SelectCard()
     {
-        if(targetSlot.childCount > 0)
+        if(battleManager.battleOver && battleManager.RewardPanel.activeSelf)
+        {
+                battleManager.AddCard(card);
+        }
+        if(targetSlot.childCount > 0 || isSelected)
         {
             return;
         }
