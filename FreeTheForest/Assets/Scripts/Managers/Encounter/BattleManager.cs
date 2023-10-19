@@ -227,7 +227,9 @@ void Update()
     {
         cardActions.PerformAction(card.card, cardTarget); //Tell CardActions to perform action based on Card name and Target if necessary
 
-        energy -= card.card.manaCost; //Reduce energy by card cost (CardActions checks for enough mana)
+        energy -= card.card.manaCost; //Reduce energy by card cost (CardActions checks for enough mana)\
+        PlayerInfoController.instance.Energy = energy;
+        PlayerInfoPanel.Instance.UpdateStats();
         ClearTargeting();
         selectedCard = null; //Drop the referenced card
         
@@ -309,7 +311,8 @@ void Update()
         DrawCards(drawAmount);
         //Restore energy
         energy += energyGain;
-
+        PlayerInfoController.instance.Energy = energy;
+        PlayerInfoPanel.Instance.UpdateStats();
         //Set turn to yes
         playersTurn = true;
     }

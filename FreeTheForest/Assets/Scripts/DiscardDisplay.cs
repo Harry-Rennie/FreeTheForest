@@ -45,8 +45,6 @@ public class DiscardDisplay : MonoBehaviour
     private void Start()
     {
         deck = battleManager.deck;
-        // add some test exiled cards
-        testDiscard(0, 3);
         // populate the discard pile display
         UpdateDiscardDisplay();
     }
