@@ -17,18 +17,28 @@ public class CardTarget : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
     // Implement the OnPointerEnter method from IPointerEnterHandler
     public void OnPointerEnter(PointerEventData eventData)
     {
-        if (enemy == null) // Sanity check
+        if (enemy == null || !enemy.isPlayer) // Sanity check
         {
             Debug.Log("Fighter Null");
             battle = FindObjectOfType<BattleManager>();
             enemy = GetComponent<Entity>();
         }
-
+        if(battle.selectedCard != null && battle.selectedCard.card.cardType != Card.CardType.Attack) //then target self
+        {
+            if(enemy.isPlayer)
+            {
+                battle.cardTarget = enemy;
+                Debug.Log("Targeting " + enemy);
+            }
+        }
         // Additional logic when the pointer enters the object area
         if (battle.selectedCard != null && battle.selectedCard.card.cardType == Card.CardType.Attack) // If Card Selected and The Card Is An Attack...
         {
-            battle.cardTarget = enemy;
-            Debug.Log("Targeting... " + enemy);
+            if(!enemy.isPlayer)
+            {
+                battle.cardTarget = enemy;
+                Debug.Log("Targeting " + enemy);
+            }
         }
     }
 
@@ -40,11 +50,22 @@ public class CardTarget : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
         {
             battle.AddCard(battle.selectedCard.card);
         }
+        if(battle.selectedCard != null && battle.selectedCard.card.cardType != Card.CardType.Attack)
+        {
+            if(enemy.isPlayer)
+            {
+                battle.cardTarget = enemy;
+                battle.PlayCard(battle.selectedCard);
+            }
+        }
         // Logic to execute when the object is clicked.
         if (battle.selectedCard != null && battle.selectedCard.card.cardType == Card.CardType.Attack)
         {
-            battle.cardTarget = enemy;
-            battle.PlayCard(battle.selectedCard);
+            if(!enemy.isPlayer)
+            {
+                battle.cardTarget = enemy;
+                battle.PlayCard(battle.selectedCard);
+            }
         }
     }
     public void OnPointerExit(PointerEventData eventData)
