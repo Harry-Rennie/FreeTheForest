@@ -19,7 +19,6 @@ public class LineDrawer : MonoBehaviour
 
         LineRenderer lr = lineObject.AddComponent<LineRenderer>();
         lr.positionCount = 2;
-
         lr.SetPosition(0, rectA.position);
         lr.SetPosition(1, rectB.position);
         lr.sortingOrder = 1;

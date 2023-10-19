@@ -1,5 +1,3 @@
-//Script for fetching Card data and filling out a blank CardDisplay object with the information
-
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -16,14 +14,43 @@ public class CardDisplay : MonoBehaviour
     public TextMeshProUGUI descriptionText;
     public TextMeshProUGUI manaCost;
 
-    BattleManager battleManager;
+    private bool isSelected = false;
+    private bool deselect = false;
+    private Vector3 originalPosition;
+    private Transform parentSlot;
+    private Transform battleCanvas;
+    private Transform targetSlot; //reference to the target slot
+    private Transform originalCardSlot; //reference to the original card slot
+    private BattleManager battleManager;
+    private int sortingOrder;
 
     private void Awake()
     {
-        battleManager = FindObjectOfType<BattleManager>();
+        originalPosition = transform.position;
+        parentSlot = transform.parent;
+        originalCardSlot = parentSlot; //store the original card slot
+        battleCanvas = GameObject.Find("BattleCanvas").transform;
+        targetSlot = GameObject.Find("TargetSlot").transform; //assign the target slot in the Inspector
     }
 
-    //Load card blank TMPro text objects with the data from the Card scriptable object.
+    private void Start()
+    {
+        battleManager = FindObjectOfType<BattleManager>();
+        battleManager.OnClearTargeting += HandleClearTargeting;
+    }
+
+    private void OnDisable()
+    {   //unsubscribing
+        battleManager.OnClearTargeting -= HandleClearTargeting;
+    }
+
+    private void HandleClearTargeting()
+    {
+        deselect = true;
+        DeselectCard();
+    }
+
+    // Load card blank TMPro text objects with the data from the Card scriptable object.
     public void LoadCard(Card _card)
     {
         card = _card;
@@ -32,40 +59,75 @@ public class CardDisplay : MonoBehaviour
         manaCost.text = card.manaCost.ToString();
     }
 
-    //Tell manager that this is the current card
     public void SelectCard()
     {
-        battleManager.selectedCard = this;
+        if(battleManager.battleOver && battleManager.RewardPanel.activeSelf)
+        {
+                battleManager.AddCard(card);
+        }
+        if(targetSlot.childCount > 0 || isSelected)
+        {
+            return;
+        }
+        if(Input.GetMouseButtonDown(1))
+        {
+            return;
+        }
+        if (!isSelected)
+        {
+            CardDisplay previouslySelectedCard = GetSelectedCard();
+
+            if (previouslySelectedCard != null)
+            {
+                // Deselect the previously selected card and return it to its original card slot
+                previouslySelectedCard.DeselectCard();
+            }
+            deselect = false;
+            isSelected = true;
+            originalPosition = transform.position;
+            sortingOrder= transform.parent.gameObject.GetComponent<Canvas>().sortingOrder;
+            parentSlot = transform.parent;
+            //move the card to the target slot
+            transform.SetParent(targetSlot);
+            transform.position = targetSlot.position;
+            //scale the card up when it is in the targeting slot
+            transform.localScale = new Vector3(1f, 1f, transform.localScale.z);
+        }
     }
 
-    //Tell manager this card is no longer selected OR Choose the card for reward if battle is over.
+    public CardDisplay GetSelectedCard()
+    {
+        CardDisplay[] allCards = FindObjectsOfType<CardDisplay>();
+        foreach (CardDisplay cardDisplay in allCards)
+        {
+            if (cardDisplay.isSelected)
+            {
+                return cardDisplay;
+            }
+        }
+        return null;
+    }
+
+    //checks if card is already in target slot, also returns card to hand
     public void DeselectCard()
     {
-        if (battleManager.EnemyCount > 0) 
-        { 
-            battleManager.selectedCard = null; 
-        }
-        else
+        if (isSelected)
         {
-            battleManager.AddCard(this.card);
+            if (deselect && isSelected)
+            {
+                isSelected = false;
+                transform.position = originalPosition;
+                transform.SetParent(originalCardSlot);
+                transform.localScale = new Vector3(0.8f, 0.8f, transform.localScale.z);
+                originalCardSlot.GetComponent<Canvas>().sortingOrder = sortingOrder - 100;
+            }
+            if(targetSlot.childCount > 1)
+            {
+                CardDisplay cardToReturn = targetSlot.GetChild(0).GetComponent<CardDisplay>();
+                cardToReturn.transform.position = cardToReturn.originalPosition;
+                cardToReturn.transform.SetParent(cardToReturn.originalCardSlot);
+                originalCardSlot.GetComponent<Canvas>().sortingOrder = sortingOrder - 100;
+            }
         }
     }
-
-    public void HandleDrag()
-    {
-        //Empty
-    }
-
-    //Attempt to play the card
-    public void HandleEndDrag()
-    {
-        if (battleManager.EnemyCount > 0) //Check if enemies exist
-        {
-            if (battleManager.energy < card.manaCost) //Check if there is enough energy to play the card
-                return;
-
-            battleManager.PlayCard(this); //Tell manager to play self
-        }
-    }
-
 }

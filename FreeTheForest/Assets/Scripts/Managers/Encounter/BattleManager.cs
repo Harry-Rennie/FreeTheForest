@@ -5,17 +5,15 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 using System.Xml;
-using UnityEditor.Build.Content;
 using UnityEngine.SceneManagement;
 
 public class BattleManager : MonoBehaviour
 {
     [Header("Cards")]
     public Deck deck;
-    public List<Card> cardsInHand;
-    public CardDisplay selectedCard;
+    private List<Card> _cardsInHand = new List<Card>();
     public List<CardDisplay> handCardObjects;
-
+    [SerializeField] public Hand handManager;
     [Header("Stats")]
     public Entity cardTarget;
     public Entity player;
@@ -25,6 +23,7 @@ public class BattleManager : MonoBehaviour
     public int drawAmount = 5;
     public bool playersTurn = true;
     public int battleCounter;
+    public bool targeting = false;
 
     [Header("Enemies")]
     [SerializeField] public List<Entity> enemies;
@@ -34,11 +33,131 @@ public class BattleManager : MonoBehaviour
     PlayerInfoController gameManager;
     public GameObject RewardPanel;
 
+    [SerializeField] public GameObject battleCanvas;
+    private TargetSlot targetSlot;
+    private LineRenderer targetLine;
+    public CardDisplay selectedCard;
+
+    public delegate void ClearTargetingEvent();
+    public event ClearTargetingEvent OnClearTargeting;
+
+    public bool battleOver;
+    public List<Card> cardsInHand
+    {
+        get { return _cardsInHand; } // Getter to access the cardsInHand list
+        set
+        {
+            if (_cardsInHand.Count != value.Count)
+            {
+                // Perform the action you want when cardsInHand changes size here
+                Debug.Log("cardsInHand size changed");
+                handManager.heldCards = value;
+                // You can also check if the new size is larger or smaller if needed.
+            }
+
+            _cardsInHand = value; // Set the new value
+        }
+    }
     public void Awake()
     {
         gameManager = FindObjectOfType<PlayerInfoController>();
         cardActions = GetComponent<CardActions>();
         StartBattle();
+    }
+
+    void Start()
+    {
+        targetSlot = FindObjectOfType<TargetSlot>();
+        targetLine = FindObjectOfType<LineRenderer>();
+        targetLine.material = new Material(Shader.Find("Sprites/Default"));
+        targetLine.startWidth = 0.05f; //set line width
+        targetLine.endWidth = 0.05f;
+        targetLine.positionCount = 0;
+        targetSlot.OnChildChanged.AddListener(OnTargetSlotChildChanged);
+        battleOver = false;
+    }
+
+void Update()
+{
+    if (targeting)
+    {
+        if (Input.GetMouseButtonDown(1))
+        {
+            ClearTargeting();
+            return;
+        }
+        int numPoints = 50;
+        targetLine.positionCount = numPoints;
+        float cardSlotWidth = targetSlot.GetComponent<RectTransform>().rect.width / 2;
+        float cardSlotHeight = targetSlot.GetComponent<RectTransform>().rect.height / 2;
+        Vector2 cardSlotMidY = new Vector2(targetSlot.transform.position.x - cardSlotWidth, targetSlot.transform.position.y - cardSlotHeight + 55f);
+
+        Vector2 canvasMousePosition;
+        RectTransform canvasRect = battleCanvas.GetComponent<RectTransform>();
+        RectTransformUtility.ScreenPointToLocalPointInRectangle(canvasRect, Input.mousePosition, Camera.main, out canvasMousePosition);
+
+        Vector2 startPoint = cardSlotMidY;
+        Vector2 endPoint = canvasMousePosition;
+        
+        //control point for the quadratic Bezier curve.
+        Vector2 controlPoint = (startPoint + endPoint) / 2 + Vector2.up * 80; //adjust magic number to change angle of curve
+
+        for (int i = 0; i < numPoints; i++)
+        {
+            float t = i / (float)(numPoints - 1);
+            Vector2 pointOnCurve = QuadraticBezierCurve(startPoint, controlPoint, endPoint, t);
+            targetLine.SetPosition(i, pointOnCurve);
+        }
+    }
+}
+    //couldnt get .lerp to work so used bezier quadratic for curve
+   private Vector2 QuadraticBezierCurve(Vector2 p0, Vector2 p1, Vector2 p2, float t) 
+   {
+        //lerping between 2 points equation: (1 - t) * (1 - t) * p0 + 2 * (1 - t) * t * p1 + t * t * p2;
+        Vector2 pointOnCurve = (1 - t) * (1 - t) * p0 + 2 * (1 - t) * t * p1 + t * t * p2;
+        return pointOnCurve;
+    }
+    private void OnTargetSlotChildChanged()
+    {
+       //if the target slot has only one child, set the card target to that child
+        
+         if(targetSlot.transform.childCount == 1)
+         {
+              selectedCard = targetSlot.transform.GetChild(0).GetComponent<CardDisplay>();
+            BeginTargeting();
+         }
+         else
+         {
+              selectedCard = null;
+         }
+    }
+
+    private void BeginTargeting()
+    {
+        if (selectedCard == null) //check if a card is selected for targeting
+        {
+            targeting = false;
+            return;
+        }
+        else
+        {
+            targeting = true;
+        }
+    }
+
+    private void ClearTargeting()
+    {
+        if (selectedCard == null)
+        {
+            return;
+        }
+        targeting = false;
+
+        if (targetLine != null)
+        {
+            targetLine.positionCount = 0; //clear the LineRenderer
+        }
+        OnClearTargeting?.Invoke();
     }
 
     //Function initializes the battle state, loading in the deck from GameManager and drawing the opening hand.
@@ -53,19 +172,29 @@ public class BattleManager : MonoBehaviour
         DrawCards(drawAmount);
         LoadEnemies();
     }
-
     //Draw cards. Loop over Deck card draw X times. Load returned card into hand.
     public void DrawCards(int amount)
     {
         int cardsDrawn = 0;
-        
-        while(cardsDrawn<amount && cardsInHand.Count<=10) //While we have cards to draw AND our hand is not full...
+        List<Card> newCardsInHand = new List<Card>(cardsInHand); // Create a copy of the current hand
+        while (cardsDrawn < amount && newCardsInHand.Count <= 10) // While we have cards to draw AND our hand is not full...
         {
-            Card cardDrawn = deck.DrawCard(); //Get the card from the deck
-            cardsInHand.Add(cardDrawn); //Put the card in the Hand list
-            DisplayCardInHand(cardDrawn); //Display the card
+            Card cardDrawn = deck.DrawCard(); // Get the card from the deck
+            newCardsInHand.Add(cardDrawn); // Put the card in the Hand list (in the copy)
+            cardsInHand = newCardsInHand; //update the hand with the copy, which triggers the action
+            DisplayCardInHand(cardDrawn); // Display the card
             cardsDrawn++;
         }
+    }
+
+    //debug method for testing
+    public void DrawCard()
+    {
+        Card cardDrawn = deck.DrawCard();
+        List<Card> newCardsInHand = new List<Card>(cardsInHand);
+        newCardsInHand.Add(cardDrawn);
+        cardsInHand = newCardsInHand; //this triggers the action
+        DisplayCardInHand(cardDrawn);
     }
 
     public void LoadEnemies()
@@ -99,7 +228,7 @@ public class BattleManager : MonoBehaviour
         cardActions.PerformAction(card.card, cardTarget); //Tell CardActions to perform action based on Card name and Target if necessary
 
         energy -= card.card.manaCost; //Reduce energy by card cost (CardActions checks for enough mana)
-
+        ClearTargeting();
         selectedCard = null; //Drop the referenced card
         
         DiscardCard(card);
@@ -108,7 +237,9 @@ public class BattleManager : MonoBehaviour
     public void DiscardCard(CardDisplay card)
     {
         card.gameObject.SetActive(false); //Deactivate the gameObject
-        cardsInHand.Remove(card.card); //Remove the Hand list item
+        List<Card> newCardsInHand = new List<Card>(cardsInHand);
+        newCardsInHand.Remove(card.card);//Remove the Hand list item
+        cardsInHand = newCardsInHand;//trigger action
         deck.Discard(card.card); //Put the card into the Discard pile of the Deck object.
     }
 
@@ -124,6 +255,7 @@ public class BattleManager : MonoBehaviour
 
     public void OpenReward() //Complete the battle and return to main map screen
     {
+        battleOver = true;
         RewardPanel.SetActive(true);
         int goldToGain = Random.Range(8, 28);
         for(int i = 0; i < goldToGain; i++)

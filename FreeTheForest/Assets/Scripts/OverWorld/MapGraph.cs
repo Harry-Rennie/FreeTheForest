@@ -15,6 +15,7 @@ public class MapGraph : MonoBehaviour
 
     //configuration of graph
     private RectTransform mGraph;
+    private ScrollRect scrollRect;
     [SerializeField] private RectTransform graphContainer;
     [SerializeField] private int numberOfNodes;
     [SerializeField] private int gridSizeX = 7;
@@ -28,6 +29,7 @@ public class MapGraph : MonoBehaviour
     private List<GameObject> nodes;
     private PlayerInfoController gameManager;
     private Vector2 lastNodePos;
+    private float scrollToPosition;
     private void Awake()
     {
         //initializing graph and dimensions
@@ -66,7 +68,12 @@ public class MapGraph : MonoBehaviour
         {
             lastNodePos = gameManager.lastPosition;
             IncrementFloor(nodes);
+            //move the map down by the amount of rows you have progressed.
+            float scrollGridPositionChange = (graphHeight / gridSizeY) * gameManager.floorNumber + 50f;
+            graphContainer.anchoredPosition = new Vector2(graphContainer.anchoredPosition.x, graphContainer.anchoredPosition.y - scrollGridPositionChange);
+            lineManager.SnapLines(scrollGridPositionChange);
         }
+
     }
 
     /// <summary>
@@ -107,6 +114,7 @@ public class MapGraph : MonoBehaviour
                                     if(lineDrawer.HasLineBetween(lastNode, parentNode) || lineDrawer.HasLineBetween(parentNode, lastNode))
                                     {
                                         parentNode.GetComponent<Button>().interactable = true;
+                                        scrollToPosition = parentNode.GetComponent<RectTransform>().anchoredPosition.y;
                                     }
                                 }
                             }

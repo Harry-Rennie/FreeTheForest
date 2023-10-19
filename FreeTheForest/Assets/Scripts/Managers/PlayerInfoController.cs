@@ -18,6 +18,7 @@ public class PlayerInfoController : MonoBehaviour
     public GameObject LastNodeVisited { get; set; }
     public Vector2 lastPosition;
     public int EnemyCount;
+    public float lastScrollPosition {get; set;}
 
     [SerializeField] private GraphLayoutManager graphLayoutManager;
 
