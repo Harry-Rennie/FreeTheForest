@@ -47,14 +47,6 @@ public class BattleManager : MonoBehaviour
         get { return _cardsInHand; } // Getter to access the cardsInHand list
         set
         {
-            if (_cardsInHand.Count != value.Count)
-            {
-                // Perform the action you want when cardsInHand changes size here
-                Debug.Log("cardsInHand size changed");
-                handManager.heldCards = value;
-                // You can also check if the new size is larger or smaller if needed.
-            }
-
             _cardsInHand = value; // Set the new value
         }
     }
@@ -216,6 +208,7 @@ void Update()
         CardDisplay cardDis = handCardObjects[cardsInHand.Count-1]; //Get the next available card
         cardDis.LoadCard(card); //Tell card to load the Card data
         cardDis.gameObject.SetActive(true); //Activate the gameObject.
+        handManager.heldCards.Add(cardDis);
     }
 
     //Play a given card
