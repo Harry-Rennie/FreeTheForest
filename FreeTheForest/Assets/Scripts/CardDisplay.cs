@@ -14,8 +14,8 @@ public class CardDisplay : MonoBehaviour
     public TextMeshProUGUI descriptionText;
     public TextMeshProUGUI manaCost;
 
-    private bool isSelected = false;
-    private bool deselect = false;
+    public bool isSelected;
+    public bool deselect = false;
     private Vector3 originalPosition;
     private Transform parentSlot;
     private Transform battleCanvas;
@@ -39,11 +39,6 @@ public class CardDisplay : MonoBehaviour
         battleManager.OnClearTargeting += HandleClearTargeting;
     }
 
-    private void OnDisable()
-    {   //unsubscribing
-        battleManager.OnClearTargeting -= HandleClearTargeting;
-    }
-
     private void HandleClearTargeting()
     {
         deselect = true;
@@ -61,15 +56,15 @@ public class CardDisplay : MonoBehaviour
 
     public void SelectCard()
     {
+        if(Input.GetMouseButtonDown(1))
+        {
+            return;
+        }
         if(battleManager.battleOver && battleManager.RewardPanel.activeSelf)
         {
                 battleManager.AddCard(card);
         }
         if(targetSlot.childCount > 0 || isSelected)
-        {
-            return;
-        }
-        if(Input.GetMouseButtonDown(1))
         {
             return;
         }

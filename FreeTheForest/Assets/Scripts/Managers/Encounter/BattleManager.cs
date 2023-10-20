@@ -147,10 +147,6 @@ void Update()
 
     private void ClearTargeting()
     {
-        if (selectedCard == null)
-        {
-            return;
-        }
         targeting = false;
 
         if (targetLine != null)
@@ -279,7 +275,6 @@ void Update()
     {
         //Set turn to no
         playersTurn = false;
-        
         //Discard all player cards
         foreach (CardDisplay card in handCardObjects)
         {
