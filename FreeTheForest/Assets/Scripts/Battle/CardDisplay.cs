@@ -22,12 +22,15 @@ public class CardDisplay : MonoBehaviour
     private Transform targetSlot; //reference to the target slot
     private Transform originalCardSlot; //reference to the original card slot
     private BattleManager battleManager;
+    private Hand handManager;
     private int sortingOrder;
 
     private void Awake()
     {
-        originalPosition = transform.position;
+        handManager = GameObject.Find("Cards").GetComponent<Hand>();
         parentSlot = transform.parent;
+        transform.position = parentSlot.position;
+        originalPosition = transform.position;
         originalCardSlot = parentSlot; //store the original card slot
         battleCanvas = GameObject.Find("BattleCanvas").transform;
         targetSlot = GameObject.Find("TargetSlot").transform; //assign the target slot in the Inspector
@@ -68,7 +71,7 @@ public class CardDisplay : MonoBehaviour
         {
             return;
         }
-        if (!isSelected)
+        if (!isSelected && !battleManager.battleOver)
         {
             CardDisplay previouslySelectedCard = GetSelectedCard();
 
@@ -111,10 +114,13 @@ public class CardDisplay : MonoBehaviour
             if (deselect && isSelected)
             {
                 isSelected = false;
-                transform.position = originalPosition;
-                transform.SetParent(originalCardSlot);
+                Transform emptySlot = FindEmptySlot();
+                handManager.heldCards.Add(this);
+                transform.SetParent(emptySlot);
+                transform.position = emptySlot.position;
+                transform.localPosition = Vector3.zero;
                 transform.localScale = new Vector3(0.8f, 0.8f, transform.localScale.z);
-                originalCardSlot.GetComponent<Canvas>().sortingOrder = sortingOrder - 100;
+                handManager.ResetCardLayout();
             }
             if(targetSlot.childCount > 1)
             {
@@ -122,7 +128,25 @@ public class CardDisplay : MonoBehaviour
                 cardToReturn.transform.position = cardToReturn.originalPosition;
                 cardToReturn.transform.SetParent(cardToReturn.originalCardSlot);
                 originalCardSlot.GetComponent<Canvas>().sortingOrder = sortingOrder - 100;
+                Debug.Log("target slot full");
             }
         }
+    }
+
+    public Transform FindEmptySlot()
+    {
+        //look for an empty slot
+        foreach (var slot in handManager.cardSlots)
+        {
+            if (slot.transform.childCount == 1)
+            {
+                Transform child = slot.transform.GetChild(0);
+                if(!child.gameObject.activeSelf)
+                {
+                    return slot.transform;
+                }
+            }
+        }
+        return null; //no empty slots found
     }
 }

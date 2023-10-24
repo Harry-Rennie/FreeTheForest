@@ -10,7 +10,6 @@ public class CardTarget : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
     Entity enemy; // Self
     GameObject valid;
     GameObject invalid;
-
     private void Awake()
     {
         battle = FindObjectOfType<BattleManager>();
@@ -27,7 +26,6 @@ public class CardTarget : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
             if(enemy.isPlayer)
             {
                 battle.cardTarget = enemy;
-                Debug.Log("Targeting " + enemy);
                 valid.SetActive(true);
             }
         }
@@ -48,7 +46,6 @@ public class CardTarget : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
             if(!enemy.isPlayer)
             {
                 battle.cardTarget = enemy;
-                Debug.Log("Targeting " + enemy);
                 valid.SetActive(true);
             }
         }

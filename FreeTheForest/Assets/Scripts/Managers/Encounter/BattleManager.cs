@@ -298,7 +298,7 @@ void Update()
         //Draw the player their next hand
         DrawCards(drawAmount);
         //Restore energy
-        energy += energyGain;
+        energy = maxEnergy;
         PlayerInfoController.instance.Energy = energy;
         PlayerInfoPanel.Instance.UpdateStats();
         //Set turn to yes

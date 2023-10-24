@@ -7,20 +7,23 @@ using UnityEngine.UI;
 [RequireComponent(typeof(Collider))]
 public class FocusOnHover : MonoBehaviour
 {
-    [SerializeField] private Canvas _canvas;
-
+    private Canvas _canvas;
+    private string _canvasName;
+    private Canvas cardCanvas;
     private Vector3 _basePosition;
     private float _scaleFactor;
     private int _baseSortOrder;
 
+    [SerializeField] Hand handManager;
     public bool canHover;
 
     private void Awake()
     {
+        _canvas = GetComponentInParent<Canvas>();
+        _canvasName = transform.parent.gameObject.name;
         _canvas.overrideSorting = true;
         _baseSortOrder = _canvas.sortingOrder;
     }
-
     private void CanHover()
     {
         GameObject parent = transform.parent.gameObject;
@@ -49,13 +52,11 @@ public class FocusOnHover : MonoBehaviour
     private void OnMouseExit()
     {
         CanHover();
-        if(!canHover)
+        if(canHover)
         {
-            return;
+            setScale(0.8f);
+            handManager.ResetCardLayout();
         }
-        setScale(0.8f);
-        _canvas.sortingOrder = _baseSortOrder;
-        _canvas.transform.position = _basePosition;
     }
 
 private void OnMouseUp()
@@ -84,14 +85,12 @@ private void OnMouseDown()
         {
             _basePosition = _canvas.transform.position;
             setScale(1f);
-            _canvas.sortingOrder = _baseSortOrder + 100;
             _canvas.transform.position = new Vector3(_canvas.transform.position.x, _canvas.transform.position.y, _canvas.transform.position.z);
         }
         if(Input.GetMouseButtonDown(1))
         {
             setScale(0.8f);
-            _canvas.sortingOrder = _baseSortOrder;
-            _canvas.transform.position = _basePosition;
+            _canvas.transform.localPosition = Vector3.zero;
         }
     }
     private void setScale(float scale)

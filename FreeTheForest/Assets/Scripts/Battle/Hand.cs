@@ -40,6 +40,8 @@ public class Hand : MonoBehaviour
              previousSlotCards[i] = cardSlots[i].GetComponentInChildren<CardDisplay>();
         }
          AdjustCardPositions();
+         AdjustInactiveCards();
+         ResetCardLayout();
     }
 
     void Update()
@@ -66,12 +68,19 @@ void CheckCardSlots()
         }
     }
 
+    if(prevCount != _heldCards.Count)
+    {
+        hasChanged = true;
+        prevCount = _heldCards.Count;
+    }
+
     if (hasChanged)
     {
         //udate the list of held cards and adjust card positions
         UpdateHeldCards();
         AdjustCardPositions();
         AdjustInactiveCards();
+        ResetCardLayout();
     }
 }
     void AdjustInactiveCards()
@@ -123,40 +132,77 @@ void CheckCardSlots()
 
 public void AdjustCardPositions()
 {
-    List<CardDisplay> inactiveCards = new List<CardDisplay>();
-    List<GameObject> inactiveSlots = new List<GameObject>();
-    //how many active cards are in the hand
+    // List to track the occupied status of each slot.
+    bool[] slotOccupied = new bool[cardSlots.Count];
+    for (int i = 0; i < slotOccupied.Length; i++)
+    {
+        slotOccupied[i] = false; // Initially, no slots are occupied.
+    }
+
+    // Determine the number of active cards.
     int activeCardsCount = _heldCards.Count(card => card.gameObject.activeSelf);
 
-    //calculate starting point for the cards to be positioned.
+    // Calculate the starting point for card positioning.
     int totalSlots = cardSlots.Count;
-    int middleIndex = totalSlots / 2; //slot 5 - index 4
-
-    //cards expand from the middle to the sides.
+    int middleIndex = totalSlots / 2; // Assuming middle slot index for even totalSlots.
+    
+    // Cards expand from the middle to the sides.
     int startSlotIndex = middleIndex - (activeCardsCount / 2);
     if (activeCardsCount % 2 == 0)
     {
-        startSlotIndex++; //adjust if even number of active cards to keep them centered
+        startSlotIndex++; // Adjust if an even number of active cards to keep them centered.
     }
 
-    //start positioning the cards from left to right based on their current active state
-    int placedCards = 0; //counter for number of cards positioned already
+    // Position the cards.
+    int placedCards = 0;
     foreach (var card in _heldCards)
     {
-        if (card.gameObject.activeSelf) //only position active cards.
+        if (card.gameObject.activeSelf) // Only position active cards.
         {
-            int currentSlotIndex = startSlotIndex + placedCards; //calculate current slot for this card.
-            
-            if (currentSlotIndex >= 0 && currentSlotIndex < totalSlots)
+            int currentSlotIndex = startSlotIndex + placedCards;
+
+            // Find the next unoccupied slot if necessary.
+            while (currentSlotIndex < totalSlots && slotOccupied[currentSlotIndex])
             {
-                //move the card to the correct slot
+                currentSlotIndex++; // This slot is occupied, check the next one.
+            }
+
+            if (currentSlotIndex < totalSlots)
+            {
+                // Move the card to the correct slot.
                 card.transform.SetParent(cardSlots[currentSlotIndex].transform, false);
-                card.transform.localPosition = Vector3.zero; //center in the slot
+                card.transform.localPosition = Vector3.zero; // Center in the slot.
                 placedCards++;
+
+                slotOccupied[currentSlotIndex] = true; // Mark this slot as occupied.
+            }
+            else
+            {
+                Debug.LogWarning("No empty slots available. Cannot place card: " + card.card.title);
+                // You might want to handle this case specifically.
             }
         }
     }
+}
 
-    //for each cardslot, if there is an inactive card AND active card in the slot, put the inactive card in the nearest available empty cardslot.
+//clean up function, some edge cases card positions can get out of whack.
+public void ResetCardLayout()
+{
+    int layerOrder = 1;
+    cardSlots.OrderBy(slot => slot.transform.position.x);
+    foreach (var slot in cardSlots)
+    {
+        slot.GetComponent<Canvas>().sortingOrder = layerOrder;
+        layerOrder++;
+        CardDisplay card = slot.GetComponentInChildren<CardDisplay>();
+        if (card != null)
+        {
+            card.transform.localScale = new Vector3(0.8f, 0.8f, card.transform.localScale.z);
+            card.transform.localPosition = Vector3.zero;
+            card.transform.position = slot.transform.position;
+            card.GetComponent<Canvas>().sortingOrder = layerOrder;
+        }
+    }
+    layerOrder = 1;
 }
 }
