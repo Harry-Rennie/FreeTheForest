@@ -8,6 +8,7 @@ public class CardActions : MonoBehaviour
 {
     Card card;
     [SerializeField] PlayerAnimator PlayerSprite;
+    CardDisplayAnimator CardSprite;
     public Entity target;
     public Entity player;
     BattleManager battleManager;
@@ -23,6 +24,7 @@ public class CardActions : MonoBehaviour
     {
         card = _card;
         target = _entity;
+        //Get the card display animator from the targetslot canvas
         if (card.effects != null) //Check that we have a card that does stuff
         {
             for (int i = 0; i < card.effects.Count; i++) //Loop through the effects
@@ -33,7 +35,10 @@ public class CardActions : MonoBehaviour
                         AttackEnemy(card.values[i]); //Call the relevant effect with the current "values" as argument
                         if(battleManager.playersTurn)
                         {
-                            PlayerSprite.Attack();
+                            if(!target.isPlayer)
+                            {
+                                PlayerSprite.Attack();
+                            }
                         }
                         break;
                     case Card.CardEffect.Block:

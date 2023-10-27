@@ -10,6 +10,8 @@ using UnityEngine.SceneManagement;
 public class BattleManager : MonoBehaviour
 {
     [Header("Cards")]
+    [SerializeField] CardAnimator cardSprite;
+    public CardDisplayAnimator cardAnimator;
     public Deck deck;
     private List<Card> _cardsInHand = new List<Card>();
     public List<CardDisplay> handCardObjects;
@@ -34,7 +36,7 @@ public class BattleManager : MonoBehaviour
     public GameObject RewardPanel;
 
     [SerializeField] public GameObject battleCanvas;
-    private TargetSlot targetSlot;
+    public TargetSlot targetSlot;
     private LineRenderer targetLine;
     public CardDisplay selectedCard;
 
@@ -116,6 +118,7 @@ void Update()
          if(targetSlot.transform.childCount == 1)
          {
               selectedCard = targetSlot.transform.GetChild(0).GetComponent<CardDisplay>();
+              cardAnimator = targetSlot.GetComponent<CardDisplayAnimator>();
             BeginTargeting();
          }
          else
@@ -156,33 +159,20 @@ void Update()
         deck.DiscardPile.AddRange(gameManager.playerDeck);
         battleCounter = 0;
         energy = maxEnergy;
-
-        DrawCards(drawAmount);
         LoadEnemies();
+        StartCoroutine(DrawCards(drawAmount));
     }
     //Draw cards. Loop over Deck card draw X times. Load returned card into hand.
-    public void DrawCards(int amount)
+    public IEnumerator DrawCards(int amount)
     {
         int cardsDrawn = 0;
-        List<Card> newCardsInHand = new List<Card>(cardsInHand); // Create a copy of the current hand
-        while (cardsDrawn < amount && newCardsInHand.Count <= 10) // While we have cards to draw AND our hand is not full...
+        while (cardsDrawn < amount && cardsInHand.Count <= 10)
         {
-            Card cardDrawn = deck.DrawCard(); // Get the card from the deck
-            newCardsInHand.Add(cardDrawn); // Put the card in the Hand list (in the copy)
-            cardsInHand = newCardsInHand; //update the hand with the copy, which triggers the action
-            DisplayCardInHand(cardDrawn); // Display the card
+            Card cardDrawn = deck.DrawCard();
+            cardsInHand.Add(cardDrawn);
+            yield return StartCoroutine(DisplayCardInHand(cardDrawn));
             cardsDrawn++;
         }
-    }
-
-    //debug method for testing
-    public void DrawCard()
-    {
-        Card cardDrawn = deck.DrawCard();
-        List<Card> newCardsInHand = new List<Card>(cardsInHand);
-        newCardsInHand.Add(cardDrawn);
-        cardsInHand = newCardsInHand; //this triggers the action
-        DisplayCardInHand(cardDrawn);
     }
 
     public void LoadEnemies()
@@ -203,31 +193,39 @@ void Update()
     }
 
     //Load CardDisplay game object with given Card data and make visible.
-    public void DisplayCardInHand(Card card)
+    public IEnumerator DisplayCardInHand(Card card)
     {
-        CardDisplay cardDis = handCardObjects[cardsInHand.Count-1]; //Get the next available card
-        cardDis.LoadCard(card); //Tell card to load the Card data
-        cardDis.gameObject.SetActive(true); //Activate the gameObject.
+        cardSprite.Draw();
+        yield return new WaitUntil(() => cardSprite.IsAnimationComplete);
+        cardSprite.IsAnimationComplete = false;
+        CardDisplay cardDis = handCardObjects[cardsInHand.Count-1];
+        cardDis.LoadCard(card);
+        cardDis.gameObject.SetActive(true);
         handManager.heldCards.Add(cardDis);
     }
 
     //Play a given card
     public void PlayCard(CardDisplay card)
     {
+        ClearTargeting();
         cardActions.PerformAction(card.card, cardTarget); //Tell CardActions to perform action based on Card name and Target if necessary
-
+        cardAnimator.IsDisplayAnimationComplete = false;
         energy -= card.card.manaCost; //Reduce energy by card cost (CardActions checks for enough mana)\
         PlayerInfoController.instance.Energy = energy;
         PlayerInfoPanel.Instance.UpdateStats();
-        ClearTargeting();
-        selectedCard = null; //Drop the referenced card
-        
-        DiscardCard(card);
+        selectedCard = null;
+        StartCoroutine(DiscardCard(card));
     }
 
-    public void DiscardCard(CardDisplay card)
+    public IEnumerator DiscardCard(CardDisplay card)
     {
-        card.gameObject.SetActive(false); //Deactivate the gameObject
+        if(playersTurn)
+        {
+            cardAnimator.Discard();
+            yield return new WaitUntil(() => cardAnimator.IsDisplayAnimationComplete);
+        }
+        yield return new WaitForSeconds(0.5f);
+        card.gameObject.SetActive(false);
         List<Card> newCardsInHand = new List<Card>(cardsInHand);
         newCardsInHand.Remove(card.card);//Remove the Hand list item
         cardsInHand = newCardsInHand;//trigger action
@@ -273,7 +271,7 @@ void Update()
         {
             if(card.gameObject.activeSelf)
             {
-                DiscardCard(card);
+                StartCoroutine(DiscardCard(card));
             }
         }
 
@@ -295,14 +293,14 @@ void Update()
         //TODO: FUTURE CONTENT: Process buffs
         // ProcessBuffs();
 
-        //Draw the player their next hand
-        DrawCards(drawAmount);
         //Restore energy
         energy = maxEnergy;
         PlayerInfoController.instance.Energy = energy;
         PlayerInfoPanel.Instance.UpdateStats();
         //Set turn to yes
         playersTurn = true;
+                //Draw the player their next hand
+        StartCoroutine(DrawCards(drawAmount));
     }
 
     private void ProcessBuffs()
