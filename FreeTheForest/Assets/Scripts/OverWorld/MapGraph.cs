@@ -73,7 +73,6 @@ public class MapGraph : MonoBehaviour
             graphContainer.anchoredPosition = new Vector2(graphContainer.anchoredPosition.x, graphContainer.anchoredPosition.y - scrollGridPositionChange);
             lineManager.SnapLines(scrollGridPositionChange);
         }
-
     }
 
     /// <summary>
@@ -149,7 +148,7 @@ public class MapGraph : MonoBehaviour
                     {
                         if(node.GetComponent<RectTransform>().anchoredPosition == nodeLocation)
                         {
-                            if(row == 0)
+                            if(row <= 1)
                             {
                                 node.GetComponent<Button>().interactable = true;
                             }
@@ -347,6 +346,7 @@ public class MapGraph : MonoBehaviour
                     GameObject newChildNode = nodeManager.Respawn(childNode, graphContainer, tag);
                     keysToUpdate.Add(childNode);
                     newEntries[newChildNode] = parentNode;
+                    Destroy(childNode);
                 }
             }
             //update the dictionary

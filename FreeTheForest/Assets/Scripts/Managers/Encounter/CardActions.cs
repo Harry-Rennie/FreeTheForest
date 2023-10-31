@@ -92,13 +92,11 @@ public class CardActions : MonoBehaviour
                 if (battleManager.playersTurn)
                 {
                     int damage = player.offense;
-
                     target.TakeDamage(damage);
                 }
                 else
                 {
                     int damage = target.offense;
-
                     player.TakeDamage(damage);
                 }
                 break;

@@ -67,6 +67,7 @@ public class BattleManager : MonoBehaviour
         targetLine.startWidth = 0.05f; //set line width
         targetLine.endWidth = 0.05f;
         targetLine.positionCount = 0;
+        targetLine.sortingOrder = 400;
         targetSlot.OnChildChanged.AddListener(OnTargetSlotChildChanged);
         battleOver = false;
     }
@@ -84,7 +85,7 @@ void Update()
         targetLine.positionCount = numPoints;
         float cardSlotWidth = targetSlot.GetComponent<RectTransform>().rect.width / 2;
         float cardSlotHeight = targetSlot.GetComponent<RectTransform>().rect.height / 2;
-        Vector2 cardSlotMidY = new Vector2(targetSlot.transform.position.x - cardSlotWidth, targetSlot.transform.position.y - cardSlotHeight + 55f);
+        Vector2 cardSlotMidY = new Vector2(targetSlot.transform.position.x - cardSlotWidth, targetSlot.transform.position.y - cardSlotHeight + 20f);
 
         Vector2 canvasMousePosition;
         RectTransform canvasRect = battleCanvas.GetComponent<RectTransform>();
@@ -117,8 +118,8 @@ void Update()
         
          if(targetSlot.transform.childCount == 1)
          {
-              selectedCard = targetSlot.transform.GetChild(0).GetComponent<CardDisplay>();
-              cardAnimator = targetSlot.GetComponent<CardDisplayAnimator>();
+            selectedCard = targetSlot.transform.GetChild(0).GetComponent<CardDisplay>();
+            cardAnimator = selectedCard.GetComponent<CardDisplayAnimator>();
             BeginTargeting();
          }
          else
@@ -205,26 +206,34 @@ void Update()
     }
 
     //Play a given card
-    public void PlayCard(CardDisplay card)
+    public IEnumerator PlayCard(CardDisplay card)
     {
+        CardDisplayAnimator cardToAnimate = selectedCard.GetComponent<CardDisplayAnimator>();
         ClearTargeting();
         cardActions.PerformAction(card.card, cardTarget); //Tell CardActions to perform action based on Card name and Target if necessary
-        cardAnimator.IsDisplayAnimationComplete = false;
         energy -= card.card.manaCost; //Reduce energy by card cost (CardActions checks for enough mana)\
         PlayerInfoController.instance.Energy = energy;
         PlayerInfoPanel.Instance.UpdateStats();
         selectedCard = null;
-        StartCoroutine(DiscardCard(card));
+        cardToAnimate.Discard();
+        yield return new WaitForSeconds(0.5f);
+        DiscardCard(card);
     }
 
-    public IEnumerator DiscardCard(CardDisplay card)
+    public IEnumerator PlayDiscardAnimation()
     {
-        if(playersTurn)
+        foreach(CardDisplay card in handCardObjects)
         {
-            cardAnimator.Discard();
-            yield return new WaitUntil(() => cardAnimator.IsDisplayAnimationComplete);
+            if(card.gameObject.activeSelf)
+            {
+                cardAnimator = card.GetComponent<CardDisplayAnimator>();
+                cardAnimator.Discard();
+                yield return new WaitForSeconds(0.5f);
+            }
         }
-        yield return new WaitForSeconds(0.5f);
+    }
+    public void DiscardCard(CardDisplay card)
+    {
         card.gameObject.SetActive(false);
         List<Card> newCardsInHand = new List<Card>(cardsInHand);
         newCardsInHand.Remove(card.card);//Remove the Hand list item
@@ -266,12 +275,13 @@ void Update()
     {
         //Set turn to no
         playersTurn = false;
+        StartCoroutine(PlayDiscardAnimation());
         //Discard all player cards
         foreach (CardDisplay card in handCardObjects)
         {
             if(card.gameObject.activeSelf)
             {
-                StartCoroutine(DiscardCard(card));
+                DiscardCard(card);
             }
         }
 

@@ -66,7 +66,7 @@ public class CardTarget : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
             if(enemy.isPlayer)
             {
                 battle.cardTarget = enemy;
-                battle.PlayCard(battle.selectedCard);
+                StartCoroutine(battle.PlayCard(battle.selectedCard));
             }
         }
         // Logic to execute when the object is clicked.
@@ -75,7 +75,7 @@ public class CardTarget : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
             if(!enemy.isPlayer)
             {
                 battle.cardTarget = enemy;
-                battle.PlayCard(battle.selectedCard);
+                StartCoroutine(battle.PlayCard(battle.selectedCard));
             }
         }
     }
