@@ -33,13 +33,22 @@ public class AudioInfo
 /// </summary>
 public class SFXManager : MonoBehaviour
 {
+    [SerializeField] private SFXDebugButtonCreator sfxDebugButtonCreator;
+
     #region Singleton
     public static SFXManager Instance;
-    [SerializeField] private SFXDebugButtonCreator sfxDebugButtonCreator;
 
     private void Awake()
     {
-        if (Instance == null) Instance = this;
+        if (Instance == null)
+        {
+            Instance = this;
+            DontDestroyOnLoad(gameObject); // This will make the object persist between scenes.
+        }
+        else
+        {
+            Destroy(gameObject); // Destroy any duplicate instances.
+        }
     }
     #endregion
 
