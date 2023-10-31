@@ -17,7 +17,10 @@ public class AudioInfo
     {
         Player = player;
         // Base name on the clip assigned to the audiosource
-        this.name = player.clip.ToString().Split(' ')[0];
+        if (player.clip != null)
+        {
+            this.name = player.clip.ToString().Split(' ')[0];
+        }
         InitVolume = initVolume;
     }
 }
@@ -32,6 +35,7 @@ public class SFXManager : MonoBehaviour
 {
     #region Singleton
     public static SFXManager Instance;
+    [SerializeField] private SFXDebugButtonCreator sfxDebugButtonCreator;
 
     private void Awake()
     {
@@ -39,7 +43,7 @@ public class SFXManager : MonoBehaviour
     }
     #endregion
 
-    [SerializeField] private List<AudioInfo> audioInfos = new List<AudioInfo>();
+    [HideInInspector] public List<AudioInfo> AudioInfos { get; } = new List<AudioInfo>();
 
     // This is the initial overall SFX volume. This is what SFX slider in the settings menu is set to when the game starts.
     public float InitSFXLevel = 0.25f;
@@ -52,8 +56,10 @@ public class SFXManager : MonoBehaviour
             AudioInfo newAudioInfo = new AudioInfo(audioSource, audioSource.volume);
             // set the volume of the audiosource to the initial SFX level relative to its initial volume.
             newAudioInfo.Player.volume = (newAudioInfo.InitVolume * InitSFXLevel);
-            audioInfos.Add(newAudioInfo);
+            AudioInfos.Add(newAudioInfo);
         }
+        // create debug buttons
+        sfxDebugButtonCreator.CreateSFXButtons();
     }
 
     /// <summary>
@@ -63,7 +69,7 @@ public class SFXManager : MonoBehaviour
     public void Play(string name)
     {
         // Find the audiosource with supplied name and play it
-        foreach (AudioInfo audioInfo in audioInfos)
+        foreach (AudioInfo audioInfo in AudioInfos)
         {
             if (audioInfo.name == name)
             {
@@ -80,7 +86,7 @@ public class SFXManager : MonoBehaviour
     public void ChangeSFXVolume(float volume)
     {
         // Change the volume of each audiosource relative to its initial volume
-        foreach (AudioInfo audioInfo in audioInfos)
+        foreach (AudioInfo audioInfo in AudioInfos)
         {
             audioInfo.Player.volume = (audioInfo.InitVolume * volume);
         }
