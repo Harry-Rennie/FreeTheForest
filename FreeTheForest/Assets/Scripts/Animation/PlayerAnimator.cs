@@ -35,6 +35,7 @@ public class PlayerAnimator : MonoBehaviour
         //start animator
         animator.enabled = true;
         animator.SetTrigger("idleTrigger");
+        StopAnimator();
     }
     public void StopAnimator()
     {

@@ -25,6 +25,8 @@ public class CardDisplay : MonoBehaviour
     private Hand handManager;
     private int sortingOrder;
 
+    private CardDisplayAnimator animator;
+
     private void Awake()
     {
         handManager = GameObject.Find("Cards").GetComponent<Hand>();
@@ -34,6 +36,7 @@ public class CardDisplay : MonoBehaviour
         originalCardSlot = parentSlot; //store the original card slot
         battleCanvas = GameObject.Find("BattleCanvas").transform;
         targetSlot = GameObject.Find("TargetSlot").transform; //assign the target slot in the Inspector
+        animator = GetComponent<CardDisplayAnimator>();
     }
 
     private void Start()
@@ -42,10 +45,13 @@ public class CardDisplay : MonoBehaviour
         battleManager.OnClearTargeting += HandleClearTargeting;
     }
 
-    private void HandleClearTargeting()
+    public void HandleClearTargeting()
     {
-        deselect = true;
-        DeselectCard();
+        if(animator.discarded == false)
+        {
+            deselect = true;
+            DeselectCard();
+        }
     }
 
     // Load card blank TMPro text objects with the data from the Card scriptable object.
@@ -71,7 +77,7 @@ public class CardDisplay : MonoBehaviour
         {
             return;
         }
-        if (!isSelected && !battleManager.battleOver)
+        if (!isSelected && !battleManager.battleOver && animator.IsDisplayAnimationComplete)
         {
             CardDisplay previouslySelectedCard = GetSelectedCard();
 
@@ -111,7 +117,7 @@ public class CardDisplay : MonoBehaviour
     {
         if (isSelected)
         {
-            if (deselect && isSelected)
+            if (deselect && battleManager.selectedCard == this && animator.discarded == false)
             {
                 isSelected = false;
                 Transform emptySlot = FindEmptySlot();

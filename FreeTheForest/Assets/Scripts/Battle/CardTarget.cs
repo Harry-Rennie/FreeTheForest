@@ -54,6 +54,8 @@ public class CardTarget : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
     // Implement the OnPointerClick method from IPointerClickHandler
     public void OnPointerClick(PointerEventData eventData)
     {
+        if(battle.selectedCard != null)
+        {
         valid.SetActive(false);
         invalid.SetActive(false);
         //check to see if battle is over and is a reward card
@@ -77,6 +79,7 @@ public class CardTarget : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                 battle.cardTarget = enemy;
                 StartCoroutine(battle.PlayCard(battle.selectedCard));
             }
+        }
         }
     }
     public void OnPointerExit(PointerEventData eventData)

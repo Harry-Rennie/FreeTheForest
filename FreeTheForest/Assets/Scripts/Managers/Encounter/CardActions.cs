@@ -33,13 +33,6 @@ public class CardActions : MonoBehaviour
                 {
                     case Card.CardEffect.Attack:
                         AttackEnemy(card.values[i]); //Call the relevant effect with the current "values" as argument
-                        if(battleManager.playersTurn)
-                        {
-                            if(!target.isPlayer)
-                            {
-                                PlayerSprite.Attack();
-                            }
-                        }
                         break;
                     case Card.CardEffect.Block:
                         PerformBlock(card.values[i]);
@@ -86,6 +79,13 @@ public class CardActions : MonoBehaviour
 
     private void AttackEnemy(int mode) //Deal damage to current target equal to Player Offense stat
     {
+        if(battleManager.playersTurn)
+        {
+            if(!target.isPlayer)
+            {
+                PlayerSprite.Attack();
+            }
+        }
         switch (mode)
         {
             case 0: //Default case, deal damage based on Offense

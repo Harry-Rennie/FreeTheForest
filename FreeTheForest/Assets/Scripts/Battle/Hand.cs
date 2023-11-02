@@ -125,7 +125,11 @@ void CheckCardSlots()
             CardDisplay card = slot.GetComponentInChildren<CardDisplay>();
             if (card != null && card.gameObject.activeSelf)
             {
-                _heldCards.Add(card);
+                CardDisplayAnimator animator = card.GetComponent<CardDisplayAnimator>();
+                if(animator == null || animator.discarded == false)
+                {
+                    _heldCards.Add(card);
+                }
             }
         }
     }
@@ -157,29 +161,22 @@ public void AdjustCardPositions()
     int placedCards = 0;
     foreach (var card in _heldCards)
     {
-        if (card.gameObject.activeSelf) // Only position active cards.
+        if (card.gameObject.activeSelf)
         {
             int currentSlotIndex = startSlotIndex + placedCards;
-
-            // Find the next unoccupied slot if necessary.
             while (currentSlotIndex < totalSlots && slotOccupied[currentSlotIndex])
             {
-                currentSlotIndex++; // This slot is occupied, check the next one.
+                currentSlotIndex++;
             }
 
             if (currentSlotIndex < totalSlots)
             {
                 // Move the card to the correct slot.
                 card.transform.SetParent(cardSlots[currentSlotIndex].transform, false);
-                card.transform.localPosition = Vector3.zero; // Center in the slot.
+                card.transform.localPosition = Vector3.zero; //center in slot
                 placedCards++;
 
-                slotOccupied[currentSlotIndex] = true; // Mark this slot as occupied.
-            }
-            else
-            {
-                Debug.LogWarning("No empty slots available. Cannot place card: " + card.card.title);
-                // You might want to handle this case specifically.
+                slotOccupied[currentSlotIndex] = true; //mark this slot as occupied
             }
         }
     }

@@ -124,6 +124,7 @@ void Update()
          }
          else
          {
+            
               selectedCard = null;
          }
     }
@@ -209,14 +210,13 @@ void Update()
     public IEnumerator PlayCard(CardDisplay card)
     {
         CardDisplayAnimator cardToAnimate = selectedCard.GetComponent<CardDisplayAnimator>();
-        ClearTargeting();
         cardActions.PerformAction(card.card, cardTarget); //Tell CardActions to perform action based on Card name and Target if necessary
         energy -= card.card.manaCost; //Reduce energy by card cost (CardActions checks for enough mana)\
         PlayerInfoController.instance.Energy = energy;
         PlayerInfoPanel.Instance.UpdateStats();
-        selectedCard = null;
+        ClearTargeting();
         cardToAnimate.Discard();
-        yield return new WaitForSeconds(0.5f);
+        yield return new WaitUntil(() => cardAnimator.IsDisplayAnimationComplete);
         DiscardCard(card);
     }
 
@@ -228,16 +228,14 @@ void Update()
             {
                 cardAnimator = card.GetComponent<CardDisplayAnimator>();
                 cardAnimator.Discard();
-                yield return new WaitForSeconds(0.5f);
+                yield return new WaitUntil(() => cardAnimator.IsDisplayAnimationComplete);
             }
         }
     }
     public void DiscardCard(CardDisplay card)
     {
         card.gameObject.SetActive(false);
-        List<Card> newCardsInHand = new List<Card>(cardsInHand);
-        newCardsInHand.Remove(card.card);//Remove the Hand list item
-        cardsInHand = newCardsInHand;//trigger action
+        cardsInHand.Remove(card.card);
         deck.Discard(card.card); //Put the card into the Discard pile of the Deck object.
     }
 

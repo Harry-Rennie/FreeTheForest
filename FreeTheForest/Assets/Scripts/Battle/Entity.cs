@@ -70,8 +70,9 @@ public class Entity : MonoBehaviour
                 battleManager.AddKill();
             }
             //you die (player)
-
-            Destroy(gameObject);
+            
+            //we cant destroy here yet or we break card logic!
+            gameObject.GetComponent<Canvas>().enabled = false;   
         }
     }
 

@@ -114,8 +114,10 @@ public class PlayerInfoPanel : MonoBehaviour
         playerInfoController.ResetPlayerInfo();
         SceneManager.LoadScene("TitleScreen");
     }
-    #endregion
-
+    public void Quit()
+    {
+        Application.Quit();
+    }
     public void ShowSavePanel()
     {
         savePanel.SetActive(true);
@@ -136,6 +138,7 @@ public class PlayerInfoPanel : MonoBehaviour
     {
         settingsPanel.SetActive(true);
     }
+    #endregion
     /// <summary>
     /// Deactivates PlayerUI when in a scene that doesn't need it. Todo: reset stats properly for new game
     /// </summary>

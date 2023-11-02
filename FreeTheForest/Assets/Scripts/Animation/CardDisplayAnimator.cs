@@ -1,54 +1,86 @@
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class CardDisplayAnimator : MonoBehaviour
 {
-    [SerializeField] 
     private Animator animator;
-    private TargetSlot targetSlot;
-    public bool IsDisplayAnimationComplete { get; private set; }
+    private bool isAnimating = false;
+    private Queue<string> animationQueue = new Queue<string>();
+    public bool discarded;
+
+    public bool IsDisplayAnimationComplete { get; set; }
 
     void Awake()
     {
-        this.IsDisplayAnimationComplete = false;
         animator = GetComponent<Animator>();
-        if(animator!=null)
-        {
-            animator.enabled = false;
-        }
-        targetSlot = GameObject.Find("TargetSlot").GetComponent<TargetSlot>();
+        IsDisplayAnimationComplete = false;
+        discarded = false;
+        StopAnimator();
     }
 
     void Update()
     {
+        if (!animator.enabled) return;
+
+        if (!animator.IsInTransition(0) && animator.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1)
+        {
+            IsDisplayAnimationComplete = true;
+            StopAnimator();
+        }
     }
 
-    private void ReadyAnimator()
+    public void EnqueueAnimation(string triggerName)
     {
-        animator.enabled = true;
-        SetIdle(); //set to idle state when its in the target slot.
+        animationQueue.Enqueue(triggerName);
+
+        if (!isAnimating) StartCoroutine(PlayAnimations());
     }
 
-    private void DisableAnimator()
+    IEnumerator PlayAnimations()
     {
-        animator.enabled = false;
-        IsDisplayAnimationComplete = true; //mark the animation complete when it leaves the target slot.
+        isAnimating = true;
+
+        while (animationQueue.Count > 0)
+        {
+            string trigger = animationQueue.Dequeue();
+            StartAnimator();
+            IsDisplayAnimationComplete = false;
+            animator.SetTrigger(trigger);
+
+            // Wait for animation to complete
+            yield return new WaitUntil(() => IsDisplayAnimationComplete);
+        }
+
+        isAnimating = false;
+        discarded = true;
     }
 
     public void Discard()
     {
-        this.animator.enabled = true;
-        this.IsDisplayAnimationComplete = false;
-        this.animator.SetTrigger("discardTrigger");
+        EnqueueAnimation("discardTrigger");
     }
+
     public void SetIdle()
     {
-        animator.enabled = true;
+        StartAnimator();
         animator.SetTrigger("idleTrigger");
+    }
+
+    private void StartAnimator()
+    {
+        animator.enabled = true;
+    }
+
+    private void StopAnimator()
+    {
+        IsDisplayAnimationComplete = true;
+        animator.enabled = false;
     }
 
     public void OnDiscardAnimationComplete()
     {
-        this.IsDisplayAnimationComplete = false;
-        animator.enabled = false;
+        IsDisplayAnimationComplete = true;
+        StopAnimator();
     }
 }

@@ -225,7 +225,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d50dfcb275bf0bf469554a8794af447c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  animator: {fileID: -6310594009871767951}
+  discarded: 0
 --- !u!114 &7843287274921920550
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -248,7 +248,7 @@ MonoBehaviour:
   m_FallbackScreenDPI: 96
   m_DefaultSpriteDPI: 96
   m_DynamicPixelsPerUnit: 1
-  m_PresetInfoIsWorld: 1
+  m_PresetInfoIsWorld: 0
 --- !u!1 &2385813484790286139
 GameObject:
   m_ObjectHideFlags: 0
