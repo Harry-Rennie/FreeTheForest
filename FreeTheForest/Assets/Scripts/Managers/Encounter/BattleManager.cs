@@ -273,7 +273,7 @@ void Update()
     {
         //Set turn to no
         playersTurn = false;
-        StartCoroutine(PlayDiscardAnimation());
+        // StartCoroutine(PlayDiscardAnimation());
         //Discard all player cards
         foreach (CardDisplay card in handCardObjects)
         {
