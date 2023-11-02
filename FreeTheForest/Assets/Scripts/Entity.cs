@@ -116,6 +116,26 @@ public class Entity : MonoBehaviour
         }
     }
 
+    public BuffBase GetBuff(string buffName) //Return a reference to a buff on entity by buffName
+    {
+        BuffBase buffReturn = null;
+        
+        foreach (BuffBase buff in buffs)
+        {
+            if (buff.buffName == buffName)
+            {
+                buffReturn = buff;
+            }
+        }
+
+        if (buffReturn == null)
+        {
+            Debug.Log(buffName + " Buff Not Found");
+        }
+
+        return buffReturn;
+    }
+
     public void CleanseBuffs() //Wipe all buffs on an entity
     {
         foreach (BuffBase buff in buffs)

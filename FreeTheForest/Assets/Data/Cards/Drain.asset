@@ -10,12 +10,12 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f6d5a2fb821bc4fa6988ef63e88642ee, type: 3}
-  m_Name: Dig Deep
+  m_Name: Drain
   m_EditorClassIdentifier: 
-  title: Dig Deep
-  description: Double your Block, Draw 2
+  title: Drain
+  description: Attack<br>Growth 1
   image: {fileID: 0}
   manaCost: 2
-  cardType: 1
-  effects: 0100000003000000
-  values: 0100000002000000
+  cardType: 0
+  effects: 0000000005000000
+  values: 0000000001000000

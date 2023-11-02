@@ -17,7 +17,8 @@ public class Card : ScriptableObject
     public enum CardType { Attack, Skill}
     //public CardTargetType cardTargetType; //What does the card target
     //public enum CardTargetType { self, enemy}
-    public enum CardEffect { Attack, Block, Energy, Draw, PoisonSelf, GrowthSelf}
+    public enum CardEffect { Attack, Block, Energy, Draw, EnergySpecial, DrawSpecial, PoisonSelf, GrowthSelf, GrowthSpecial, Stun, AOE}
     public List<CardEffect> effects; //What does the card do? Read for CardActions
     public List<int> values; //Values for the given related effect
+    public bool exiled; //Is the card exiled on play?
 }

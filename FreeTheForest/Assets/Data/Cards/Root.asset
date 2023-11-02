@@ -16,6 +16,6 @@ MonoBehaviour:
   description: Block, then Gain 2 @
   image: {fileID: 0}
   manaCost: 1
-  cardType: 0
+  cardType: 1
   effects: 0100000002000000
   values: 0000000002000000

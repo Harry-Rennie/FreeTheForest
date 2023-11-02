@@ -10,12 +10,13 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f6d5a2fb821bc4fa6988ef63e88642ee, type: 3}
-  m_Name: Dig Deep
+  m_Name: TIMBER!
   m_EditorClassIdentifier: 
-  title: Dig Deep
-  description: Double your Block, Draw 2
+  title: TIMBER!
+  description: AOE Attack 3 Times<br>Stun<br>Lose 2 Growth
   image: {fileID: 0}
-  manaCost: 2
-  cardType: 1
-  effects: 0100000003000000
-  values: 0100000002000000
+  manaCost: 4
+  cardType: 0
+  effects: 0a0000000800000008000000
+  values: 64000000ffffffffffffffff
+  exiled: 0

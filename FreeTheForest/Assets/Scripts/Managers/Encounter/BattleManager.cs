@@ -222,7 +222,14 @@ void Update()
         ClearTargeting();
         selectedCard = null; //Drop the referenced card
         
-        DiscardCard(card);
+        if (card.card.exiled) //Either exile or discard the card based on its Exiled bool
+        {
+            ExileCard(card);
+        }
+        else
+        {
+            DiscardCard(card);
+        }
     }
 
     public void DiscardCard(CardDisplay card)
@@ -232,6 +239,15 @@ void Update()
         newCardsInHand.Remove(card.card);//Remove the Hand list item
         cardsInHand = newCardsInHand;//trigger action
         deck.Discard(card.card); //Put the card into the Discard pile of the Deck object.
+    }
+
+    public void ExileCard(CardDisplay card)
+    {
+        card.gameObject.SetActive(false); //Deactivate the gameObject
+        List<Card> newCardsInHand = new List<Card>(cardsInHand);
+        newCardsInHand.Remove(card.card);//Remove the Hand list item
+        cardsInHand = newCardsInHand;//trigger action
+        deck.ExileCard(card.card); //Put the card into the Exile pile of the Deck object.
     }
 
     public void AddKill() //Subtract our enemy counter for checking Battle End
@@ -280,7 +296,7 @@ void Update()
         //Go through each enemy and execute their actions
         foreach(Entity enemy in enemies)
         {
-            if (enemy != null && enemy.gameObject.activeSelf)
+            if (enemy != null && enemy.gameObject.activeSelf && enemy.GetBuff("Stun") == null)
             {
                 int roll = battleCounter % enemy.enemyCards.Count;
 
@@ -292,8 +308,8 @@ void Update()
         //Increment battleCounter
         battleCounter++;
 
-        //TODO: FUTURE CONTENT: Process buffs
-        // ProcessBuffs();
+        //Process buffs
+        ProcessBuffs();
 
         //Draw the player their next hand
         DrawCards(drawAmount);
