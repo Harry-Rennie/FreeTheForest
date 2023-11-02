@@ -86,6 +86,19 @@ public class MusicManager : MonoBehaviour
         }
     }
 
+    public void FadeOut()
+    {
+        // Find the audiosource with supplied name and play it
+        foreach (AudioInfo audioInfo in AudioInfos)
+        {
+            if (audioInfo.Player.isPlaying)
+            {
+                // start fadeaudiosource coroutine
+                StartCoroutine(FadeAudioSource.StartFade(audioInfo.Player, fadeTime, 0f));
+            }
+        }
+    }
+
     /// <summary>
     /// This method is used to change the overall music volume.
     /// </summary>

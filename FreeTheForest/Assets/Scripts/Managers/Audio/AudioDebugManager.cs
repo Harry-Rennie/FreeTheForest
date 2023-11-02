@@ -55,7 +55,7 @@ public class AudioDebugManager : MonoBehaviour
             {
                 if (value)
                 {
-                    audioInfo.Player.Play();
+                    MusicManager.Instance.Play(audioInfo.name);
                 }
                 else
                 {
