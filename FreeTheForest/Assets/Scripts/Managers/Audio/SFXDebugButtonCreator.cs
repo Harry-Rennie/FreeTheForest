@@ -12,6 +12,8 @@ public class SFXDebugButtonCreator : MonoBehaviour
     // the button is not a prefab, just a generic button
     public void CreateSFXButtons()
     {
+        if (sfxButtonContainer == null) return;
+
         foreach (AudioInfo audioInfo in SFXManager.Instance.AudioInfos)
         {
             // create a button
