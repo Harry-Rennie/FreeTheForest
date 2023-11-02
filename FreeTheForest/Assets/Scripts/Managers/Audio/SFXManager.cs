@@ -33,8 +33,6 @@ public class AudioInfo
 /// </summary>
 public class SFXManager : MonoBehaviour
 {
-    [SerializeField] private SFXDebugButtonCreator sfxDebugButtonCreator;
-
     #region Singleton
     public static SFXManager Instance;
 
@@ -60,7 +58,7 @@ public class SFXManager : MonoBehaviour
     private void Start()
     {
         // find all audiosources in this object
-        foreach (AudioSource audioSource in GetComponents<AudioSource>())
+        foreach (AudioSource audioSource in GetComponentsInChildren<AudioSource>())
         {
             AudioInfo newAudioInfo = new AudioInfo(audioSource, audioSource.volume);
             // set the volume of the audiosource to the initial SFX level relative to its initial volume.
@@ -68,7 +66,10 @@ public class SFXManager : MonoBehaviour
             AudioInfos.Add(newAudioInfo);
         }
         // create debug buttons
-        sfxDebugButtonCreator.CreateSFXButtons();
+        if (AudioDebugManager.Instance != null)
+        {
+            AudioDebugManager.Instance.CreateSFXButtons();
+        }
     }
 
     /// <summary>
