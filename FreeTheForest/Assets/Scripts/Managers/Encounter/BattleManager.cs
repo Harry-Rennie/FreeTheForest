@@ -19,9 +19,13 @@ public class BattleManager : MonoBehaviour
     [Header("Stats")]
     public Entity cardTarget;
     public Entity player;
-    public int maxEnergy;
+
     public int energy;
     public int energyGain;
+    public int currentMaxEnergy;
+    public int currentEnergy; //energy in context of the battle/turn
+    [SerializeField] public GameObject energyCounter; //Max energy will stay the same in top ui, counter visually shows battle specific energy
+    [SerializeField] public TMP_Text eCounter; //Txt for now, parent object might contain animations.
     public int drawAmount = 5;
     public bool playersTurn = true;
     public int battleCounter;
@@ -160,7 +164,10 @@ void Update()
         cardsInHand = new List<Card>();
         deck.DiscardPile.AddRange(gameManager.playerDeck);
         battleCounter = 0;
-        energy = maxEnergy;
+        energy = PlayerInfoController.instance.Energy;
+        currentEnergy = energy;
+        currentMaxEnergy = energy;
+        SetEnergyCounter(currentEnergy, currentMaxEnergy);
         LoadEnemies();
         StartCoroutine(DrawCards(drawAmount));
     }
@@ -203,21 +210,38 @@ void Update()
         CardDisplay cardDis = handCardObjects[cardsInHand.Count-1];
         cardDis.LoadCard(card);
         cardDis.gameObject.SetActive(true);
+        CardDisplayAnimator resetDiscard = cardDis.GetComponent<CardDisplayAnimator>();
+        resetDiscard.discarded = false;
         handManager.heldCards.Add(cardDis);
     }
 
     //Play a given card
     public IEnumerator PlayCard(CardDisplay card)
     {
+        int tempCurrentMax = currentMaxEnergy;
         CardDisplayAnimator cardToAnimate = selectedCard.GetComponent<CardDisplayAnimator>();
-        cardActions.PerformAction(card.card, cardTarget); //Tell CardActions to perform action based on Card name and Target if necessary
-        energy -= card.card.manaCost; //Reduce energy by card cost (CardActions checks for enough mana)\
-        PlayerInfoController.instance.Energy = energy;
-        PlayerInfoPanel.Instance.UpdateStats();
-        ClearTargeting();
-        cardToAnimate.Discard();
-        yield return new WaitUntil(() => cardAnimator.IsDisplayAnimationComplete);
-        DiscardCard(card);
+        if(card.card.manaCost > currentEnergy)
+        {
+            card.DeselectCard();
+            ClearTargeting();
+        }
+        else
+        {
+            cardActions.PerformAction(card.card, cardTarget); //Tell CardActions to perform action based on Card name and Target if necessary
+            currentEnergy -= card.card.manaCost; //Reduce energy by card cost (CardActions checks for enough mana)\
+            if(tempCurrentMax != currentMaxEnergy)
+            {
+                SetEnergyCounter(currentEnergy, currentMaxEnergy);
+            }
+            else
+            {
+                SetEnergyCounter(currentEnergy, tempCurrentMax);
+            }
+            ClearTargeting();
+            cardToAnimate.Discard();
+            yield return new WaitUntil(() => cardAnimator.IsDisplayAnimationComplete);
+            DiscardCard(card);
+        }
     }
 
     public IEnumerator PlayDiscardAnimation()
@@ -302,8 +326,8 @@ void Update()
         // ProcessBuffs();
 
         //Restore energy
-        energy = maxEnergy;
-        PlayerInfoController.instance.Energy = energy;
+        SetEnergyCounter(energy, energy);
+        currentEnergy = energy;
         PlayerInfoPanel.Instance.UpdateStats();
         //Set turn to yes
         playersTurn = true;
@@ -359,5 +383,13 @@ void Update()
                 enemy.buffs.RemoveAll(buff => buff.stacks <= 0);
             }
         }
+    }
+
+    private void SetEnergyCounter(int e, int maxE)
+    {
+        string energyString;
+        //energy/maxEnergy
+        energyString = e.ToString() + "/" + maxE.ToString();
+        eCounter.text = energyString;
     }
 }
