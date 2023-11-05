@@ -65,7 +65,19 @@ public class PlayerInfoPanel : MonoBehaviour
         gold.text = @$"{playerInfoController.Gold}";
         energy.text = @$"{playerInfoController.Energy}";
         //we dont want to visually display 0 based floors
-        floorNumber.text = @$"{playerInfoController.floorNumber + 1}";
+        floorNumber.text = @$"{FormatFloorNumber()}";
+    }
+
+    public string FormatFloorNumber()
+    {
+        if (playerInfoController.floorNumber < 10)
+        {
+            return "0" + @$"{playerInfoController.floorNumber + 1}";
+        }
+        else
+        {
+            return playerInfoController.floorNumber.ToString();
+        }
     }
 
     public void UpdateGold()

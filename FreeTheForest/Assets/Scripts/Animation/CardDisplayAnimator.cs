@@ -16,11 +16,15 @@ public class CardDisplayAnimator : MonoBehaviour
         animator = GetComponent<Animator>();
         IsDisplayAnimationComplete = false;
         discarded = false;
-        StopAnimator();
+        if(animator != null)
+        {
+            StopAnimator();
+        }
     }
 
     void Update()
     {
+        if(animator == null) return;
         if (!animator.enabled) return;
 
         if (!animator.IsInTransition(0) && animator.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1)

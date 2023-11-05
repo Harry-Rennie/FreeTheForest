@@ -28,6 +28,10 @@ public class CardTarget : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                 battle.cardTarget = enemy;
                 valid.SetActive(true);
             }
+            if(!enemy.isPlayer)
+            {
+                invalid.SetActive(true);
+            }
         }
         if(battle.selectedCard != null && battle.selectedCard.card.cardType == Card.CardType.Attack) //then target enemy
         {

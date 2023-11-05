@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using TMPro;
 /// <summary>
 /// This class is used to store the player's information. It is used to pass information between scenes.
@@ -19,6 +20,9 @@ public class PlayerInfoController : MonoBehaviour
     public Vector2 lastPosition;
     public int EnemyCount;
     public float lastScrollPosition {get; set;}
+    public Image p_healthBar;
+    public Image p_damageBar;
+    public TMP_Text p_healthText;
 
     [SerializeField] private GraphLayoutManager graphLayoutManager;
 
@@ -60,10 +64,29 @@ public class PlayerInfoController : MonoBehaviour
         int amountToHeal = Mathf.RoundToInt(percentageHeal * MaxHealth);
         CurrentHealth += amountToHeal;
         if (CurrentHealth > MaxHealth)
-            CurrentHealth = MaxHealth;
-        
+            CurrentHealth = MaxHealth;       
         PlayerInfoPanel.Instance.UpdateStats();
         return amountToHeal;
+    }
+
+    public void SetHealthBar()
+    {
+        p_healthBar.fillAmount = (float) CurrentHealth/MaxHealth;
+    }
+
+    public void deactivateHealthBar()
+    {
+        p_healthBar.gameObject.SetActive(false);
+        p_damageBar.gameObject.SetActive(false);
+    }
+
+    public void activateHealthBar()
+    {
+        GameObject healthBar = GameObject.Find("PlayerHealthBar");
+        p_healthBar = healthBar.transform.GetChild(1).GetComponent<Image>();
+        p_damageBar = healthBar.transform.GetChild(0).GetComponent<Image>();
+        p_damageBar.gameObject.SetActive(true);
+        p_healthBar.gameObject.SetActive(true);
     }
     public void SetLastNodeVisited(GameObject node)
     {
@@ -86,7 +109,7 @@ public class PlayerInfoController : MonoBehaviour
     {
         MaxHealth = 100;
         CurrentHealth = 100;
-        Strength = 10;
+        Strength = 5;
         Defense = 1;
         Gold = 25;
         Energy = 3;

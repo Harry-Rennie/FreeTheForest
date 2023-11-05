@@ -3,6 +3,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
+using TMPro;
 
 public class Entity : MonoBehaviour
 {
@@ -26,6 +28,9 @@ public class Entity : MonoBehaviour
 
     public BattleManager battleManager;
     PlayerInfoController gameManager;
+    public Image e_healthBar;
+    public Image e_damageBar;
+    public TMP_Text e_healthText;
 
     private void Awake()
     {
@@ -42,10 +47,18 @@ public class Entity : MonoBehaviour
         else
         {
         currentHealth = maxHealth;
+        GameObject healthBar = transform.GetChild(3).gameObject;
+        e_healthBar = healthBar.transform.GetChild(1).GetComponent<Image>();
+        e_damageBar = healthBar.transform.GetChild(0).GetComponent<Image>();
+        e_healthText = healthBar.transform.GetChild(2).GetComponent<TMP_Text>();
+        e_healthText.text = currentHealth.ToString() + "/" + maxHealth.ToString();
         }
         buffs= new List<BuffBase>();
     }
 
+    private void Start()
+    {
+    }
 
     public void TakeDamage(int amount)
     {
@@ -59,10 +72,15 @@ public class Entity : MonoBehaviour
         {
             gameManager.CurrentHealth -= amount;
             PlayerInfoPanel.Instance.UpdateStats();
+            gameManager.SetHealthBar();
         }
 
         currentHealth -= amount; //Take damage
-
+        if(!isPlayer)
+        {
+            e_healthBar.fillAmount = (float) currentHealth/maxHealth;
+            e_healthText.text = currentHealth.ToString() + "/" + maxHealth.ToString();
+        }
         if(currentHealth<=0) //Die
         {
             if (!isPlayer)
@@ -79,6 +97,7 @@ public class Entity : MonoBehaviour
     public void AddBlock(int amount) //Flat add to Entity block
     {
         currentBlock += amount;
+        Debug.Log($"Added {amount} block");
     }
 
     private int BlockDamage(int amount) //Reduce damage by block amount
@@ -93,7 +112,7 @@ public class Entity : MonoBehaviour
             amount -= currentBlock;
             currentBlock = 0;
         }
-
+        Debug.Log("Blocked " + (amount) + " damage");
         return amount;
     }
 

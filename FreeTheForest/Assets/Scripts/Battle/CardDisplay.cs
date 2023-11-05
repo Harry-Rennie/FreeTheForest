@@ -80,7 +80,6 @@ public class CardDisplay : MonoBehaviour
         if (!isSelected && !battleManager.battleOver && animator.IsDisplayAnimationComplete)
         {
             CardDisplay previouslySelectedCard = GetSelectedCard();
-
             if (previouslySelectedCard != null)
             {
                 // Deselect the previously selected card and return it to its original card slot

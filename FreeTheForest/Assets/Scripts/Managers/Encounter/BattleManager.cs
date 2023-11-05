@@ -168,6 +168,9 @@ void Update()
         currentEnergy = energy;
         currentMaxEnergy = energy;
         SetEnergyCounter(currentEnergy, currentMaxEnergy);
+        gameManager.activateHealthBar();
+        gameManager.SetHealthBar();
+        Debug.Log(gameManager.p_healthBar.fillAmount);
         LoadEnemies();
         StartCoroutine(DrawCards(drawAmount));
     }
@@ -228,6 +231,10 @@ void Update()
         else
         {
             cardActions.PerformAction(card.card, cardTarget); //Tell CardActions to perform action based on Card name and Target if necessary
+            if(card.card.cardType == Card.CardType.Attack )
+            {
+                gameManager.deactivateHealthBar();
+            }
             currentEnergy -= card.card.manaCost; //Reduce energy by card cost (CardActions checks for enough mana)\
             if(tempCurrentMax != currentMaxEnergy)
             {
@@ -241,6 +248,11 @@ void Update()
             cardToAnimate.Discard();
             yield return new WaitUntil(() => cardAnimator.IsDisplayAnimationComplete);
             DiscardCard(card);
+            if(card.card.cardType == Card.CardType.Attack)
+            {
+                yield return new WaitForSeconds(0.5f);
+                gameManager.activateHealthBar();
+            }
         }
     }
 
