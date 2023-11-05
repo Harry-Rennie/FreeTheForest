@@ -79,35 +79,34 @@ public class DrawDisplay : MonoBehaviour
         }
 
         // Scroll to the left of the draw pile display
-        ScrollRect.horizontalNormalizedPosition = 0;
+        ScrollRect.verticalNormalizedPosition = 0;
     }
 
     /// <summary>
     /// This function resizes the width of the draw pile display to fit the cards in the draw pile.
     /// </summary>
-    private void setDrawDisplayWidth()
+    private void setDrawDisplayWidth() //changed to same as DiscardDisplayHeight()
     {
-        // Get the rect transform of the cardContainer
+        // get the rect transform of the cardContainer
         RectTransform cardContainerRect = cardContainer.GetComponent<RectTransform>();
 
-        // Get the minimum (initial) width of the draw pile display
-        int minDrawDisplayWidth = (int)cardContainer.GetComponent<RectTransform>().rect.width;
+        // get the width of the discard pile display
+        int compendiumWidth = (int)cardContainer.GetComponent<RectTransform>().rect.width;
+        // get the minimum (initial) height of the discard pile display
+        int minCompendiumHeight = (int)cardContainer.GetComponent<RectTransform>().rect.height;
+        // get the width of the card cell from the grid layout group of the card container
+        int cardCellWidth = (int)cardContainer.GetComponent<GridLayoutGroup>().cellSize.x;
+        // get the height of the card cell from the grid layout group of the card container
+        int cardCellHeight = (int)cardContainer.GetComponent<GridLayoutGroup>().cellSize.y;
 
-        // occasionally it loses the reference to the deck here, not sure why, but this fixes it
-        if (deck == null)
-        {
-            deck = battleManager.deck;
-        }
-        // Calculate the amount of cards in the deck
-        int cardCount = deck.MainDeck.Count;
+        // calculate the amount of cards that can fit in a row
+        int amtCardsPerRow = compendiumWidth / cardCellWidth;
+        // calculate the amount of rows needed to display all the cards
+        int rows = (int)Mathf.Ceil((float)(deck.DiscardPile.Count + deck.ExiledPile.Count) / amtCardsPerRow);
 
-        // Calculate the total width of the draw pile display based on card count and spacing
-        int width = cardCount * (int)compendiumCardPrefab.GetComponent<RectTransform>().rect.width;
-
-        // Set the width of the cardContainer to the calculated width or the minimum width of the draw pile display with a ternary
-        cardContainerRect.sizeDelta = new Vector2((width > minDrawDisplayWidth) ? width : minDrawDisplayWidth, cardContainerRect.sizeDelta.y);
-
-                
+        // set the height of the cardContainer to the height of the cards * the amount of rows, or the minimum height of the discard pile display
+        cardContainerRect.sizeDelta = 
+        new Vector2(cardContainerRect.sizeDelta.x, (rows > minCompendiumHeight / cardCellHeight) ? cardCellHeight * rows : minCompendiumHeight);          
     }
 
     /// <summary>

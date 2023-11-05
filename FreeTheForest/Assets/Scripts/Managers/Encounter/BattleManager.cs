@@ -59,6 +59,7 @@ public class BattleManager : MonoBehaviour
     public void Awake()
     {
         gameManager = FindObjectOfType<PlayerInfoController>();
+        gameManager.GetCamera();
         cardActions = GetComponent<CardActions>();
         StartBattle();
     }
@@ -170,7 +171,6 @@ void Update()
         SetEnergyCounter(currentEnergy, currentMaxEnergy);
         gameManager.activateHealthBar();
         gameManager.SetHealthBar();
-        Debug.Log(gameManager.p_healthBar.fillAmount);
         LoadEnemies();
         StartCoroutine(DrawCards(drawAmount));
     }
@@ -213,6 +213,14 @@ void Update()
         CardDisplay cardDis = handCardObjects[cardsInHand.Count-1];
         cardDis.LoadCard(card);
         cardDis.gameObject.SetActive(true);
+        if (cardDis.GetComponent<Canvas>().enabled == false) //if the card was previously discarded, some elements are disabled to smooth animation - so re-enable them
+        {
+            cardDis.GetComponent<Canvas>().enabled = true;
+            cardDis.transform.GetChild(0).gameObject.SetActive(true);
+            cardDis.transform.GetChild(1).gameObject.SetActive(true);
+            cardDis.transform.GetChild(2).gameObject.SetActive(true);
+            cardDis.transform.GetChild(3).gameObject.SetActive(true);
+        }
         CardDisplayAnimator resetDiscard = cardDis.GetComponent<CardDisplayAnimator>();
         resetDiscard.discarded = false;
         handManager.heldCards.Add(cardDis);
@@ -273,6 +281,7 @@ void Update()
         card.gameObject.SetActive(false);
         cardsInHand.Remove(card.card);
         deck.Discard(card.card); //Put the card into the Discard pile of the Deck object.
+        DiscardDisplay.Instance.UpdateDiscardDisplay();
     }
 
     public void AddKill() //Subtract our enemy counter for checking Battle End

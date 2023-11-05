@@ -37,7 +37,6 @@ void Update()
 
     public void Draw()
     {
-        Debug.Log("Draw called");
         animationQueue.Enqueue("drawTrigger");
         
         if (!isAnimating) StartCoroutine(PlayAnimations());

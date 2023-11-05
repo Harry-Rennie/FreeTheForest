@@ -8,6 +8,7 @@ using TMPro;
 /// </summary>
 public class PlayerInfoController : MonoBehaviour
 {
+    private Canvas canvas;
     public TMP_Text m_TextMeshPro;
     public static PlayerInfoController instance;
     public int MaxHealth;
@@ -35,7 +36,10 @@ public class PlayerInfoController : MonoBehaviour
     private void Awake()
     {
         if (instance == null)
+        {
             instance = this;
+            canvas = GetComponent<Canvas>();
+        }
         else
         {
             Destroy(gameObject);
@@ -72,12 +76,14 @@ public class PlayerInfoController : MonoBehaviour
     public void SetHealthBar()
     {
         p_healthBar.fillAmount = (float) CurrentHealth/MaxHealth;
+        p_healthText.text = CurrentHealth.ToString() + "/" + MaxHealth.ToString();
     }
 
     public void deactivateHealthBar()
     {
         p_healthBar.gameObject.SetActive(false);
         p_damageBar.gameObject.SetActive(false);
+        p_healthText.gameObject.SetActive(false);
     }
 
     public void activateHealthBar()
@@ -85,8 +91,10 @@ public class PlayerInfoController : MonoBehaviour
         GameObject healthBar = GameObject.Find("PlayerHealthBar");
         p_healthBar = healthBar.transform.GetChild(1).GetComponent<Image>();
         p_damageBar = healthBar.transform.GetChild(0).GetComponent<Image>();
+        p_healthText = healthBar.transform.GetChild(2).GetComponent<TMP_Text>();
         p_damageBar.gameObject.SetActive(true);
         p_healthBar.gameObject.SetActive(true);
+        p_healthText.gameObject.SetActive(true);
     }
     public void SetLastNodeVisited(GameObject node)
     {
@@ -114,5 +122,14 @@ public class PlayerInfoController : MonoBehaviour
         Gold = 25;
         Energy = 3;
         floorNumber = 0;
+    }
+
+    public void GetCamera() //set the camera to whatever camera is in scene. (loses reference)
+    {
+        Camera mainCamera = Camera.main;
+        if (mainCamera != null && canvas != null)
+        {
+            canvas.worldCamera = mainCamera;
+        }
     }
 }
