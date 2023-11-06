@@ -22,6 +22,7 @@ public class CardDisplay : MonoBehaviour
     private Transform targetSlot; //reference to the target slot
     private Transform originalCardSlot; //reference to the original card slot
     private BattleManager battleManager;
+    private PlayerInfoController playerStats;
     private Hand handManager;
     private int sortingOrder;
 
@@ -43,6 +44,48 @@ public class CardDisplay : MonoBehaviour
     {
         battleManager = FindObjectOfType<BattleManager>();
         battleManager.OnClearTargeting += HandleClearTargeting;
+    }
+
+    public void OnCardLoad()
+    {
+        playerStats = FindObjectOfType<PlayerInfoController>();
+        if(card != null && card.cardType == Card.CardType.Attack)
+        {
+            playerStats.OnStrengthChanged += UpdateStrengthDescription;
+            UpdateStrengthDescription();
+        }
+        if(card != null && card.cardType == Card.CardType.Skill)
+        {
+            playerStats.OnDefenceChanged += UpdateDefenceDescription;
+            UpdateDefenceDescription();
+        }
+    }
+
+    public void OnCardDeload()
+    {
+        if (card != null && card.cardType == Card.CardType.Attack)
+        {
+            playerStats.OnStrengthChanged -= UpdateStrengthDescription;
+        }
+        if (card != null && card.cardType == Card.CardType.Skill)
+        {
+            playerStats.OnDefenceChanged -= UpdateDefenceDescription;
+        }
+    }
+    private void UpdateStrengthDescription()
+    {
+        if (card.description.Contains("{0}"))
+        {
+            descriptionText.text = string.Format(card.description, playerStats.Strength);
+        }
+    }
+
+    private void UpdateDefenceDescription()
+    {
+        if (card.description.Contains("{0}"))
+        {
+            descriptionText.text = string.Format(card.description, playerStats.Defence);
+        }
     }
 
     public void HandleClearTargeting()

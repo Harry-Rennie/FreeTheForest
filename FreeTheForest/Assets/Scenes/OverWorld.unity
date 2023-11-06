@@ -2767,11 +2767,14 @@ MonoBehaviour:
   MaxHealth: 100
   CurrentHealth: 75
   Strength: 1000
-  Defense: 10
+  Defence: 0
   Gold: 0
   Energy: 0
   lastPosition: {x: 0, y: 0}
   EnemyCount: 0
+  p_healthBar: {fileID: 0}
+  p_damageBar: {fileID: 0}
+  p_healthText: {fileID: 0}
   graphLayoutManager: {fileID: 1783038}
   floorNumber: 0
   playerDeck:
@@ -3620,7 +3623,7 @@ GameObject:
   - component: {fileID: 589941077}
   - component: {fileID: 589941076}
   m_Layer: 5
-  m_Name: Defense
+  m_Name: Defence
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -9099,7 +9102,7 @@ MonoBehaviour:
   - {fileID: 2012590245}
   - {fileID: 659467110}
   strength: {fileID: 1435824780}
-  defense: {fileID: 1359813693}
+  defence: {fileID: 1359813693}
   gold: {fileID: 1138038045}
   energy: {fileID: 427810149}
   health: {fileID: 294822394}

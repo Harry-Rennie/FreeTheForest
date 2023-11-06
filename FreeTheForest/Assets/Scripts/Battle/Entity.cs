@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using System;
 
 public class Entity : MonoBehaviour
 {
@@ -14,8 +15,8 @@ public class Entity : MonoBehaviour
     public int currentBlock;
 
     [Header("Stats")]
-    public int offense;
-    public int defense;
+    public int strength;
+    public int defence;
 
     [Header("Buffs")]
     public List<BuffBase> buffs;
@@ -41,8 +42,8 @@ public class Entity : MonoBehaviour
         {
             maxHealth = gameManager.MaxHealth;
             currentHealth = gameManager.CurrentHealth;
-            offense = gameManager.Strength;
-            defense = gameManager.Defense;
+            strength = gameManager.Strength;
+            defence = gameManager.Defence;
         }
         else
         {

@@ -13,15 +13,15 @@ public class GrowthBuff : BuffBase
 
     public override void End()
     {
-        target.offense -= stacks;
-        target.defense -= stacks;
+        target.strength -= stacks;
+        target.defence -= stacks;
         target.battleManager.energyGain-= stacks;
     }
 
     public override void Apply()
     {
-        target.offense++;
-        target.defense++;
+        target.strength++;
+        target.defence++;
         target.battleManager.energyGain++;
     }
 

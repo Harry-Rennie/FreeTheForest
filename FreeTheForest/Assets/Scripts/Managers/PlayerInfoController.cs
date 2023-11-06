@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using System;
 /// <summary>
 /// This class is used to store the player's information. It is used to pass information between scenes.
 /// </summary>
@@ -13,10 +14,40 @@ public class PlayerInfoController : MonoBehaviour
     public static PlayerInfoController instance;
     public int MaxHealth;
     public int CurrentHealth;
-    public int Strength;
-    public int Defense;
+
+    private int _Strength;
+    public int Strength
+    {
+        get => _Strength;
+        set
+        {
+            _Strength = value;
+            OnStrengthChanged?.Invoke();
+        }
+    }
+
+    private int _Defence;
+    public int Defence
+    {
+        get => _Defence;
+        set
+        {
+            _Defence = value;
+            OnDefenceChanged?.Invoke();
+        }
+    }
+
+    private int _Energy;
+    public int Energy
+    {
+        get => _Energy;
+        set
+        {
+            _Energy = value;
+            OnEnergyChanged?.Invoke();
+        }
+    }
     public int Gold;
-    public int Energy;
     public GameObject LastNodeVisited { get; set; }
     public Vector2 lastPosition;
     public int EnemyCount;
@@ -31,8 +62,11 @@ public class PlayerInfoController : MonoBehaviour
     [SerializeField] public int floorNumber = 0;
     public List<Card> playerDeck = new List<Card>(); //Holds the players current deck as a list of cards.
     public List<Card> cardLibrary = new List<Card>(); //Holds all possible reward cards.
-    
     public List<Enemy> currentEnemies = new List<Enemy>(); //Battle reads from here to load in enemies to battle scene.
+
+    public event Action OnStrengthChanged;
+    public event Action OnDefenceChanged;
+    public event Action OnEnergyChanged;
     private void Awake()
     {
         if (instance == null)
@@ -53,14 +87,16 @@ public class PlayerInfoController : MonoBehaviour
         ResetPlayerInfo();
     }
 
-    public void GainHealth(int amount)
+    public void ModifyDefence(int amount)
     {
-
+        Defence += amount;
+        OnDefenceChanged?.Invoke();
     }
 
-    public void LoseHealth(int amount)
+    public void ModifyStrength(int amount)
     {
-
+        Strength += amount;
+        OnStrengthChanged?.Invoke();
     }
 
     public int HealNode(float percentageHeal)
@@ -118,7 +154,7 @@ public class PlayerInfoController : MonoBehaviour
         MaxHealth = 100;
         CurrentHealth = 100;
         Strength = 5;
-        Defense = 1;
+        Defence = 1;
         Gold = 25;
         Energy = 3;
         floorNumber = 0;

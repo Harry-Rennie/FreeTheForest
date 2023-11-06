@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Strike
   m_EditorClassIdentifier: 
   title: Strike
-  description: Attack
+  description: Deal {0} damage.
   image: {fileID: 0}
   manaCost: 1
   cardType: 0

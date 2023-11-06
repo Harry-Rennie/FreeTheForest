@@ -1666,6 +1666,10 @@ PrefabInstance:
       propertyPath: animator
       value: 
       objectReference: {fileID: -6310594009871767951, guid: bdd548904a0892441a71e6ca1e87a679, type: 3}
+    - target: {fileID: 7843287274921920550, guid: bdd548904a0892441a71e6ca1e87a679, type: 3}
+      propertyPath: m_PresetInfoIsWorld
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 8490886910030222431, guid: bdd548904a0892441a71e6ca1e87a679, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -7554,7 +7558,7 @@ MonoBehaviour:
   MaxHealth: 0
   CurrentHealth: 0
   Strength: 0
-  Defense: 0
+  Defence: 0
   Gold: 0
   Energy: 0
   lastPosition: {x: 0, y: 0}
@@ -9576,6 +9580,10 @@ PrefabInstance:
       propertyPath: animator
       value: 
       objectReference: {fileID: -6310594009871767951, guid: bdd548904a0892441a71e6ca1e87a679, type: 3}
+    - target: {fileID: 7843287274921920550, guid: bdd548904a0892441a71e6ca1e87a679, type: 3}
+      propertyPath: m_PresetInfoIsWorld
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 8490886910030222431, guid: bdd548904a0892441a71e6ca1e87a679, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -10311,8 +10319,8 @@ MonoBehaviour:
   currentHealth: 0
   maxHealth: 75
   currentBlock: 0
-  offense: 5
-  defense: 5
+  strength: 0
+  defence: 0
   isPlayer: 1
   enemyCards: []
   battleManager: {fileID: 0}

@@ -9,8 +9,8 @@ public class Enemy : ScriptableObject
     public string title; //Name of enemy
 
     //Stats
-    public int offense;
-    public int defense;
+    public int strength;
+    public int defence;
     public int health;
 
     public List<Card> Actions; //List of cards the enemy can execute

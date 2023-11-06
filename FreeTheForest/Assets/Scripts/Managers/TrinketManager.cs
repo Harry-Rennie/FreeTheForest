@@ -54,19 +54,19 @@ public class TrinketManager : MonoBehaviour
     }
 
     // this property returns the total defense buff from all equipped trinkets
-    public int TotalDefenseBuff
+    public int TotalDefenceBuff
     {
         get
         {
-            int totalDefenseBuff = 0;
+            int totalDefenceBuff = 0;
             foreach (Trinket trinket in PlayerTrinkets)
             {
                 if (trinket.Equipped)
                 {
-                    totalDefenseBuff += trinket.DefenseBuff;
+                    totalDefenceBuff += trinket.DefenceBuff;
                 }
             }
-            return totalDefenseBuff;
+            return totalDefenceBuff;
         }
     }
     #endregion
@@ -153,7 +153,7 @@ public class TrinketManager : MonoBehaviour
         trinket.Equipped = true;
         playerInfoController.MaxHealth += trinket.MaxHealthBuff;
         playerInfoController.Strength += trinket.AttackBuff;
-        playerInfoController.Defense += trinket.DefenseBuff;
+        playerInfoController.Defence += trinket.DefenceBuff;
     }
 
     /// <summary>
@@ -165,6 +165,6 @@ public class TrinketManager : MonoBehaviour
         trinket.Equipped = false;
         playerInfoController.MaxHealth -= trinket.MaxHealthBuff;
         playerInfoController.Strength -= trinket.AttackBuff;
-        playerInfoController.Defense -= trinket.DefenseBuff;
+        playerInfoController.Defence -= trinket.DefenceBuff;
     }
 }

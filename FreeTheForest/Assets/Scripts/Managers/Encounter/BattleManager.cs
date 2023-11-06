@@ -195,8 +195,8 @@ void Update()
         for(int i = 0; i < EnemyCount; i++)
         {   
             enemies[i].name = curEnemies[i].title;
-            enemies[i].offense = curEnemies[i].offense;
-            enemies[i].defense = curEnemies[i].defense;
+            enemies[i].strength = curEnemies[i].strength;
+            enemies[i].defence = curEnemies[i].defence;
             enemies[i].maxHealth = curEnemies[i].health;
             enemies[i].currentHealth = curEnemies[i].health;
             enemies[i].enemyCards = curEnemies[i].Actions;
@@ -221,6 +221,7 @@ void Update()
             cardDis.transform.GetChild(2).gameObject.SetActive(true);
             cardDis.transform.GetChild(3).gameObject.SetActive(true);
         }
+        cardDis.OnCardLoad();
         CardDisplayAnimator resetDiscard = cardDis.GetComponent<CardDisplayAnimator>();
         resetDiscard.discarded = false;
         handManager.heldCards.Add(cardDis);
@@ -278,10 +279,10 @@ void Update()
     }
     public void DiscardCard(CardDisplay card)
     {
+        // card.OnCardDeload();
         card.gameObject.SetActive(false);
         cardsInHand.Remove(card.card);
         deck.Discard(card.card); //Put the card into the Discard pile of the Deck object.
-        DiscardDisplay.Instance.UpdateDiscardDisplay();
     }
 
     public void AddKill() //Subtract our enemy counter for checking Battle End

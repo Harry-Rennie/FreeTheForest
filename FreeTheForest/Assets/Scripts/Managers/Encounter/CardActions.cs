@@ -91,25 +91,25 @@ public class CardActions : MonoBehaviour
             case 0: //Default case, deal damage based on Offense
                 if (battleManager.playersTurn)
                 {
-                    int damage = player.offense;
+                    int damage = player.strength;
                     target.TakeDamage(damage);
                 }
                 else
                 {
-                    int damage = target.offense;
+                    int damage = target.strength;
                     player.TakeDamage(damage);
                 }
                 break;
             case 1: //Weak attack, deals 30% less damage
                 if (battleManager.playersTurn)
                 {
-                    int damage = Mathf.RoundToInt(player.offense * 0.7f);
+                    int damage = Mathf.RoundToInt(player.strength * 0.7f);
 
                     target.TakeDamage(damage);
                 }
                 else
                 {
-                    int damage = Mathf.RoundToInt(target.offense * 0.7f);
+                    int damage = Mathf.RoundToInt(target.strength * 0.7f);
 
                     player.TakeDamage(damage);
                 }
@@ -117,13 +117,13 @@ public class CardActions : MonoBehaviour
             case 2: //Attack enhanced by Entity current block, usually to be followed by a Block Wipe
                 if (battleManager.playersTurn)
                 {
-                    int damage = player.offense + (player.currentBlock * 2);
+                    int damage = player.strength + (player.currentBlock * 2);
 
                     target.TakeDamage(damage);
                 }
                 else
                 {
-                    int damage = target.offense + (target.currentBlock * 2);
+                    int damage = target.strength + (target.currentBlock * 2);
 
                     player.TakeDamage(damage);
                 }
@@ -149,13 +149,13 @@ public class CardActions : MonoBehaviour
             case 0: //Default Case, Add block equal to defense
                 if (battleManager.playersTurn)
                 {
-                    int block = player.defense;
+                    int block = player.defence;
 
                     player.AddBlock(block);
                 }
                 else
                 {
-                    int block = target.defense;
+                    int block = target.defence;
 
                     target.AddBlock(block);
                 }

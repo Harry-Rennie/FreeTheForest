@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Block
   m_EditorClassIdentifier: 
   title: Block
-  description: Defend
+  description: Gain {0} block.
   image: {fileID: 0}
   manaCost: 1
   cardType: 1

@@ -11,7 +11,7 @@ public class PlayerInfoPanel : MonoBehaviour
 {
     public List<TrinketSlot> TrinketSlots;
     [SerializeField] public TMP_Text strength;
-    [SerializeField] public TMP_Text defense;
+    [SerializeField] public TMP_Text defence;
     [SerializeField] public TMP_Text gold;
     [SerializeField] public TMP_Text energy;
     [SerializeField] public TMP_Text health;
@@ -61,7 +61,7 @@ public class PlayerInfoPanel : MonoBehaviour
     {
         health.text = @$"{playerInfoController.CurrentHealth}/{playerInfoController.MaxHealth} {getBuffString(trinketManager.TotalHealthBuff)}";
         strength.text = @$"{playerInfoController.Strength} {getBuffString(trinketManager.TotalStrengthBuff)}";
-        defense.text = @$"{playerInfoController.Defense} {getBuffString(trinketManager.TotalDefenseBuff)}";
+        defence.text = @$"{playerInfoController.Defence} {getBuffString(trinketManager.TotalDefenceBuff)}";
         gold.text = @$"{playerInfoController.Gold}";
         energy.text = @$"{playerInfoController.Energy}";
         //we dont want to visually display 0 based floors

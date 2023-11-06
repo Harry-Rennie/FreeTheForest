@@ -7,7 +7,7 @@ public class Upgrade : MonoBehaviour
 {
     [SerializeField] private Button maxHealth;
     [SerializeField] private Button strength;
-    [SerializeField] private Button defense;
+    [SerializeField] private Button defence;
     // Start is called before the first frame update
 
     public void Start()
@@ -21,7 +21,7 @@ public class Upgrade : MonoBehaviour
 
         maxHealth.interactable = true;
         strength.interactable = true;
-        defense.interactable = true;
+        defence.interactable = true;
     }
     public void GainMaxHealth()
     {
@@ -29,7 +29,7 @@ public class Upgrade : MonoBehaviour
         PlayerInfoPanel.Instance.UpdateStats();
         maxHealth.interactable = false;
         strength.interactable = false;
-        defense.interactable = false;
+        defence.interactable = false;
     }
 
     public void GainStrength()
@@ -38,16 +38,16 @@ public class Upgrade : MonoBehaviour
         PlayerInfoPanel.Instance.UpdateStats();
         maxHealth.interactable = false;
         strength.interactable = false;
-        defense.interactable = false;
+        defence.interactable = false;
     }
 
-    public void GainDefense()
+    public void GainDefence()
     {
-        PlayerInfoController.instance.Defense += 1;
+        PlayerInfoController.instance.Defence += 1;
         PlayerInfoPanel.Instance.UpdateStats();
         maxHealth.interactable = false;
         strength.interactable = false;
-        defense.interactable = false;
+        defence.interactable = false;
     }
 
 }
