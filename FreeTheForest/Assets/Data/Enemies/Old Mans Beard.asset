@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: Old Mans Beard
   m_EditorClassIdentifier: 
   title: Old Man's Beard
-  offense: 5
-  defense: 5
+  strength: 1000
+  defence: 5
   health: 10
   Actions:
   - {fileID: 11400000, guid: b4b4d4673cb77404caa5afb14ffd80a6, type: 2}
