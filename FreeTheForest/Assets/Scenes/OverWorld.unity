@@ -2765,11 +2765,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_TextMeshPro: {fileID: 0}
   MaxHealth: 100
-  CurrentHealth: 75
-  Strength: 1000
-  Defence: 0
+  CurrentHealth: 100
   Gold: 0
-  Energy: 0
   lastPosition: {x: 0, y: 0}
   EnemyCount: 0
   p_healthBar: {fileID: 0}
@@ -2787,10 +2784,8 @@ MonoBehaviour:
   - {fileID: 11400000, guid: b4b4d4673cb77404caa5afb14ffd80a6, type: 2}
   - {fileID: 11400000, guid: 0c91da6c3ef651c4b9b0e07d277392c3, type: 2}
   - {fileID: 11400000, guid: 0c91da6c3ef651c4b9b0e07d277392c3, type: 2}
-  - {fileID: 11400000, guid: 0c91da6c3ef651c4b9b0e07d277392c3, type: 2}
-  - {fileID: 11400000, guid: 0c91da6c3ef651c4b9b0e07d277392c3, type: 2}
+  - {fileID: 11400000, guid: 229eb794e0bfbaa45b3fe266e6b8ece7, type: 2}
   cardLibrary:
-  - {fileID: 11400000, guid: 379b4da2af0008c4a81696633787b511, type: 2}
   - {fileID: 11400000, guid: b4b4d4673cb77404caa5afb14ffd80a6, type: 2}
   - {fileID: 11400000, guid: 0c91da6c3ef651c4b9b0e07d277392c3, type: 2}
   currentEnemies: []

@@ -33,10 +33,17 @@ public class Entity : MonoBehaviour
     public Image e_damageBar;
     public TMP_Text e_healthText;
 
+    public GameObject intent;
+
+
     private void Awake()
     {
         battleManager = FindObjectOfType<BattleManager>();
         gameManager = FindObjectOfType<PlayerInfoController>();
+        if(!isPlayer)
+        {
+            intent = transform.GetChild(4).gameObject; 
+        }
         // assign stats from PlayerInfoController
         if (isPlayer)
         {
@@ -67,8 +74,6 @@ public class Entity : MonoBehaviour
         {
             amount = BlockDamage(amount);
         }
-
-        Debug.Log($"Dealt {amount} damage");
         if(isPlayer)
         {
             gameManager.CurrentHealth -= amount;
@@ -85,13 +90,11 @@ public class Entity : MonoBehaviour
         if(currentHealth<=0) //Die
         {
             if (!isPlayer)
-            {
+           {
+                intent.GetComponent<Intent>().DisableIntent();
+                gameObject.GetComponent<Canvas>().enabled = false;
                 battleManager.AddKill();
             }
-            //you die (player)
-            
-            //we cant destroy here yet or we break card logic!
-            gameObject.GetComponent<Canvas>().enabled = false;   
         }
     }
 

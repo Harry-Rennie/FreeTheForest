@@ -34,6 +34,9 @@ public class BattleManager : MonoBehaviour
     [Header("Enemies")]
     [SerializeField] public List<Entity> enemies;
     public int EnemyCount;
+    public int enemiesAlive;
+    public List<int> roll;
+    public List<int> mod;
     
     CardActions cardActions;
     PlayerInfoController gameManager;
@@ -46,8 +49,9 @@ public class BattleManager : MonoBehaviour
 
     public delegate void ClearTargetingEvent();
     public event ClearTargetingEvent OnClearTargeting;
-
     public bool battleOver;
+
+    [SerializeField] GameObject deathScreen;
     public List<Card> cardsInHand
     {
         get { return _cardsInHand; } // Getter to access the cardsInHand list
@@ -172,6 +176,7 @@ void Update()
         gameManager.activateHealthBar();
         gameManager.SetHealthBar();
         LoadEnemies();
+        enemiesAlive = gameManager.EnemyCount;
         StartCoroutine(DrawCards(drawAmount));
     }
     //Draw cards. Loop over Deck card draw X times. Load returned card into hand.
@@ -185,8 +190,8 @@ void Update()
             yield return StartCoroutine(DisplayCardInHand(cardDrawn));
             cardsDrawn++;
         }
+        OnTurnChange(); //call an intent set
     }
-
     public void LoadEnemies()
     {
         EnemyCount = gameManager.currentEnemies.Count;
@@ -207,6 +212,7 @@ void Update()
     //Load CardDisplay game object with given Card data and make visible.
     public IEnumerator DisplayCardInHand(Card card)
     {
+        //enable enemy intent
         cardSprite.Draw();
         yield return new WaitUntil(() => cardSprite.IsAnimationComplete);
         cardSprite.IsAnimationComplete = false;
@@ -239,7 +245,6 @@ void Update()
         }
         else
         {
-            cardActions.PerformAction(card.card, cardTarget); //Tell CardActions to perform action based on Card name and Target if necessary
             if(card.card.cardType == Card.CardType.Attack )
             {
                 gameManager.deactivateHealthBar();
@@ -254,14 +259,20 @@ void Update()
                 SetEnergyCounter(currentEnergy, tempCurrentMax);
             }
             ClearTargeting();
+            cardActions.PerformAction(card.card, cardTarget); //Tell CardActions to perform action based on Card name and Target if necessary
             cardToAnimate.Discard();
-            yield return new WaitUntil(() => cardAnimator.IsDisplayAnimationComplete);
+            yield return new WaitUntil(() => cardToAnimate.discarded == true);
             DiscardCard(card);
             if(card.card.cardType == Card.CardType.Attack)
             {
                 yield return new WaitForSeconds(0.5f);
                 gameManager.activateHealthBar();
             }
+        }
+        if(gameManager.EnemyCount <= 0)
+        {
+            StopAllCoroutines();
+            OpenReward();
         }
     }
 
@@ -287,14 +298,9 @@ void Update()
 
     public void AddKill() //Subtract our enemy counter for checking Battle End
     {
-        EnemyCount--;
-
-        if (EnemyCount <= 0)
-        {
-            OpenReward();
-        }
+        StopAllCoroutines();
+        gameManager.EnemyCount--;
     }
-
     public void OpenReward() //Complete the battle and return to main map screen
     {
         battleOver = true;
@@ -334,14 +340,23 @@ void Update()
         {
             if (enemy != null && enemy.gameObject.activeSelf)
             {
-                int roll = battleCounter % enemy.enemyCards.Count;
-
-                Card card = enemy.enemyCards[roll];
-                cardActions.PerformAction(card, enemy);
+                if(enemy.enemyCards.Count == 1)
+                {
+                    Card card = enemy.enemyCards[0];
+                    cardActions.PerformAction(card, enemy);
+                }
+                else
+                {
+                    Card card = enemy.enemyCards[roll[mod[enemies.IndexOf(enemy)]]]; //get the card to play from the enemy's list of cards
+                    cardActions.PerformAction(card, enemy);
+                } 
             }
         }
 
-        //Increment battleCounter
+        if(player.currentHealth <= 0 && enemiesAlive > 0)
+        {
+            DisplayDeathScreen();
+        }
         battleCounter++;
 
         //TODO: FUTURE CONTENT: Process buffs
@@ -355,6 +370,40 @@ void Update()
         playersTurn = true;
                 //Draw the player their next hand
         StartCoroutine(DrawCards(drawAmount));
+        OnTurnChange();
+    }
+    public void OnTurnChange()
+    {
+        mod.Clear();
+        roll.Clear();
+        foreach(Entity enemy in enemies)
+        {
+            if(enemy != null && enemy.gameObject.activeSelf && enemy.currentHealth > 0 && enemy.enemyCards.Count > 0)
+            {
+                if(enemy.enemyCards.Count == 1)
+                {
+                    mod.Add(0);
+                    roll.Add(0);
+                    Card card = enemy.enemyCards[0];
+                    Intent intent = enemy.transform.GetChild(4).GetComponent<Intent>();
+                    intent.ModifyIntent(card);
+                }
+                else if(enemy.enemyCards.Count > 1 )
+                {
+                    int mods = Random.Range(0, enemy.enemyCards.Count);
+                    mod.Add(mods);
+                    roll.Add(enemy.enemyCards.IndexOf(enemy.enemyCards[mods]));
+                    Card card = enemy.enemyCards[roll[mods]];
+                    Intent intent = enemy.transform.GetChild(4).GetComponent<Intent>();
+                    intent.ModifyIntent(card);
+                }
+            }
+        }
+    }
+
+    public void DisplayDeathScreen()
+    {
+        deathScreen.SetActive(true);
     }
 
     private void ProcessBuffs()

@@ -56,6 +56,9 @@ public class MapGraph : MonoBehaviour
             SaveData(nodes);
             //if you have no progress, enable first row of nodes.
             CheckProgress(nodes);
+            float scrollGridPositionChange = (graphHeight / gridSizeY) * gameManager.floorNumber - 70f;
+            graphContainer.anchoredPosition = new Vector2(graphContainer.anchoredPosition.x, graphContainer.anchoredPosition.y - scrollGridPositionChange);
+            lineManager.SnapLines(scrollGridPositionChange);
         }
         if(gameManager.lastPosition != null && gameManager.floorNumber > 0)
         {
@@ -145,6 +148,17 @@ public class MapGraph : MonoBehaviour
                             if(row <= 1)
                             {
                                 node.GetComponent<Button>().interactable = true;
+                            }
+                            else if(lineManager.GetLinesFromNode(node).Count > 0)
+                            {
+                               List <GameObject> Line = lineManager.GetLinesFromNode(node);
+                               foreach(GameObject line in Line)
+                               {
+                                    Color currentColor = line.GetComponent<LineRenderer>().startColor;
+                                    currentColor.a = 0.5f;
+                                    line.GetComponent<LineRenderer>().startColor = currentColor;
+                                    line.GetComponent<LineRenderer>().endColor = currentColor;
+                               }
                             }
                         }
                     }
