@@ -105,12 +105,12 @@ public class TrinketManager : MonoBehaviour
             Debug.LogWarning("No trinkets found in Resources/Trinkets.");
         }
 
-        // for all trinkets in PlayerTrinkets, equip the trinket
+        // for all trinkets in PlayerTrinkets, unequip the trinket
         foreach (Trinket trinket in PlayerTrinkets)
         {
             if (trinket.Equipped)
             {
-                EquipTrinket(trinket);
+                UnequipTrinket(trinket);
             }
         }
 

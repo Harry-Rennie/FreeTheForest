@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Old Mans Beard
   m_EditorClassIdentifier: 
   title: Old Man's Beard
-  strength: 1000
+  strength: 1
   defence: 5
   health: 10
   Actions:

@@ -207,6 +207,13 @@ void Update()
             enemies[i].enemyCards = curEnemies[i].Actions;
             enemies[i].gameObject.SetActive(true);
         }
+        if(EnemyCount < 3)
+        {
+            for(int i = EnemyCount; i < 3; i++)
+            {
+                enemies[i].gameObject.SetActive(false);
+            }
+        }
     }
 
     //Load CardDisplay game object with given Card data and make visible.
@@ -338,7 +345,7 @@ void Update()
         //Go through each enemy and execute their actions
         foreach(Entity enemy in enemies)
         {
-            if (enemy != null && enemy.gameObject.activeSelf)
+            if (enemy != null && enemy.gameObject.activeSelf && enemy.currentHealth > 0)
             {
                 if(enemy.enemyCards.Count == 1)
                 {

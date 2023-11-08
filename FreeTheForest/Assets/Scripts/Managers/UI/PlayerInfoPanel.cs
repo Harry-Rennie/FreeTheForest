@@ -22,6 +22,10 @@ public class PlayerInfoPanel : MonoBehaviour
     [SerializeField] public GameObject savePanel;
     [SerializeField] public GameObject settingsPanel;
 
+    [SerializeField] public Button settingsButton;
+    [SerializeField] public Sprite settingsPressed;
+    [SerializeField] public Sprite settingsUnpressed;
+
     private PlayerInfoController playerInfoController;
     private TrinketManager trinketManager;
 
