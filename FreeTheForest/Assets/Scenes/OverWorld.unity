@@ -2812,7 +2812,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: b4b4d4673cb77404caa5afb14ffd80a6, type: 2}
   - {fileID: 11400000, guid: 0c91da6c3ef651c4b9b0e07d277392c3, type: 2}
   - {fileID: 11400000, guid: 0c91da6c3ef651c4b9b0e07d277392c3, type: 2}
-  - {fileID: 11400000, guid: 229eb794e0bfbaa45b3fe266e6b8ece7, type: 2}
+  - {fileID: 11400000, guid: 0c91da6c3ef651c4b9b0e07d277392c3, type: 2}
   cardLibrary:
   - {fileID: 11400000, guid: b4b4d4673cb77404caa5afb14ffd80a6, type: 2}
   - {fileID: 11400000, guid: 0c91da6c3ef651c4b9b0e07d277392c3, type: 2}

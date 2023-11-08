@@ -14,5 +14,5 @@ public class Enemy : ScriptableObject
     public int health;
 
     public List<Card> Actions; //List of cards the enemy can execute
-
+    public Sprite image;
 }

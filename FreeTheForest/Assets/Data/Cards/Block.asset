@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   title: Block
   description: Gain {0} block.
-  image: {fileID: 0}
+  image: {fileID: 21300000, guid: 6b82783b27682ae4c9783ca3ebab1a1f, type: 3}
   manaCost: 1
   cardType: 1
   effects: 01000000

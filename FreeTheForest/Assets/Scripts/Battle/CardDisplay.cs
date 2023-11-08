@@ -13,7 +13,7 @@ public class CardDisplay : MonoBehaviour
     public TextMeshProUGUI nameText;
     public TextMeshProUGUI descriptionText;
     public TextMeshProUGUI manaCost;
-
+    public GameObject cardImg;
     public bool isSelected;
     public bool deselect = false;
     private Vector3 originalPosition;
@@ -38,6 +38,7 @@ public class CardDisplay : MonoBehaviour
         battleCanvas = GameObject.Find("BattleCanvas").transform;
         targetSlot = GameObject.Find("TargetSlot").transform; //assign the target slot in the Inspector
         animator = GetComponent<CardDisplayAnimator>();
+        cardImg = transform.GetChild(0).gameObject;
     }
 
     private void Start()
@@ -48,6 +49,10 @@ public class CardDisplay : MonoBehaviour
 
     public void OnCardLoad()
     {
+        if(card.image != null)
+        {
+            cardImg.GetComponent<Image>().sprite = card.image;
+        }
         playerStats = FindObjectOfType<PlayerInfoController>();
         if(card != null && card.cardType == Card.CardType.Attack)
         {

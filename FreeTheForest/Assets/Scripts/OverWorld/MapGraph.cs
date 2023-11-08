@@ -149,17 +149,17 @@ public class MapGraph : MonoBehaviour
                             {
                                 node.GetComponent<Button>().interactable = true;
                             }
-                            else if(lineManager.GetLinesFromNode(node).Count > 0)
-                            {
-                               List <GameObject> Line = lineManager.GetLinesFromNode(node);
-                               foreach(GameObject line in Line)
-                               {
-                                    Color currentColor = line.GetComponent<LineRenderer>().startColor;
-                                    currentColor.a = 0.5f;
-                                    line.GetComponent<LineRenderer>().startColor = currentColor;
-                                    line.GetComponent<LineRenderer>().endColor = currentColor;
-                               }
-                            }
+                            // else if(lineManager.GetLinesFromNode(node).Count > 0)
+                            // {
+                            //    List <GameObject> Line = lineManager.GetLinesFromNode(node);
+                            //    foreach(GameObject line in Line)
+                            //    {
+                            //         Color currentColor = line.GetComponent<LineRenderer>().startColor;
+                            //         currentColor.a = 0.5f;
+                            //         line.GetComponent<LineRenderer>().startColor = currentColor;
+                            //         line.GetComponent<LineRenderer>().endColor = currentColor;
+                            //    }
+                            // }
                         }
                     }
                 }

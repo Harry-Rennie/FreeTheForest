@@ -6,6 +6,7 @@ using UnityEngine;
 using TMPro;
 using System.Xml;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class BattleManager : MonoBehaviour
 {
@@ -205,6 +206,10 @@ void Update()
             enemies[i].maxHealth = curEnemies[i].health;
             enemies[i].currentHealth = curEnemies[i].health;
             enemies[i].enemyCards = curEnemies[i].Actions;
+            if(curEnemies[i].image != null)
+            {
+            enemies[i].transform.GetChild(0).GetComponent<Image>().sprite = curEnemies[i].image;
+            }
             enemies[i].gameObject.SetActive(true);
         }
         if(EnemyCount < 3)
