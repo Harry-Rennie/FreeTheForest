@@ -17,6 +17,8 @@ public static class FadeAudioSource {
             audioSource.volume = Mathf.Lerp(start, targetVolume, currentTime / duration);
             yield return null;
         }
+        // stop the audio source
+        audioSource.Stop();
         yield break;
     }
 }
