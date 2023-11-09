@@ -188,6 +188,7 @@ void Update()
         {
             Card cardDrawn = deck.DrawCard();
             cardsInHand.Add(cardDrawn);
+            SFXManager.Instance.Play("DrawCard");
             yield return StartCoroutine(DisplayCardInHand(cardDrawn));
             cardsDrawn++;
         }
@@ -284,6 +285,8 @@ void Update()
         if(gameManager.EnemyCount <= 0)
         {
             StopAllCoroutines();
+            MusicManager.Instance.FadeOut();
+            SFXManager.Instance.Play("Victory");
             OpenReward();
         }
     }
@@ -335,6 +338,11 @@ void Update()
 
     public void EndTurn()
     {
+        // if player
+        if (playersTurn)
+        {
+            SFXManager.Instance.Play("EndTurn");
+        }
         //Set turn to no
         playersTurn = false;
         // StartCoroutine(PlayDiscardAnimation());

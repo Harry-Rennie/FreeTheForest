@@ -33,15 +33,18 @@ public class CardActions : MonoBehaviour
                 {
                     case Card.CardEffect.Attack:
                         AttackEnemy(card.values[i]); //Call the relevant effect with the current "values" as argument
+                        SFXManager.Instance.Play("Attack");
                         break;
                     case Card.CardEffect.Block:
                         PerformBlock(card.values[i]);
+                        SFXManager.Instance.Play("Block");
                         break;
                     case Card.CardEffect.Energy:
                         ChangeEnergy(card.values[i]);
                         break;
                     case Card.CardEffect.Draw:
                         DrawCards(card.values[i]);
+                        SFXManager.Instance.Play("DrawCard");
                         break;
                     case Card.CardEffect.PoisonSelf:
                         ApplySelfPoison(card.values[i]);
