@@ -48,6 +48,7 @@ public class CardActions : MonoBehaviour
                         break;
                     case Card.CardEffect.PoisonSelf:
                         ApplySelfPoison(card.values[i]);
+                        SFXManager.Instance.Play("Poison");
                         break;
                     case Card.CardEffect.GrowthSelf:
                         ApplySelfGrowth(card.values[i]);
