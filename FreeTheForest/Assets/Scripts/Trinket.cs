@@ -17,7 +17,7 @@ public class Trinket : ScriptableObject
     public int Level;
     // Trinket buffs or debuffs these stats
     // A positive value buffs the stat, a negative value debuffs the stat
-    public int MaxHealthBuff, AttackBuff, DefenseBuff;
+    public int MaxHealthBuff, AttackBuff, DefenceBuff;
     public bool Equipped;
 
     // this method returns a string that describes the trinket
@@ -32,9 +32,9 @@ public class Trinket : ScriptableObject
         {
             trinketString += $"Attack: {AttackBuff}\n";
         }
-        if (DefenseBuff != 0)
+        if (DefenceBuff != 0)
         {
-            trinketString += $"Defense: {DefenseBuff}\n";
+            trinketString += $"Defense: {DefenceBuff}\n";
         }
         return trinketString;
     }

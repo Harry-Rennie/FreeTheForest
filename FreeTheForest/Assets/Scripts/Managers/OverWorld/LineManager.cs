@@ -50,21 +50,16 @@ public void Update()
         .Where(child => child.name.StartsWith("Line"))
         .Select(child => child.gameObject)
         .ToList();
-
+    Vector3 offset = new Vector3(0f, scrollPositionChange, 0f);
     // Offset each line by the scroll position change
     foreach (GameObject line in lines)
     {
         LineRenderer lr = line.GetComponent<LineRenderer>();
-        Vector3 lineStart = lr.GetPosition(0);
-        Vector3 lineEnd = lr.GetPosition(1);
-
-        // Create a Vector3 offset with the Y component adjusted by scrollPositionChange
-        //the need to move in opp y direction
-        
-        Vector3 offset = new Vector3(0f, scrollPositionChange, 0f);
-
-        lr.SetPosition(0, lineStart + offset);
-        lr.SetPosition(1, lineEnd + offset);
+        for (int i = 0; i < lr.positionCount; i++)
+        {
+            Vector3 position = lr.GetPosition(i);
+            lr.SetPosition(i, position + offset);
+        }
     }
 }
 public void SnapLines(float scrollLinePositionChange)
@@ -85,9 +80,12 @@ public void SnapLines(float scrollLinePositionChange)
 
         // Create a Vector3 offset with the Y component adjusted by scrollLinePositionChange
         Vector3 offset = new Vector3(0f, -scrollLinePositionChange * scrollPositionSensitivity, 0f); // Use a negative offset to move the lines down
-
-        lr.SetPosition(0, lineStart + offset);
-        lr.SetPosition(1, lineEnd + offset);
+        // Offset each line by the scroll position change
+        for (int i = 0; i < lr.positionCount; i++)
+        {
+            Vector3 position = lr.GetPosition(i);
+            lr.SetPosition(i, position + offset);
+        }
     }
 }
     public void ConnectNodes(List<GameObject> nodes)

@@ -15,7 +15,7 @@ MonoBehaviour:
   title: Steelbark
   description: Deal damage equal to your Offense plus twice your Block, then Lose
     All Block
-  image: {fileID: 0}
+  image: {fileID: 21300000, guid: 72a38099bf6536e47ae226e57af7da66, type: 3}
   manaCost: 0
   cardType: 0
   effects: 0000000001000000
