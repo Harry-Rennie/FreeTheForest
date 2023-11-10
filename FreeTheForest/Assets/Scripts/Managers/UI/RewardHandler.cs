@@ -26,6 +26,18 @@ public class RewardHandler : MonoBehaviour
             chosen = true; //If we don't have it already, flag this loop as successful
             rewards.Add(card); //Add that card to our dupe list
             cards[i].LoadCard(rewards[i]); //Load the reward card into the CardDisplay
+            FormatCards();
+        }
+    }
+
+    private void FormatCards()
+    {
+        foreach (CardDisplay card in cards)
+        {
+            if(card.descriptionText.text.Contains("{0}"))
+            {
+                card.descriptionText.text = card.descriptionText.text.Replace("{0}", "X");
+            }
         }
     }
 }

@@ -22,11 +22,11 @@ public class CompendiumCard : MonoBehaviour
     {
         if(card.description.Contains("{0}") && card.cardType == Card.CardType.Attack)
         {
-            DescriptionText.text = card.description.Replace("{0}", PlayerInfoController.instance.Strength.ToString());   
+            DescriptionText.text = card.description.Replace("{0}", "X");   
         }
         if(card.description.Contains("{0}") && card.cardType == Card.CardType.Skill)
         {
-            DescriptionText.text = card.description.Replace("{0}", PlayerInfoController.instance.Defence.ToString());   
+            DescriptionText.text = card.description.Replace("{0}", "X");   
         }
         if(!card.description.Contains("{0}"))
         {
