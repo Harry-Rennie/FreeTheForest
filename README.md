@@ -43,17 +43,17 @@ A 2D roguelike card-battler, developed in Unity.
 # Sound
 ---
 ## Music
-Music of Free the Forest aims to utilise folk instrumentation to evoke a sense of austerity, resourcefulness, and the great outdoors.
+The music of Free the Forest aims to utilise folk instrumentation to evoke a sense of austerity, resourcefulness, and the great outdoors.
 The musical themes already introduced can be reinterpreted using electronic instrumentation if required.
-Audio for the overworld map should be a simple backdrop of wind and forest sounds. This will give the player a sense of respite between battle sequences.
+Audio for the overworld map is a simple backdrop of wind and forest sounds. This gives the player a sense of respite between battle sequences.
 
 ## SFX
-In terms of sound effects, these should be simple and recognisable sounds. 
+In terms of sound effects, these are simple and recognisable sounds. 
  - The sound of a deck shuffling
  - a card being peeled from a deck
  - a firm thwack for an attack
  - a metallic clink for defense
-These effects are probably freely available.
+
 
 # Art and Animation
 ---
