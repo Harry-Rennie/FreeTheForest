@@ -429,7 +429,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   settingsPanel: {fileID: 0}
---- !u!21 &488312767
+--- !u!21 &359064972
 Material:
   serializedVersion: 8
   m_ObjectHideFlags: 0
@@ -466,7 +466,7 @@ Material:
     - _StencilWriteMask: 255
     - _UseUIAlphaClip: 0
     m_Colors:
-    - _WidthHeightRadius: {r: -800, g: -340, b: 80, a: 0}
+    - _WidthHeightRadius: {r: 1162.8301, g: 767.25, b: 80, a: 0}
   m_BuildTextureStacks: []
 --- !u!1 &572787835
 GameObject:
@@ -1931,6 +1931,22 @@ PrefabInstance:
       propertyPath: m_hasFontAssetChanged
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 3778592266428341842, guid: c3863658cdcad41a3bf282c283efb09a, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 42.83
+      objectReference: {fileID: 0}
+    - target: {fileID: 3778592266428341842, guid: c3863658cdcad41a3bf282c283efb09a, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 27.25
+      objectReference: {fileID: 0}
+    - target: {fileID: 3778592266428341842, guid: c3863658cdcad41a3bf282c283efb09a, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: -1.9500122
+      objectReference: {fileID: 0}
+    - target: {fileID: 3778592266428341842, guid: c3863658cdcad41a3bf282c283efb09a, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: -3.8900146
+      objectReference: {fileID: 0}
     - target: {fileID: 4490500413233527005, guid: c3863658cdcad41a3bf282c283efb09a, type: 3}
       propertyPath: m_AnchorMax.y
       value: 1
@@ -1957,7 +1973,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5073302923991435898, guid: c3863658cdcad41a3bf282c283efb09a, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5296747248484679169, guid: c3863658cdcad41a3bf282c283efb09a, type: 3}
       propertyPath: m_AnchorMax.y
