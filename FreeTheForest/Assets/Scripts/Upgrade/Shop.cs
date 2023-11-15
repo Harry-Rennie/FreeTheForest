@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
 public class Shop : MonoBehaviour
 {
@@ -18,6 +19,9 @@ public class Shop : MonoBehaviour
     public List <Card> cardsForSale = new List<Card>();
     [SerializeField] public List<TextMeshProUGUI> cardCosts = new List<TextMeshProUGUI>();
     // Start is called before the first frame update
+    [SerializeField] public Sprite shopKeeperIdle;
+    [SerializeField] public Sprite shopKeeperActive;
+    [SerializeField] public Image shopKeeper;
     public void Start()
     {
         playerInfoController = PlayerInfoController.instance;
@@ -42,6 +46,7 @@ public class Shop : MonoBehaviour
             playerInfoController.playerDeck.Add(card);
             costText.text = "SOLD";
             PlayerInfoPanel.Instance.UpdateGold();
+            StartCoroutine(ShopKeeperAnimation());
         }
         else
         {
@@ -143,5 +148,12 @@ public class Shop : MonoBehaviour
             }
             return;
         }
+    }
+
+    public IEnumerator ShopKeeperAnimation()
+    {
+        shopKeeper.sprite = shopKeeperActive;
+        yield return new WaitForSeconds(1f);
+        shopKeeper.sprite = shopKeeperIdle;
     }
 }  
