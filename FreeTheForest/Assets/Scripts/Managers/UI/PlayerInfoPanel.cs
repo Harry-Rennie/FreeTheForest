@@ -63,9 +63,9 @@ public class PlayerInfoPanel : MonoBehaviour
     /// </summary>
     public void UpdateStats()
     {
-        health.text = @$"{playerInfoController.CurrentHealth}/{playerInfoController.MaxHealth} {getBuffString(trinketManager.TotalHealthBuff)}";
-        strength.text = @$"{playerInfoController.Strength} {getBuffString(trinketManager.TotalStrengthBuff)}";
-        defence.text = @$"{playerInfoController.Defence} {getBuffString(trinketManager.TotalDefenceBuff)}";
+        health.text = @$"{playerInfoController.CurrentHealth}/{playerInfoController.MaxHealth}";
+        strength.text = @$"{playerInfoController.Strength}";
+        defence.text = @$"{playerInfoController.Defence}";
         gold.text = @$"{playerInfoController.Gold}";
         energy.text = @$"{playerInfoController.Energy}";
         //we dont want to visually display 0 based floors
