@@ -29,6 +29,7 @@ public class CardActions : MonoBehaviour
         {
             for (int i = 0; i < card.effects.Count; i++) //Loop through the effects
             {
+                Debug.Log(card.effects[i]);
                 switch (card.effects[i])
                 {
                     case Card.CardEffect.Attack:
@@ -58,6 +59,7 @@ public class CardActions : MonoBehaviour
                         break;
                 }
             }
+            PlayerInfoPanel.Instance.UpdateStats();
         }
     }
 
@@ -139,11 +141,12 @@ public class CardActions : MonoBehaviour
                 Debug.Log("Something gone wrong with Attack Mode");
                 break;
         }
+
     }
 
     private void ChangeEnergy(int change)
     {
-        battleManager.energy += change;
+        battleManager.currentEnergy += change;
     }
 
     private void PerformBlock(int mode) //Entity gains block equal to their Defense stat

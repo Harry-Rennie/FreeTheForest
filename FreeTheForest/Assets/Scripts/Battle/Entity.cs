@@ -64,8 +64,23 @@ public class Entity : MonoBehaviour
         buffs= new List<BuffBase>();
     }
 
-    private void Start()
+    private void Update()
     {
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            DebugBuffs();
+        }
+    }
+
+    public void DebugBuffs()
+    {
+        if (isPlayer)
+        {
+            foreach (BuffBase buff in buffs)
+            {
+                Debug.Log(buff.buffName + " " + buff.stacks);
+            }
+        }
     }
 
     public void TakeDamage(int amount)
