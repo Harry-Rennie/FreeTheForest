@@ -13,9 +13,10 @@ MonoBehaviour:
   m_Name: Root
   m_EditorClassIdentifier: 
   title: Root
-  description: Block, then Gain 2 @
+  description: Block<br>Gain 2 @
   image: {fileID: 0}
   manaCost: 1
   cardType: 0
+  exiled: 0
   effects: 0100000002000000
   values: 0000000002000000

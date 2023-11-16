@@ -1073,7 +1073,7 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 100677700}
   m_CullTransparentMesh: 1
---- !u!21 &105063524
+--- !u!21 &108427560
 Material:
   serializedVersion: 8
   m_ObjectHideFlags: 0
@@ -2512,6 +2512,16 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 38b7c7a23695cc241a0cb385fa7c94dc, type: 2}
   - {fileID: 11400000, guid: 0fed38608385fd24daeea7956de755e8, type: 2}
   - {fileID: 11400000, guid: bfd35a71e16a18546ad0febc37926bd1, type: 2}
+  - {fileID: 11400000, guid: 0730709f6d350404495f20b6b1ebda45, type: 2}
+  - {fileID: 11400000, guid: 5766239985b378f4c91074f7c49d341b, type: 2}
+  - {fileID: 11400000, guid: 61558f27dce3eed4b8c35fefaaf0f9b9, type: 2}
+  - {fileID: 11400000, guid: 7c052942c2cc05b41a5ee14d57a4c2d5, type: 2}
+  - {fileID: 11400000, guid: 6d4553c7325aa984886a521516402240, type: 2}
+  - {fileID: 11400000, guid: 4aa038175121f5749904c3c352624dd2, type: 2}
+  - {fileID: 11400000, guid: 768fdfbad2a56ac4a805d83eb16b7214, type: 2}
+  - {fileID: 11400000, guid: 3a0996ec5db1bb14a8d7a0897a18b0c6, type: 2}
+  - {fileID: 11400000, guid: f1e720b1de74c424fad0be3e1336155d, type: 2}
+  - {fileID: 11400000, guid: f90d63d1de879fe41ae9ba547c4a28b5, type: 2}
   currentEnemies: []
 --- !u!223 &411000523
 Canvas:

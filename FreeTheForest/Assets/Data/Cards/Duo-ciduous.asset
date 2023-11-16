@@ -13,9 +13,10 @@ MonoBehaviour:
   m_Name: Duo-ciduous
   m_EditorClassIdentifier: 
   title: Duo-ciduous
-  description: Attack, Attack
+  description: Attack<br>Attack
   image: {fileID: 0}
   manaCost: 1
   cardType: 0
+  exiled: 0
   effects: 0000000000000000
   values: 0000000000000000

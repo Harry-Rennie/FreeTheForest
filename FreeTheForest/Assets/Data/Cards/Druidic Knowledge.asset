@@ -10,13 +10,13 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f6d5a2fb821bc4fa6988ef63e88642ee, type: 3}
-  m_Name: Low Hanging Branch
+  m_Name: Druidic Knowledge
   m_EditorClassIdentifier: 
-  title: Low Hanging Branch
-  description: Weak Attack<br>Draw 1
-  image: {fileID: 0}
-  manaCost: 0
-  cardType: 0
+  title: Druidic Knowledge
+  description: Draw equal to your Growth
+  image: {fileID: 21300000, guid: a3a79884c9770ea4bb095f69fdc1cf1f, type: 3}
+  manaCost: 2
+  cardType: 1
   exiled: 0
-  effects: 0000000003000000
-  values: 0100000001000000
+  effects: 05000000
+  values: 00000000

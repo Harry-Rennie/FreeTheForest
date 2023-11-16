@@ -275,8 +275,15 @@ void Update()
             cardActions.PerformAction(card.card, cardTarget); //Tell CardActions to perform action based on Card name and Target if necessary
             cardToAnimate.Discard();
             yield return new WaitUntil(() => cardToAnimate.discarded == true);
-            DiscardCard(card);
-            if(card.card.cardType == Card.CardType.Attack)
+            if (card.card.exiled) //Either exile or discard the card based on its Exiled bool
+            {
+                ExileCard(card);
+            }
+            else
+            {
+                DiscardCard(card);
+            }
+            if (card.card.cardType == Card.CardType.Attack)
             {
                 yield return new WaitForSeconds(0.5f);
                 gameManager.activateHealthBar();
@@ -307,8 +314,19 @@ void Update()
     {
         // card.OnCardDeload();
         card.gameObject.SetActive(false);
-        cardsInHand.Remove(card.card);
+        List<Card> newCardsInHand = new List<Card>(cardsInHand);
+        newCardsInHand.Remove(card.card);//Remove the Hand list item
+        cardsInHand = newCardsInHand;//trigger action
         deck.Discard(card.card); //Put the card into the Discard pile of the Deck object.
+    }
+
+    public void ExileCard(CardDisplay card)
+    {
+        card.gameObject.SetActive(false); //Deactivate the gameObject
+        List<Card> newCardsInHand = new List<Card>(cardsInHand);
+        newCardsInHand.Remove(card.card);//Remove the Hand list item
+        cardsInHand = newCardsInHand;//trigger action
+        deck.ExileCard(card.card); //Put the card into the Exile pile of the Deck object.
     }
 
     public void AddKill() //Subtract our enemy counter for checking Battle End
@@ -358,7 +376,7 @@ void Update()
         //Go through each enemy and execute their actions
         foreach(Entity enemy in enemies)
         {
-            if (enemy != null && enemy.gameObject.activeSelf && enemy.currentHealth > 0)
+            if (enemy != null && enemy.gameObject.activeSelf && enemy.currentHealth > 0 && enemy.GetBuff("Stun") == null)
             {
                 if(enemy.enemyCards.Count == 1)
                 {
@@ -379,8 +397,7 @@ void Update()
         }
         battleCounter++;
 
-        //TODO: FUTURE CONTENT: Process buffs
-        // ProcessBuffs();
+        ProcessBuffs();
 
         //Restore energy
         SetEnergyCounter(energy, energy);

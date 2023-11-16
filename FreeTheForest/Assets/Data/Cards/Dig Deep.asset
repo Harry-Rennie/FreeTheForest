@@ -13,9 +13,10 @@ MonoBehaviour:
   m_Name: Dig Deep
   m_EditorClassIdentifier: 
   title: Dig Deep
-  description: Double your Block, Draw 2
+  description: Double Block<br>Draw 2
   image: {fileID: 0}
   manaCost: 2
   cardType: 0
+  exiled: 0
   effects: 0100000003000000
   values: 0100000002000000
