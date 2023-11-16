@@ -65,10 +65,10 @@ public class MapGraph : MonoBehaviour
             SpawnFromSave(layoutData);
             lastNodePos = gameManager.lastPosition;
             IncrementFloor(nodes);
-            //move the map down by the amount of rows you have progressed.
-            float scrollGridPositionChange = (graphHeight / gridSizeY) * gameManager.floorNumber + 100f;
-            graphContainer.anchoredPosition = new Vector2(graphContainer.anchoredPosition.x, graphContainer.anchoredPosition.y - scrollGridPositionChange);
-            lineManager.SnapLines(scrollGridPositionChange);
+            // move the map down by the amount of rows you have progressed.
+            // float scrollGridPositionChange = (graphHeight / gridSizeY) * gameManager.floorNumber;
+            // graphContainer.anchoredPosition = new Vector2(graphContainer.anchoredPosition.x, graphContainer.anchoredPosition.y - scrollGridPositionChange);
+            // lineManager.SnapLines(scrollGridPositionChange);
         }
     }
 
@@ -331,52 +331,58 @@ public class MapGraph : MonoBehaviour
     /// <summary>
     ////compares tags of parent child, respawns if they match condition, updates dictionary and list of nodes.
     /// </summary>
-    private void CheckRespawn(List<GameObject> nodes)
+private void CheckRespawn(List<GameObject> nodes)
+{
+    bool hasDuplicate;
+
+    do
     {
-        bool hasDuplicate;
-        List<GameObject> updatedNodes = new List<GameObject>(); //store updated nodes
+        hasDuplicate = false;
+        List<GameObject> nodesToRemove = new List<GameObject>();
 
-        do
+        foreach (KeyValuePair<GameObject, GameObject> entry in new Dictionary<GameObject, GameObject>(lineManager.nodeParentMap))
         {
-            hasDuplicate = false;
-            List<GameObject> keysToUpdate = new List<GameObject>();
-            Dictionary<GameObject, GameObject> newEntries = new Dictionary<GameObject, GameObject>();
+            GameObject childNode = entry.Key;
+            GameObject parentNode = entry.Value;
+            string tag = childNode.tag;
 
-            foreach (KeyValuePair<GameObject, GameObject> entry in new Dictionary<GameObject, GameObject>(lineManager.nodeParentMap))
+            if (childNode.name == parentNode.name && (tag == "Heal" || tag == "Upgrade"))
             {
-                GameObject childNode = entry.Key;
-                GameObject parentNode = entry.Value;
-                string tag = childNode.tag;
+                // Flag that we found a duplicate
+                hasDuplicate = true;
 
-                if (childNode.name == parentNode.name && (tag == "Heal" || tag == "Upgrade"))
-                {
-                    hasDuplicate = true; //keep checking
-                    GameObject newChildNode = nodeManager.Respawn(childNode, graphContainer, tag);
-                    keysToUpdate.Add(childNode);
-                    newEntries[newChildNode] = parentNode;
-                    Destroy(childNode);
-                }
-            }
-            //update the dictionary
-            foreach (var key in keysToUpdate)
-            {
-                lineManager.nodeParentMap.Remove(key);
-            }
-            foreach (var entry in newEntries)
-            {
-                lineManager.nodeParentMap[entry.Key] = entry.Value;
+                // Spawn a new node
+                GameObject newChildNode = nodeManager.Respawn(childNode, graphContainer, tag);
+                
+                // Immediately update the dictionary to replace the old node with the new node
+                lineManager.nodeParentMap.Remove(childNode);
+                lineManager.nodeParentMap.Add(newChildNode, parentNode);
+
+                // Add the old node to the list of nodes to remove
+                nodesToRemove.Add(childNode);
+
+                // Destroy the old node
+                Destroy(childNode);
             }
         }
-        while (hasDuplicate);
-        //updating dependencies and saving
-        updatedNodes.AddRange(nodes);
-        foreach (var entry in lineManager.nodeParentMap)
+
+        // Remove the old nodes from the nodes list
+        foreach (var node in nodesToRemove)
         {
-            updatedNodes.Add(entry.Key);
+            nodes.Remove(node);
         }
-        nodes.Clear();
-        nodes.AddRange(updatedNodes);        
     }
+    while (hasDuplicate);
+
+    // Update nodes list with all nodes from the nodeParentMap
+    foreach (var entry in lineManager.nodeParentMap)
+    {
+        if (!nodes.Contains(entry.Key))
+        {
+            nodes.Add(entry.Key);
+        }
+    }
+}
 
     /// <summary>
     /// Generates grid of nodes based on node locations.
