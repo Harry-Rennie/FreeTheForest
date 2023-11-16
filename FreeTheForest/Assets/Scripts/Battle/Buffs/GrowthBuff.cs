@@ -16,6 +16,8 @@ public class GrowthBuff : BuffBase
         target.strength -= stacks;
         target.defence -= stacks;
         target.battleManager.energyGain-= stacks;
+        PlayerInfoController.instance.ModifyStrength(-stacks);
+        PlayerInfoController.instance.ModifyDefence(-stacks);
     }
 
     public override void Apply()
@@ -23,6 +25,8 @@ public class GrowthBuff : BuffBase
         target.strength++;
         target.defence++;
         target.battleManager.energyGain++;
+        PlayerInfoController.instance.ModifyStrength(1);
+        PlayerInfoController.instance.ModifyDefence(1);
     }
 
     public override void Tick()

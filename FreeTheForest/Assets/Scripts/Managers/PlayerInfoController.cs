@@ -153,7 +153,7 @@ public class PlayerInfoController : MonoBehaviour
     {
         MaxHealth = 100;
         CurrentHealth = 100;
-        Strength = 1000;
+        Strength = 10;
         Defence = 1;
         Gold = 25;
         Energy = 3;

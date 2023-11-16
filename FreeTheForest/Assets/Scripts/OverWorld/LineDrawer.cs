@@ -21,7 +21,7 @@ public class LineDrawer : MonoBehaviour
         LineRenderer lr = lineObject.AddComponent<LineRenderer>();
         lr.sortingOrder = 1;
         lr.textureMode = LineTextureMode.Tile;
-        lr.startWidth = lr.endWidth = 0.1f;
+        lr.startWidth = lr.endWidth = 0.075f;
         lr.material = new Material(Shader.Find("Sprites/Default"));
         lr.material.color = Color.black;
 

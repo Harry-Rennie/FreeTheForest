@@ -64,8 +64,23 @@ public class Entity : MonoBehaviour
         buffs= new List<BuffBase>();
     }
 
-    private void Start()
+    private void Update()
     {
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            DebugBuffs();
+        }
+    }
+
+    public void DebugBuffs()
+    {
+        if (isPlayer)
+        {
+            foreach (BuffBase buff in buffs)
+            {
+                Debug.Log(buff.buffName + " " + buff.stacks);
+            }
+        }
     }
 
     public void TakeDamage(int amount)
@@ -138,6 +153,26 @@ public class Entity : MonoBehaviour
             buffs.Add(buff);
             buff.Activate();
         }
+    }
+
+    public BuffBase GetBuff(string buffName) //Return a reference to a buff on entity by buffName
+    {
+        BuffBase buffReturn = null;
+        
+        foreach (BuffBase buff in buffs)
+        {
+            if (buff.buffName == buffName)
+            {
+                buffReturn = buff;
+            }
+        }
+
+        if (buffReturn == null)
+        {
+            Debug.Log(buffName + " Buff Not Found");
+        }
+
+        return buffReturn;
     }
 
     public void CleanseBuffs() //Wipe all buffs on an entity
