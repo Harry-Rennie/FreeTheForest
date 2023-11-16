@@ -13,8 +13,9 @@ MonoBehaviour:
   m_Name: Bat-man
   m_EditorClassIdentifier: 
   title: Bat-man
-  offense: 5
-  defense: 5
+  strength: 1
+  defence: 1
   health: 10
   Actions:
   - {fileID: 11400000, guid: b4b4d4673cb77404caa5afb14ffd80a6, type: 2}
+  image: {fileID: 21300000, guid: d1ccec1b5e5ed2940ad7070e02da1a91, type: 3}

@@ -44,13 +44,9 @@ public class MapGraph : MonoBehaviour
     {
         //check if layout data is available (an existing list of serialized nodes)
         List<SerializableNode> layoutData = graphLayoutManager.LoadGraphLayout();
-        if (layoutData.Count > 0)
+        //delete the file if the character dies || they win the map - quick solution to scrapping save feature for now.
+        if(gameManager.floorNumber == 0 && gameManager.lastPosition != null)
         {
-            SpawnFromSave(layoutData);
-        }
-        if (layoutData.Count == 0)
-        {
-            //no layout data - generate a new map
             nodeLocations = GenerateRandomNodeLocations(numberOfNodes);
             nodeLocations = NodeUtility.SortNodes(nodeLocations);
             GenerateNodeGrid(nodeLocations);
@@ -58,22 +54,22 @@ public class MapGraph : MonoBehaviour
             lineManager.ConnectNodes(nodes);
             CheckRespawn(nodes);
             SaveData(nodes);
-        }
-        if(gameManager.floorNumber == 0 && gameManager.lastPosition != null)
-        {
             //if you have no progress, enable first row of nodes.
             CheckProgress(nodes);
-        }
-        if(gameManager.lastPosition != null && gameManager.floorNumber > 0)
-        {
-            lastNodePos = gameManager.lastPosition;
-            IncrementFloor(nodes);
-            //move the map down by the amount of rows you have progressed.
-            float scrollGridPositionChange = (graphHeight / gridSizeY) * gameManager.floorNumber + 50f;
+            float scrollGridPositionChange = (graphHeight / gridSizeY) * gameManager.floorNumber - 70f;
             graphContainer.anchoredPosition = new Vector2(graphContainer.anchoredPosition.x, graphContainer.anchoredPosition.y - scrollGridPositionChange);
             lineManager.SnapLines(scrollGridPositionChange);
         }
-
+        if(gameManager.lastPosition != null && gameManager.floorNumber > 0)
+        {
+            SpawnFromSave(layoutData);
+            lastNodePos = gameManager.lastPosition;
+            IncrementFloor(nodes);
+            //move the map down by the amount of rows you have progressed.
+            float scrollGridPositionChange = (graphHeight / gridSizeY) * gameManager.floorNumber + 100f;
+            graphContainer.anchoredPosition = new Vector2(graphContainer.anchoredPosition.x, graphContainer.anchoredPosition.y - scrollGridPositionChange);
+            lineManager.SnapLines(scrollGridPositionChange);
+        }
     }
 
     /// <summary>
@@ -149,10 +145,21 @@ public class MapGraph : MonoBehaviour
                     {
                         if(node.GetComponent<RectTransform>().anchoredPosition == nodeLocation)
                         {
-                            if(row == 0)
+                            if(row <= 1)
                             {
                                 node.GetComponent<Button>().interactable = true;
                             }
+                            // else if(lineManager.GetLinesFromNode(node).Count > 0)
+                            // {
+                            //    List <GameObject> Line = lineManager.GetLinesFromNode(node);
+                            //    foreach(GameObject line in Line)
+                            //    {
+                            //         Color currentColor = line.GetComponent<LineRenderer>().startColor;
+                            //         currentColor.a = 0.5f;
+                            //         line.GetComponent<LineRenderer>().startColor = currentColor;
+                            //         line.GetComponent<LineRenderer>().endColor = currentColor;
+                            //    }
+                            // }
                         }
                     }
                 }
@@ -347,6 +354,7 @@ public class MapGraph : MonoBehaviour
                     GameObject newChildNode = nodeManager.Respawn(childNode, graphContainer, tag);
                     keysToUpdate.Add(childNode);
                     newEntries[newChildNode] = parentNode;
+                    Destroy(childNode);
                 }
             }
             //update the dictionary

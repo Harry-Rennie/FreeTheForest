@@ -14,13 +14,6 @@ public class RewardHandler : MonoBehaviour
         GenerateRewards();
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
-
-
     private void GenerateRewards()
     {
         List<Card> rewards = new List<Card>(); //Hold a reference list for checking duplicates
@@ -28,17 +21,29 @@ public class RewardHandler : MonoBehaviour
         for (int i = 0; i < 3; i++) //For our three cards...
         {
             bool chosen = false;
-            while (!chosen) //Setup for Dupe Check
+
+            while (!chosen)
             {
                 Card card = gm.cardLibrary[Random.Range(0, gm.cardLibrary.Count)]; //Roll a random card from GameManager's CardLibrary list
-                if (!rewards.Contains(card)) //See if we already have it in our reward list
+                if (!rewards.Contains(card))
                 {
                     chosen = true; //If we don't have it already, flag this loop as successful
-                    rewards.Add(card); //Add that card to our dupe list
+                    rewards.Add(card); //Add that card to our reward list
+                    cards[i].LoadCard(rewards[i]); //Load the reward card into the CardDisplay
                 }
             }
+            FormatCards();
+        }
+    }
 
-            cards[i].LoadCard(rewards[i]); //Load the reward card into the CardDisplay
+    private void FormatCards()
+    {
+        foreach (CardDisplay card in cards)
+        {
+            if(card.descriptionText.text.Contains("{0}"))
+            {
+                card.descriptionText.text = card.descriptionText.text.Replace("{0}", "X");
+            }
         }
     }
 }

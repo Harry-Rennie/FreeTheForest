@@ -96,6 +96,8 @@ public class NodeManager : MonoBehaviour
         nodeTransform.anchorMax = new Vector2(0, 0);
         Button nodeButton = node.GetComponent<UnityEngine.UI.Button>();
         nodeButton.interactable = false;
+        Canvas nodeCanvas = node.GetComponent<Canvas>();
+        nodeCanvas.overrideSorting = true;
     }
     
     //this is dirty. the method checks the nodes after they have been spawned, and replaces the ones causing undesired consecutive spawning. Ideally this is done before.
@@ -148,6 +150,8 @@ public class NodeManager : MonoBehaviour
         {
             line.transform.SetParent(newNode.transform);
         }
+        Canvas newNodeCanvas = newNode.GetComponent<Canvas>();
+        newNodeCanvas.overrideSorting = true;
         return newNode;
     }
 

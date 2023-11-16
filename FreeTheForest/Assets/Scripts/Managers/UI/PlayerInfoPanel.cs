@@ -11,7 +11,7 @@ public class PlayerInfoPanel : MonoBehaviour
 {
     public List<TrinketSlot> TrinketSlots;
     [SerializeField] public TMP_Text strength;
-    [SerializeField] public TMP_Text defense;
+    [SerializeField] public TMP_Text defence;
     [SerializeField] public TMP_Text gold;
     [SerializeField] public TMP_Text energy;
     [SerializeField] public TMP_Text health;
@@ -21,6 +21,10 @@ public class PlayerInfoPanel : MonoBehaviour
     [SerializeField] public Button noSave;
     [SerializeField] public GameObject savePanel;
     [SerializeField] public GameObject settingsPanel;
+
+    [SerializeField] public Button settingsButton;
+    [SerializeField] public Sprite settingsPressed;
+    [SerializeField] public Sprite settingsUnpressed;
 
     private PlayerInfoController playerInfoController;
     private TrinketManager trinketManager;
@@ -59,13 +63,25 @@ public class PlayerInfoPanel : MonoBehaviour
     /// </summary>
     public void UpdateStats()
     {
-        health.text = @$"{playerInfoController.CurrentHealth}/{playerInfoController.MaxHealth} {getBuffString(trinketManager.TotalHealthBuff)}";
-        strength.text = @$"{playerInfoController.Strength} {getBuffString(trinketManager.TotalStrengthBuff)}";
-        defense.text = @$"{playerInfoController.Defense} {getBuffString(trinketManager.TotalDefenseBuff)}";
+        health.text = @$"{playerInfoController.CurrentHealth}/{playerInfoController.MaxHealth}";
+        strength.text = @$"{playerInfoController.Strength}";
+        defence.text = @$"{playerInfoController.Defence}";
         gold.text = @$"{playerInfoController.Gold}";
         energy.text = @$"{playerInfoController.Energy}";
         //we dont want to visually display 0 based floors
-        floorNumber.text = @$"{playerInfoController.floorNumber + 1}";
+        floorNumber.text = @$"{FormatFloorNumber()}";
+    }
+
+    public string FormatFloorNumber()
+    {
+        if (playerInfoController.floorNumber < 10)
+        {
+            return "0" + @$"{playerInfoController.floorNumber + 1}";
+        }
+        else
+        {
+            return playerInfoController.floorNumber.ToString();
+        }
     }
 
     public void UpdateGold()
@@ -114,8 +130,10 @@ public class PlayerInfoPanel : MonoBehaviour
         playerInfoController.ResetPlayerInfo();
         SceneManager.LoadScene("TitleScreen");
     }
-    #endregion
-
+    public void Quit()
+    {
+        Application.Quit();
+    }
     public void ShowSavePanel()
     {
         savePanel.SetActive(true);
@@ -136,6 +154,7 @@ public class PlayerInfoPanel : MonoBehaviour
     {
         settingsPanel.SetActive(true);
     }
+    #endregion
     /// <summary>
     /// Deactivates PlayerUI when in a scene that doesn't need it. Todo: reset stats properly for new game
     /// </summary>

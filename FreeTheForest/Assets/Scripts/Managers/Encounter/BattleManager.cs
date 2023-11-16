@@ -6,10 +6,13 @@ using UnityEngine;
 using TMPro;
 using System.Xml;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class BattleManager : MonoBehaviour
 {
     [Header("Cards")]
+    [SerializeField] CardAnimator cardSprite;
+    public CardDisplayAnimator cardAnimator;
     public Deck deck;
     private List<Card> _cardsInHand = new List<Card>();
     public List<CardDisplay> handCardObjects;
@@ -17,9 +20,13 @@ public class BattleManager : MonoBehaviour
     [Header("Stats")]
     public Entity cardTarget;
     public Entity player;
-    public int maxEnergy;
+
     public int energy;
     public int energyGain;
+    public int currentMaxEnergy;
+    public int currentEnergy; //energy in context of the battle/turn
+    [SerializeField] public GameObject energyCounter; //Max energy will stay the same in top ui, counter visually shows battle specific energy
+    [SerializeField] public TMP_Text eCounter; //Txt for now, parent object might contain animations.
     public int drawAmount = 5;
     public bool playersTurn = true;
     public int battleCounter;
@@ -28,20 +35,24 @@ public class BattleManager : MonoBehaviour
     [Header("Enemies")]
     [SerializeField] public List<Entity> enemies;
     public int EnemyCount;
+    public int enemiesAlive;
+    public List<int> roll;
+    public List<int> mod;
     
     CardActions cardActions;
     PlayerInfoController gameManager;
     public GameObject RewardPanel;
 
     [SerializeField] public GameObject battleCanvas;
-    private TargetSlot targetSlot;
+    public TargetSlot targetSlot;
     private LineRenderer targetLine;
     public CardDisplay selectedCard;
 
     public delegate void ClearTargetingEvent();
     public event ClearTargetingEvent OnClearTargeting;
-
     public bool battleOver;
+
+    [SerializeField] GameObject deathScreen;
     public List<Card> cardsInHand
     {
         get { return _cardsInHand; } // Getter to access the cardsInHand list
@@ -53,6 +64,7 @@ public class BattleManager : MonoBehaviour
     public void Awake()
     {
         gameManager = FindObjectOfType<PlayerInfoController>();
+        gameManager.GetCamera();
         cardActions = GetComponent<CardActions>();
         StartBattle();
     }
@@ -65,6 +77,7 @@ public class BattleManager : MonoBehaviour
         targetLine.startWidth = 0.05f; //set line width
         targetLine.endWidth = 0.05f;
         targetLine.positionCount = 0;
+        targetLine.sortingOrder = 400;
         targetSlot.OnChildChanged.AddListener(OnTargetSlotChildChanged);
         battleOver = false;
     }
@@ -82,7 +95,7 @@ void Update()
         targetLine.positionCount = numPoints;
         float cardSlotWidth = targetSlot.GetComponent<RectTransform>().rect.width / 2;
         float cardSlotHeight = targetSlot.GetComponent<RectTransform>().rect.height / 2;
-        Vector2 cardSlotMidY = new Vector2(targetSlot.transform.position.x - cardSlotWidth, targetSlot.transform.position.y - cardSlotHeight + 55f);
+        Vector2 cardSlotMidY = new Vector2(targetSlot.transform.position.x - cardSlotWidth, targetSlot.transform.position.y - cardSlotHeight + 20f);
 
         Vector2 canvasMousePosition;
         RectTransform canvasRect = battleCanvas.GetComponent<RectTransform>();
@@ -115,11 +128,13 @@ void Update()
         
          if(targetSlot.transform.childCount == 1)
          {
-              selectedCard = targetSlot.transform.GetChild(0).GetComponent<CardDisplay>();
+            selectedCard = targetSlot.transform.GetChild(0).GetComponent<CardDisplay>();
+            cardAnimator = selectedCard.GetComponent<CardDisplayAnimator>();
             BeginTargeting();
          }
          else
          {
+            
               selectedCard = null;
          }
     }
@@ -155,36 +170,30 @@ void Update()
         cardsInHand = new List<Card>();
         deck.DiscardPile.AddRange(gameManager.playerDeck);
         battleCounter = 0;
-        energy = maxEnergy;
-
-        DrawCards(drawAmount);
+        energy = PlayerInfoController.instance.Energy;
+        currentEnergy = energy;
+        currentMaxEnergy = energy;
+        SetEnergyCounter(currentEnergy, currentMaxEnergy);
+        gameManager.activateHealthBar();
+        gameManager.SetHealthBar();
         LoadEnemies();
+        enemiesAlive = gameManager.EnemyCount;
+        StartCoroutine(DrawCards(drawAmount));
     }
     //Draw cards. Loop over Deck card draw X times. Load returned card into hand.
-    public void DrawCards(int amount)
+    public IEnumerator DrawCards(int amount)
     {
         int cardsDrawn = 0;
-        List<Card> newCardsInHand = new List<Card>(cardsInHand); // Create a copy of the current hand
-        while (cardsDrawn < amount && newCardsInHand.Count <= 10) // While we have cards to draw AND our hand is not full...
+        while (cardsDrawn < amount && cardsInHand.Count <= 10)
         {
-            Card cardDrawn = deck.DrawCard(); // Get the card from the deck
-            newCardsInHand.Add(cardDrawn); // Put the card in the Hand list (in the copy)
-            cardsInHand = newCardsInHand; //update the hand with the copy, which triggers the action
-            DisplayCardInHand(cardDrawn); // Display the card
+            Card cardDrawn = deck.DrawCard();
+            cardsInHand.Add(cardDrawn);
+            SFXManager.Instance.Play("DrawCard");
+            yield return StartCoroutine(DisplayCardInHand(cardDrawn));
             cardsDrawn++;
         }
+        OnTurnChange(); //call an intent set
     }
-
-    //debug method for testing
-    public void DrawCard()
-    {
-        Card cardDrawn = deck.DrawCard();
-        List<Card> newCardsInHand = new List<Card>(cardsInHand);
-        newCardsInHand.Add(cardDrawn);
-        cardsInHand = newCardsInHand; //this triggers the action
-        DisplayCardInHand(cardDrawn);
-    }
-
     public void LoadEnemies()
     {
         EnemyCount = gameManager.currentEnemies.Count;
@@ -193,51 +202,119 @@ void Update()
         for(int i = 0; i < EnemyCount; i++)
         {   
             enemies[i].name = curEnemies[i].title;
-            enemies[i].offense = curEnemies[i].offense;
-            enemies[i].defense = curEnemies[i].defense;
+            enemies[i].strength = curEnemies[i].strength;
+            enemies[i].defence = curEnemies[i].defence;
             enemies[i].maxHealth = curEnemies[i].health;
             enemies[i].currentHealth = curEnemies[i].health;
             enemies[i].enemyCards = curEnemies[i].Actions;
+            if(curEnemies[i].image != null)
+            {
+            enemies[i].transform.GetChild(0).GetComponent<Image>().sprite = curEnemies[i].image;
+            }
             enemies[i].gameObject.SetActive(true);
+        }
+        if(EnemyCount < 3)
+        {
+            for(int i = EnemyCount; i < 3; i++)
+            {
+                enemies[i].gameObject.SetActive(false);
+            }
         }
     }
 
     //Load CardDisplay game object with given Card data and make visible.
-    public void DisplayCardInHand(Card card)
+    public IEnumerator DisplayCardInHand(Card card)
     {
-        CardDisplay cardDis = handCardObjects[cardsInHand.Count-1]; //Get the next available card
-        cardDis.LoadCard(card); //Tell card to load the Card data
-        cardDis.gameObject.SetActive(true); //Activate the gameObject.
+        //enable enemy intent
+        cardSprite.Draw();
+        yield return new WaitUntil(() => cardSprite.IsAnimationComplete);
+        cardSprite.IsAnimationComplete = false;
+        CardDisplay cardDis = handCardObjects[cardsInHand.Count-1];
+        cardDis.LoadCard(card);
+        cardDis.gameObject.SetActive(true);
+        if (cardDis.GetComponent<Canvas>().enabled == false) //if the card was previously discarded, some elements are disabled to smooth animation - so re-enable them
+        {
+            cardDis.GetComponent<Canvas>().enabled = true;
+            cardDis.transform.GetChild(0).gameObject.SetActive(true);
+            cardDis.transform.GetChild(1).gameObject.SetActive(true);
+            cardDis.transform.GetChild(2).gameObject.SetActive(true);
+            cardDis.transform.GetChild(3).gameObject.SetActive(true);
+        }
+        cardDis.OnCardLoad();
+        CardDisplayAnimator resetDiscard = cardDis.GetComponent<CardDisplayAnimator>();
+        resetDiscard.discarded = false;
         handManager.heldCards.Add(cardDis);
     }
 
     //Play a given card
-    public void PlayCard(CardDisplay card)
+    public IEnumerator PlayCard(CardDisplay card)
     {
-        cardActions.PerformAction(card.card, cardTarget); //Tell CardActions to perform action based on Card name and Target if necessary
-
-        energy -= card.card.manaCost; //Reduce energy by card cost (CardActions checks for enough mana)\
-        PlayerInfoController.instance.Energy = energy;
-        PlayerInfoPanel.Instance.UpdateStats();
-        ClearTargeting();
-        selectedCard = null; //Drop the referenced card
-        
-        if (card.card.exiled) //Either exile or discard the card based on its Exiled bool
+        int tempCurrentMax = currentMaxEnergy;
+        CardDisplayAnimator cardToAnimate = selectedCard.GetComponent<CardDisplayAnimator>();
+        if(card.card.manaCost > currentEnergy)
         {
-            ExileCard(card);
+            card.DeselectCard();
+            ClearTargeting();
         }
         else
         {
-            DiscardCard(card);
+            if(card.card.cardType == Card.CardType.Attack )
+            {
+                gameManager.deactivateHealthBar();
+            }
+            currentEnergy -= card.card.manaCost; //Reduce energy by card cost (CardActions checks for enough mana)\
+            if(tempCurrentMax != currentMaxEnergy)
+            {
+                SetEnergyCounter(currentEnergy, currentMaxEnergy);
+            }
+            else
+            {
+                SetEnergyCounter(currentEnergy, tempCurrentMax);
+            }
+            ClearTargeting();
+            cardActions.PerformAction(card.card, cardTarget); //Tell CardActions to perform action based on Card name and Target if necessary
+            cardToAnimate.Discard();
+            yield return new WaitUntil(() => cardToAnimate.discarded == true);
+            if (card.card.exiled) //Either exile or discard the card based on its Exiled bool
+            {
+                ExileCard(card);
+            }
+            else
+            {
+                DiscardCard(card);
+            }
+            if(card.card.cardType == Card.CardType.Attack)
+            {
+                yield return new WaitForSeconds(0.5f);
+                gameManager.activateHealthBar();
+            }
+        }
+        if(gameManager.EnemyCount <= 0)
+        {
+            StopAllCoroutines();
+            MusicManager.Instance.FadeOut();
+            SFXManager.Instance.Play("Victory");
+            OpenReward();
+    }
+}
+
+    public IEnumerator PlayDiscardAnimation()
+    {
+        foreach(CardDisplay card in handCardObjects)
+        {
+            if(card.gameObject.activeSelf)
+            {
+                cardAnimator = card.GetComponent<CardDisplayAnimator>();
+                cardAnimator.Discard();
+                yield return new WaitUntil(() => cardAnimator.IsDisplayAnimationComplete);
+            }
         }
     }
-
     public void DiscardCard(CardDisplay card)
     {
-        card.gameObject.SetActive(false); //Deactivate the gameObject
-        List<Card> newCardsInHand = new List<Card>(cardsInHand);
-        newCardsInHand.Remove(card.card);//Remove the Hand list item
-        cardsInHand = newCardsInHand;//trigger action
+        // card.OnCardDeload();
+        card.gameObject.SetActive(false);
+        cardsInHand.Remove(card.card);
         deck.Discard(card.card); //Put the card into the Discard pile of the Deck object.
     }
 
@@ -252,14 +329,9 @@ void Update()
 
     public void AddKill() //Subtract our enemy counter for checking Battle End
     {
-        EnemyCount--;
-
-        if (EnemyCount <= 0)
-        {
-            OpenReward();
-        }
+        StopAllCoroutines();
+        gameManager.EnemyCount--;
     }
-
     public void OpenReward() //Complete the battle and return to main map screen
     {
         battleOver = true;
@@ -282,8 +354,14 @@ void Update()
 
     public void EndTurn()
     {
+        // if player
+        if (playersTurn)
+        {
+            SFXManager.Instance.Play("EndTurn");
+        }
         //Set turn to no
         playersTurn = false;
+        // StartCoroutine(PlayDiscardAnimation());
         //Discard all player cards
         foreach (CardDisplay card in handCardObjects)
         {
@@ -296,29 +374,72 @@ void Update()
         //Go through each enemy and execute their actions
         foreach(Entity enemy in enemies)
         {
-            if (enemy != null && enemy.gameObject.activeSelf && enemy.GetBuff("Stun") == null)
+            if (enemy != null && enemy.gameObject.activeSelf && enemy.currentHealth > 0 && enemy.GetBuff("Stun") == null)
             {
-                int roll = battleCounter % enemy.enemyCards.Count;
-
-                Card card = enemy.enemyCards[roll];
-                cardActions.PerformAction(card, enemy);
+                if (enemy.enemyCards.Count == 1)
+                {
+                    Card card = enemy.enemyCards[0];
+                    cardActions.PerformAction(card, enemy);
+                }
+                else
+                {
+                    Card card = enemy.enemyCards[roll[mod[enemies.IndexOf(enemy)]]]; //get the card to play from the enemy's list of cards
+                    cardActions.PerformAction(card, enemy);
+                } 
             }
         }
 
-        //Increment battleCounter
+        if(player.currentHealth <= 0 && enemiesAlive > 0)
+        {
+            DisplayDeathScreen();
+        }
         battleCounter++;
 
         //Process buffs
         ProcessBuffs();
 
-        //Draw the player their next hand
-        DrawCards(drawAmount);
         //Restore energy
-        energy += energyGain;
-        PlayerInfoController.instance.Energy = energy;
+        SetEnergyCounter(energy, energy);
+        currentEnergy = energy;
         PlayerInfoPanel.Instance.UpdateStats();
         //Set turn to yes
         playersTurn = true;
+                //Draw the player their next hand
+        StartCoroutine(DrawCards(drawAmount));
+        OnTurnChange();
+    }
+    public void OnTurnChange()
+    {
+        mod.Clear();
+        roll.Clear();
+        foreach(Entity enemy in enemies)
+        {
+            if(enemy != null && enemy.gameObject.activeSelf && enemy.currentHealth > 0 && enemy.enemyCards.Count > 0)
+            {
+                if(enemy.enemyCards.Count == 1)
+                {
+                    mod.Add(0);
+                    roll.Add(0);
+                    Card card = enemy.enemyCards[0];
+                    Intent intent = enemy.transform.GetChild(4).GetComponent<Intent>();
+                    intent.ModifyIntent(card);
+                }
+                else if(enemy.enemyCards.Count > 1 )
+                {
+                    int mods = Random.Range(0, enemy.enemyCards.Count);
+                    mod.Add(mods);
+                    roll.Add(enemy.enemyCards.IndexOf(enemy.enemyCards[mods]));
+                    Card card = enemy.enemyCards[roll[mods]];
+                    Intent intent = enemy.transform.GetChild(4).GetComponent<Intent>();
+                    intent.ModifyIntent(card);
+                }
+            }
+        }
+    }
+
+    public void DisplayDeathScreen()
+    {
+        deathScreen.SetActive(true);
     }
 
     private void ProcessBuffs()
@@ -369,5 +490,13 @@ void Update()
                 enemy.buffs.RemoveAll(buff => buff.stacks <= 0);
             }
         }
+    }
+
+    private void SetEnergyCounter(int e, int maxE)
+    {
+        string energyString;
+        //energy/maxEnergy
+        energyString = e.ToString() + "/" + maxE.ToString();
+        eCounter.text = energyString;
     }
 }

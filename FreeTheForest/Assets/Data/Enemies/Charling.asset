@@ -13,8 +13,9 @@ MonoBehaviour:
   m_Name: Charling
   m_EditorClassIdentifier: 
   title: Charling
-  offense: 5
-  defense: 5
+  strength: 1
+  defence: 1
   health: 10
   Actions:
   - {fileID: 11400000, guid: b4b4d4673cb77404caa5afb14ffd80a6, type: 2}
+  image: {fileID: 21300000, guid: 0459d404ee60d5c46b3406a8d5bca358, type: 3}

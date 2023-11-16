@@ -17,16 +17,19 @@ public class Navigation : MonoBehaviour
     {
         SceneLoader.SceneNames.Add("Battle");
         SceneManager.LoadSceneAsync("Battle");
+        SFXManager.Instance.Play("BeginEncounter");
     }
 
     public void LoadHeal()
     {
         SceneManager.LoadScene("Heal");
+        SFXManager.Instance.Play("BeginEncounter");
     }
 
     public void LoadUpgrade()
     {
         SceneManager.LoadScene("Upgrade");
+        SFXManager.Instance.Play("BeginEncounter");
     }
 
     public void Continue()

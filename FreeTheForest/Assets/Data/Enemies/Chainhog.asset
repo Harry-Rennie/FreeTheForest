@@ -13,8 +13,9 @@ MonoBehaviour:
   m_Name: Chainhog
   m_EditorClassIdentifier: 
   title: Chainhog
-  offense: 5
-  defense: 5
+  strength: 1
+  defence: 1
   health: 10
   Actions:
   - {fileID: 11400000, guid: b4b4d4673cb77404caa5afb14ffd80a6, type: 2}
+  image: {fileID: 21300000, guid: 71806a62f9ad1fc479c0768dee2e58eb, type: 3}

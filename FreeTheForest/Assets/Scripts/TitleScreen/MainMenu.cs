@@ -9,6 +9,10 @@ public class MainMenu : MonoBehaviour
         SceneManager.LoadScene("Overworld");
     }
 
+    public void LoadMainMenu()
+    {
+        SceneManager.LoadScene("TitleScreen");
+    }
     public void ExitGame()
     {
         Application.Quit();
