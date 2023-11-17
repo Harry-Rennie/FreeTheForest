@@ -149,17 +149,6 @@ public class MapGraph : MonoBehaviour
                             {
                                 node.GetComponent<Button>().interactable = true;
                             }
-                            // else if(lineManager.GetLinesFromNode(node).Count > 0)
-                            // {
-                            //    List <GameObject> Line = lineManager.GetLinesFromNode(node);
-                            //    foreach(GameObject line in Line)
-                            //    {
-                            //         Color currentColor = line.GetComponent<LineRenderer>().startColor;
-                            //         currentColor.a = 0.5f;
-                            //         line.GetComponent<LineRenderer>().startColor = currentColor;
-                            //         line.GetComponent<LineRenderer>().endColor = currentColor;
-                            //    }
-                            // }
                         }
                     }
                 }
@@ -353,10 +342,13 @@ private void CheckRespawn(List<GameObject> nodes)
 
                 // Spawn a new node
                 GameObject newChildNode = nodeManager.Respawn(childNode, graphContainer, tag);
-                
+
+                // Make sure the new node has a unique name
+                newChildNode.name = GetUniqueNodeName(newChildNode.name, nodes);
+
                 // Immediately update the dictionary to replace the old node with the new node
                 lineManager.nodeParentMap.Remove(childNode);
-                lineManager.nodeParentMap.Add(newChildNode, parentNode);
+                lineManager.nodeParentMap[newChildNode] = parentNode;
 
                 // Add the old node to the list of nodes to remove
                 nodesToRemove.Add(childNode);
@@ -382,6 +374,18 @@ private void CheckRespawn(List<GameObject> nodes)
             nodes.Add(entry.Key);
         }
     }
+}
+
+private string GetUniqueNodeName(string baseName, List<GameObject> nodes)
+{
+    int counter = 1;
+    string uniqueName = baseName;
+    while (nodes.Any(n => n.name == uniqueName))
+    {
+        uniqueName = $"{baseName} ({counter})";
+        counter++;
+    }
+    return uniqueName;
 }
 
     /// <summary>
